@@ -12,7 +12,15 @@
    (lessons/qmatrix_tags.json ↔ kc_graph._QMATRIX_PATH): a paused session on
    an out-of-focus drill is discarded, and an out-of-focus drill on screen is
    swapped for the server's next pick. `redirects(q)` is the same check for
-   renderQuestion (practice/ui.js), which every other door goes through. */
+   renderQuestion (practice/ui.js), which every other door goes through.
+
+   🔴 SAME LEAK, COURSE TOGGLE. Seth, 2026-09-29: switched LeetCode off on the
+   Courses tab and the LeetCode drill (q60008) stayed up. The server stops
+   serving a course that is off (course_registry.course_off, via
+   kc_prefs.is_disabled), but nothing asked it for a new drill. So the
+   course choice is checked here too: `studied: false` from
+   /course-shares is exactly the server's course_off, and a drill tagged to a
+   concept of such a course is out, the same way an out-of-focus one is. */
 (() => {
   const picker = document.getElementById("practice-target");
   const note = document.getElementById("practice-target-note");
@@ -21,6 +29,8 @@
   let generation = 0;
   let current = null;
   let scope = null; // Set of in-focus KC ids, null = whole curriculum
+  let offCourses = new Set(); // course ids with `studied: false` (course-shares)
+  let courseLoads = 0;
   let qmatrix = null; // qid → target_kcs, null until loaded
   let qmatrixLoad = null;
   let replacing = false;
@@ -38,23 +48,51 @@
     return qmatrixLoad;
   };
 
-  /* Out of focus = TAGGED to a concept outside it. An untagged drill is left
-     to the server (it refuses those under a focus anyway); refusing it here
-     too could bounce a lane the q-matrix does not cover back and forth. Fails
-     open until the q-matrix loads: the server is still the real filter. */
-  const outOfScope = (q) => {
-    if (!scope || !qmatrix || !q) return false;
-    const kcs = qmatrix.get(Number(q.question_id ?? q.id ?? q.questionId)) || [];
-    return kcs.length > 0 && kcs.some((kc) => !scope.has(kc));
+  const loadCourses = async (mine) => {
+    const res = await apiFetch("/api/practice/course-shares");
+    if (!res.ok) throw new Error(`course-shares ${res.status}`);
+    const data = await res.json();
+    if (mine !== courseLoads) return;
+    offCourses = new Set((data.courses || []).filter((r) => r.studied === false).map((r) => r.course));
   };
+
+  // course_registry.course_of: the standalone courses by prefix, else ARENA
+  // (the main graph). Every delta-drills KC starts "deltadrills.".
+  const courseOf = (kc) =>
+    kc.startsWith("leetcode.") ? "leetcode" : kc.startsWith("deltadrills.") ? "delta-drills" : "arena";
+
+  /* Why a drill is out, or null. Out = TAGGED to a concept of a course that is
+     off, or outside the 0.1 focus. An untagged drill is left to the server (it
+     refuses those under a focus anyway); refusing it here too could bounce a
+     lane the q-matrix does not cover back and forth. Fails open until the
+     q-matrix loads: the server is still the real filter. */
+  const kcWhyOut = (kc) => {
+    if (offCourses.has(courseOf(kc))) return "from a course you switched off";
+    if (scope && !scope.has(kc)) return "on a concept outside Ray Tracing 0.1";
+    return null;
+  };
+  const whyOut = (q) => {
+    if ((!scope && !offCourses.size) || !qmatrix || !q) return null;
+    const kcs = qmatrix.get(Number(q.question_id ?? q.id ?? q.questionId)) || [];
+    return kcs.map(kcWhyOut).find(Boolean) || null;
+  };
+  const outOfScope = (q) => whyOut(q) !== null;
+
+  /* A concept the learner asked to practise by name (Practice ⤢ on the graph,
+     a ?lesson= link, an exercise's practice block — practice/kc-practice.js)
+     pins the queue to it, and its drills are the learner's own pick: they are
+     painted even when that concept is out. What a LATER filter change does to
+     that pin is enforce()'s business, not renderQuestion's. */
+  const pinned = () => window.__kcFocusId || null;
 
   /* For renderQuestion: true = this drill is out of focus and the server's
      next pick is being painted in its place. Whatever the server hands back
      is painted as-is (`replacing` skips the check), so an out-of-focus answer
      from the server can never loop; a failed fetch paints the original
-     rather than leaving the prompt blank. */
-  const redirects = (q, count) => {
-    if (replacing || !outOfScope(q)) return false;
+     rather than leaving the prompt blank. `force` = a filter just changed,
+     which outranks a pin (see enforce). */
+  const redirects = (q, count, { force = false } = {}) => {
+    if (replacing || (pinned() && !force) || !outOfScope(q)) return false;
     replacing = true;
     PracticeAPI.getNextQuestion()
       .then((nextQ) => renderQuestion(nextQ || q, count))
@@ -66,22 +104,32 @@
     return true;
   };
 
-  const enforce = async () => {
-    if (!scope || practiceMode !== "backend") return;
+  /* `changed` = the learner just changed the focus or a course. The newer
+     choice wins over a concept pinned before it (the LeetCode case above came
+     off a LeetCode concept's Practice ⤢), so an out pin is let go. On a page
+     load nothing changed: a pin made by the link that opened the page stands. */
+  const enforce = async ({ changed = false } = {}) => {
+    if ((!scope && !offCourses.size) || practiceMode !== "backend") return;
     await loadQmatrix();
-    if (!scope || !qmatrix) return;
+    if (!qmatrix) return;
     // Script-global consts, not window properties (practice/timer.js, api.js).
     const session = typeof PracticeSession !== "undefined" ? PracticeSession : null;
     const saved = window.SessionSnapshot?.read?.();
-    if (session?.hasPausedSession() && saved && outOfScope({ id: saved.questionId })) {
+    const why = saved ? whyOut({ id: saved.questionId }) : null;
+    // A paused block the learner started on a concept by name (its ladder is
+    // in the snapshot) is that pick: kept across a page load, dropped only
+    // when a filter changes after it.
+    const picked = !!(saved?.ladder || saved?.config?.ladder);
+    if (session?.hasPausedSession() && why && (changed || !picked)) {
       session.discard();
       sessionSummary.textContent =
-        "Your paused session was on a concept outside Ray Tracing 0.1, so it was set aside. Start a new block to practise 0.1.";
+        `Your paused session was ${why}, so it was set aside. Start a new block to keep going.`;
     }
     const onScreen = typeof PracticeAPI !== "undefined" ? PracticeAPI.currentQuestion : null;
+    if (changed && pinned() && kcWhyOut(pinned())) window.KcPractice?.release?.();
     const graded = !practiceFeedbackArea?.classList.contains("hidden");
     if (graded || session?.hasPausedSession()) return;
-    redirects(onScreen, practiceQuestionCount);
+    redirects(onScreen, practiceQuestionCount, { force: changed });
   };
 
   const paint = (data) => {
@@ -122,9 +170,18 @@
       picker.disabled = false;
     } catch (err) {
       if (mine === generation) { picker.disabled = true; note.textContent = err.message; }
-      return;
     }
-    enforce().catch((err) => console.warn("[practice-target] focus check failed:", err));
+    recheck();
+  };
+  /* The course choice changed (courses.js toggle, course-pick.js), or the
+     page just learned who the learner is: re-read which courses are off, then
+     drop whatever drill that leaves out. */
+  const recheck = async (changed = false) => {
+    const mine = ++courseLoads;
+    try { await loadCourses(mine); } catch (err) { console.warn("[practice-target] could not read courses:", err); }
+    // A newer recheck is in flight: only its (fresher) course list may act.
+    if (mine !== courseLoads) return;
+    enforce({ changed }).catch((err) => console.warn("[practice-target] focus check failed:", err));
   };
   picker.addEventListener("change", async () => {
     const mine = ++generation;
@@ -140,11 +197,12 @@
       note.textContent = err.message;
       return;
     } finally { picker.disabled = false; }
-    enforce().catch((err) => console.warn("[practice-target] focus check failed:", err));
+    enforce({ changed: true }).catch((err) => console.warn("[practice-target] focus check failed:", err));
   });
   window.PracticeTarget = { outOfScope, redirects };
   loadQmatrix();
   window.addEventListener("delta:practice-mode-ready", refresh);
+  window.addEventListener("delta:courses-changed", () => recheck(true));
   window.addEventListener("delta:practice-target-graph-ready", () => { if (current) paint(current); });
   if (window.DDPracticeModeReady) refresh();
 })();

@@ -62,6 +62,7 @@
 
 ## Recent Changes
 
+- 2026-09-28 (**Learner Home: choose a concept**): `home.css` (`?v=5`) — columns flipped: `.home-main` (left, wide) holds `.home-graphs` over `#learner-xp`; new `.home-choice` (right, 300–380px) holds `.session-go` (Practice with AI + summary), `#concept-choice` and the `.session-clock-scale` pinned to the foot; guest/empty = one narrow column (`.session-setup:has(.home-graphs.is-empty)`, descendant not child now); ≤860px stacks with `.home-choice` first. List styles in `../concept-choice.css`.
 - 2026-09-26 (**one-screen Learner Home**): `home.css` (`?v=3`) now owns the idle card (moved out of `timer.css`, `?v=10`, which keeps only the hide-while-in-session rule) as a two-column grid; the group-board area rows, the weekly activity bars and `.learner-group` are gone with their features; `readiness.css` deleted; `exercise-session.css` (`?v=5`) loses the dead `#session-clock-note` rule. `watch.py` lists the new selectors.
 
 - 2026-09-26 (**Groups on the Learner Home**): `home.css` (`?v=2`) adds `.learner-group` — full-width + `flex-shrink: 0` inside the idle `.practice-container` column, `display: none` off `session-idle`, `.is-invited { order: -1 }`, `.learner-group-head`.

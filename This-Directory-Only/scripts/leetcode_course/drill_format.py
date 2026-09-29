@@ -63,10 +63,14 @@ _POWER = [(re.compile(r"(?<![\d.])10([2-9])(?!\d)"), r"10^\1"), (re.compile(r"(?
 
 def _constraint(line: str) -> str:
     line = line.strip()
-    if "`" in line or not _FORMULA.search(line):
+    if "`" in line:
         return f"- {line}"
+    formula = bool(_FORMULA.search(line))  # judged before `^` is added below
+    # Prose bounds were flattened too ("in the range [1, 104]").
     for pat, rep in _POWER:
         line = pat.sub(rep, line)
+    if not formula:
+        return f"- {line}"
     # A formula, not prose: a code span keeps `*` and `_` (n * m, nums[i])
     # from reading as emphasis.
     return f"- `{line}`"
@@ -88,7 +92,8 @@ def statement_markdown(text: str) -> str:
             in_constraints = in_constraints and not seen_item
             out.append("")
             continue
-        if in_constraints and not line.lstrip().startswith(("-", "*", "#")):
+        # "-231 <= x" is a negative bound, not a list item: only "- " / "* " is.
+        if in_constraints and not line.lstrip().startswith(("- ", "* ", "#")):
             out.append(_constraint(line))
             seen_item = True
             continue

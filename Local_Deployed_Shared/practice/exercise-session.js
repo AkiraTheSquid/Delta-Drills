@@ -633,6 +633,8 @@
 
   const onEnd = (reason, served, config, outcome) => {
     document.getElementById("page-practice")?.classList.remove("dd-exercise-session");
+    // A concept picked on the Learner Home ends here too (practice/concept-choice.js).
+    document.dispatchEvent(new CustomEvent("dd-exercise-end", { detail: { reason, served, config, outcome } }));
     document.querySelectorAll(".dd-ex-block").forEach(_syncButton);
     const el = _summaryEl();
     if (!el || !config?.exercise) return;

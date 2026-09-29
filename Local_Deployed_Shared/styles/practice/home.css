@@ -117,7 +117,7 @@
   box-sizing: border-box;
   display: grid;
   flex-shrink: 0;
-  grid-template-columns: minmax(300px, 368px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   margin: 28px auto;
   max-width: 1120px;
   overflow: hidden;
@@ -125,39 +125,53 @@
   width: calc(100% - 48px);
 }
 /* No XP to show (a guest, or the read failed): just the way back in. */
-.session-setup:has(> .home-graphs.is-empty) {
+.session-setup:has(.home-graphs.is-empty) {
   grid-template-columns: minmax(0, 1fr);
   max-width: 420px;
 }
+.session-setup:has(.home-graphs.is-empty) .home-main { display: none; }
+.session-setup:has(.home-graphs.is-empty) .home-choice { border-left: 0; }
+/* LEFT: the one graph, measured learning under it. */
 .home-main {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 26px;
   min-width: 0;
-  padding: 28px 30px 26px;
+  padding: 24px 30px 26px;
 }
 .home-graphs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.home-graphs.is-empty { display: none; }
+.home-main .learner-xp {
+  border-top: 1px solid var(--home-rule);
+  padding-top: 22px;
+}
+/* RIGHT: Practice with AI, the concepts to choose from, the multiplier. */
+.home-choice {
   border-left: 1px solid var(--home-rule);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   min-width: 0;
-  padding: 24px 30px 22px;
+  padding: 28px 26px 24px;
 }
-.home-graphs.is-empty { display: none; }
 
-/* The multiplier and the button: the foot of the left column. */
+/* The button that hands every choice to the algorithm, and what the last
+   block said. */
 .session-go {
-  border-top: 1px solid var(--home-rule);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: auto;
-  padding-top: 18px;
 }
-.learner-xp.is-empty + .session-go { border-top: 0; padding-top: 0; }
 .session-clock-scale {
   align-items: center;
+  border-top: 1px solid var(--home-rule);
+  margin-top: auto;
+  padding-top: 16px;
   color: var(--muted);
   cursor: text;
   display: flex;
@@ -192,11 +206,12 @@
 
 @media (max-width: 860px) {
   .session-setup,
-  .session-setup:has(> .home-graphs.is-empty) {
+  .session-setup:has(.home-graphs.is-empty) {
     grid-template-columns: minmax(0, 1fr);
     margin: 16px auto;
     width: calc(100% - 32px);
   }
-  .home-main { padding: 22px 18px 20px; }
-  .home-graphs { border-left: 0; border-top: 1px solid var(--home-rule); padding: 20px 18px; }
+  /* On a phone the way in comes first; the graph and the numbers follow. */
+  .home-choice { border-left: 0; order: -1; padding: 22px 18px 20px; }
+  .home-main { border-top: 1px solid var(--home-rule); padding: 20px 18px; }
 }

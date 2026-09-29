@@ -72,6 +72,7 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-09-29: Seth on q60151 (Find Bottom Left Tree Value). `drill_format.py`: a constraint line starting `-231` is a negative bound, not a list item (only `- `/`* ` are), and prose constraints get their superscripts restored too (`[1, 104]` → `[1, 10^4]`); 64 statements fixed, 0 flat left. `export_app.py`: LeetCode's commented `# class TreeNode`/`# class ListNode` stub is dropped from starter and answer, since `_header` already prepends the real class (34 starters showed it twice).
 - 2026-09-28: `export_concepts.py` added and called at the end of `export_app.py`.
 - 2026-09-25: `drill_format.py`: each drill gets `secs_allowed` = base by LeetCode difficulty (Easy 15 / Medium 25 / Hard 40 min; unlabeled rows placed by TypeSafe score) × pattern weight (graphs/DP/backtracking/trie 1.2, arrays/hashing/two-pointers/stack 0.85) × TypeSafe spread ±15% (+5 min for a design class), clamped 5–60 min. Dataset statements are rewritten to markdown: `### Example N` / `### Constraints`, **Input:**/**Output:**/**Explanation:** labels, constraints as a list with formulas code-spanned and flattened superscripts restored (`105` → `10^5`, `231` → `2^31`).
 - 2026-09-25: `export_app.py` added, the last pipeline step. It grades every drill

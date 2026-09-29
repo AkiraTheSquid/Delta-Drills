@@ -1,0 +1,146 @@
+/* ================================================================
+   CONCEPT-CHOICE.CSS — the Learner Home's "Or choose a concept" list
+   and its not-ready dialog (../practice/concept-choice.js, Seth
+   2026-09-28).
+
+   Each row's bar IS the topbar concept pill (styles/concept-pill.css):
+   same markup, same two text layers, same fill, driven by the same
+   `--dd-concept-pct`. Here it is only resized to the row — the pill's
+   own width (a third of the viewport) belongs to the topbar. The
+   `.concept-choice` prefix outranks the pill's single-class rules,
+   including its narrow-screen width.
+
+   Token-first, no hex (styles/watch.py).
+   ================================================================ */
+
+.concept-choice[hidden] { display: none; }
+.concept-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.concept-choice-head {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.concept-choice-note {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 0 0 6px;
+}
+
+.cc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cc-row {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  gap: 6px;
+  padding: 9px 10px 8px;
+  text-align: left;
+  width: 100%;
+}
+.cc-row:hover { background: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k))); border-color: var(--border); }
+.cc-row:focus-visible { outline: 2px solid var(--xp-to); outline-offset: 1px; }
+.cc-row:disabled { cursor: progress; opacity: 0.6; }
+/* The AI's pick: a rule down the left in the knowledge ink, nothing louder. */
+.cc-row.is-ai { border-color: var(--border); box-shadow: inset 3px 0 0 var(--xp-to); }
+
+/* The bar: the topbar pill, full row width and a little shorter. `display`
+   too: the TOPBAR's chip is dropped under 620px (concept-pill.css), and a
+   row without its bar is a list of names with no ability on it. */
+.concept-choice .dd-concept {
+  display: inline-grid;
+  flex: none;
+  height: 30px;
+  width: 100%;
+}
+.concept-choice .dd-concept-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 0 12px;
+}
+
+.cc-meta {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 4px 10px;
+  padding: 0 4px;
+}
+.cc-xp {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.cc-lesson {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cc-tag {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 8px;
+}
+.cc-tag--ai { border-color: var(--xp-to); color: var(--xp-to); }
+.cc-tag--continue { border-color: var(--accent); color: var(--accent); }
+
+.cc-error {
+  color: var(--warn);
+  font-size: 12.5px;
+  margin: 4px 0 0;
+}
+.cc-error.hidden { display: none; }
+
+/* ---- NOT READY: one message, one way back ------------------------- */
+.cc-not-ready {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px -24px rgb(0 0 0 / 0.6);
+  color: var(--text);
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 24px 26px 22px;
+}
+.cc-not-ready::backdrop { background: rgb(0 0 0 / 0.45); }
+.cc-not-ready-head {
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+.cc-not-ready-text {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+.cc-not-ready-btn {
+  border-radius: 10px;
+  font-weight: 600;
+  min-height: 42px;
+  width: 100%;
+}

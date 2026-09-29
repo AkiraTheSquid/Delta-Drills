@@ -24,6 +24,7 @@ from __future__ import annotations
 import ast
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -92,6 +93,20 @@ def _header(code: str) -> str:
     if "TreeNode" in code:
         parts.append("\n# Definition for a binary tree node.\n" + TREE_NODE)
     return "".join(parts) + "\n"
+
+
+# LeetCode's own commented-out node definition ("# Definition for a binary tree
+# node.\n# class TreeNode: ..."). _header prepends the real class, so leaving
+# the stub in shows the learner the same class twice.
+_NODE_STUB = re.compile(
+    r"^# Definition for (?:a binary tree node|singly-linked list)\.\n"
+    r"(?:#\s+(?:class (?:TreeNode|ListNode):|def __init__\(.*\):|self\.\w+ = \w+)[ \t]*(?:\n|$))*",
+    re.M,
+)
+
+
+def _drop_node_stub(code: str) -> str:
+    return _NODE_STUB.sub("", code)
 
 
 def _label(score: int) -> str:
@@ -167,7 +182,7 @@ def drill_row(p: dict, qid: int, concept_title: str) -> dict | None:
     # even when neither the starter nor the solution names them.
     header = _header(p["starter_code"] + p["solution"]
                      + json.dumps(test_cases).replace("list_node", "ListNode").replace("tree_node", "TreeNode"))
-    starter = p["starter_code"].rstrip()
+    starter = _drop_node_stub(p["starter_code"]).rstrip()
     if p["tests"]["kind"] == "assert":  # the dataset's starter stops at the signature
         starter += "\n        pass"
     starter += "\n"
@@ -179,7 +194,7 @@ def drill_row(p: dict, qid: int, concept_title: str) -> dict | None:
         "subtopic": "Patterns",
         "subtopic_key": LESSON["subtopic_key"],
         "question_text": f"**{p['title']}**\n\n{statement_markdown(p['statement'].strip())}",
-        "answer_code": header + p["solution"].strip() + "\n",
+        "answer_code": header + _drop_node_stub(p["solution"]).strip() + "\n",
         "difficulty_score": score,
         "difficulty_label": _label(score),
         "expected_output": "",

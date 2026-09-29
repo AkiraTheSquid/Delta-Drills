@@ -4,10 +4,11 @@
    Seth, 2026-09-26: XP is "measured by your actual learning progress",
    the same yardstick for every learner, with a daily target that keeps
    the learner on pace to finish the course — and a graph of it. Later
-   the same day: one screen, measured learning on the left, the graphs on
-   the right, daily XP a week by default.
+   the same day: one screen, daily XP a week by default. Since 2026-09-28
+   the left column is ONE graph with measured learning under it, and the
+   right is the way in (practice/session-idle.js, practice/concept-choice.js).
 
-   LEFT (#learner-xp, all from GET /api/practice/xp, app/learning_xp.py)
+   MEASURED LEARNING (#learner-xp, all from GET /api/practice/xp, app/learning_xp.py)
      * today's XP against today's target — the one number to look at;
      * level (80 XP = one concept's worth), course knowledge out of the
        fixed total, and the projected finish at the learner's pace;
@@ -15,14 +16,12 @@
        date (the server spreads what is left over the days that remain,
        re-read every day) or a fixed XP per day.
 
-   RIGHT (#learner-xp-graphs)
-     * one row of range tabs across the column — Week (the default),
-       Month, 3 months, All — that controls BOTH graphs (Seth, 2026-09-27);
-     * DAILY XP bars and TOWARD THE COURSE under it, drawn by
-       ./xp-charts.js for that range;
-     * in a study group, ./xp-group-view.js draws the column instead: a
-       Time and a Graph dropdown, then one graph type for every member, or
-       "Just me" — both of yours (Seth, 2026-09-27).
+   THE GRAPH (#learner-xp-graphs), drawn by ./xp-group-view.js: Time
+     (Week — the default — Month, 3 months, All; the range is kept here),
+     Graph (daily bars or toward the course) and Measure (XP or problems
+     solved) dropdowns over ONE chart (Seth, 2026-09-28: "a singular graph
+     that you can switch in between"); in a study group, one row per member.
+     This file hands it `solo`, the learner's own charts for the range.
 
    It draws from `delta:xp-summary`, which ../xp.js broadcasts after every
    read it makes for the level pill — one request feeds both. Nothing here
@@ -290,8 +289,7 @@
     return d;
   }
 
-  // ── the range: one row of tabs over both graphs ────────────────
-  // (in a group, practice/xp-group-view.js's Time select sets the same one)
+  // ── the range (./xp-group-view.js's Time select) ───────────────
   function setRange(id) {
     range = id;
     try {
@@ -302,26 +300,7 @@
     paintGraphs();
   }
 
-  function rangeTabs() {
-    const tabs = el("div", "xp-range");
-    // Plain toggle buttons, not a tablist: there are no tab panels, and
-    // Tab + Enter is the whole keyboard contract a pressed button needs.
-    tabs.setAttribute("role", "group");
-    tabs.setAttribute("aria-label", "Time shown in both graphs");
-    RANGES.forEach((r) => {
-      const b = el("button", "xp-range-btn", r.label);
-      b.type = "button";
-      b.setAttribute("aria-pressed", String(r.id === range));
-      b.addEventListener("click", () => {
-        setRange(r.id);
-        graphs()?.querySelector('.xp-range-btn[aria-pressed="true"]')?.focus();
-      });
-      tabs.appendChild(b);
-    });
-    return tabs;
-  }
-
-  /** The right column alone: the tabs and the two graphs for the range. */
+  /** The graph column alone, for the range. */
   function paintGraphs() {
     const right = graphs();
     if (!right || !summary) return;
@@ -330,20 +309,19 @@
     drawnWidth = chartWidth();
     const opts = { width: drawnWidth };
     const course = { ...opts, count: days };
-    // Both graphs for the range — here, and as the group view's "Just me",
-    // which may ask for them in problems solved (./xp-solved-chart.js).
-    const solo = (measure = "xp") => [
-      window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length, measure }),
-      measure === "solved"
-        ? window.DDXpSolvedChart.cumulative(summary, course)
-        : window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course),
-    ];
-    // In a group the column is the group view's (dropdowns, one graph type).
-    if (window.DDXpGroupView?.paint(right, summary, { width: drawnWidth, range, ranges: RANGES, setRange, solo })) return;
-    // A target set from the keyboard repaints this column; keep focus on the graph.
-    const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
-    right.replaceChildren(rangeTabs(), ...solo());
-    if (refocus) right.querySelector(".xp-trajectory")?.focus();
+    // The learner's own charts for the range, in XP or problems solved
+    // (./xp-solved-chart.js): `which` = "bars" or "course", else both.
+    const solo = (measure = "xp", which = null) => [
+      which !== "course" &&
+        window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length, measure }),
+      which !== "bars" &&
+        (measure === "solved"
+          ? window.DDXpSolvedChart.cumulative(summary, course)
+          : window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course)),
+    ].filter(Boolean);
+    const ctx = { width: drawnWidth, range, ranges: RANGES, setRange, solo };
+    if (window.DDXpGroupView) window.DDXpGroupView.paint(right, summary, ctx);
+    else right.replaceChildren(...solo()); // the dropdowns' file did not load
   }
 
   // ── paint ──────────────────────────────────────────────────────

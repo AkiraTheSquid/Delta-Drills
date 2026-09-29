@@ -675,6 +675,9 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
       } catch (_) {
         /* lattice refresh is best-effort; the saved setting still stands */
       }
+      // practice/practice-target.js swaps out a drill from a course just
+      // switched off (same event practice/course-pick.js raises).
+      window.dispatchEvent(new CustomEvent("delta:courses-changed"));
       window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed"));
     });
     const toggleText = document.createElement("span");
