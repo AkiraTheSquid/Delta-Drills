@@ -39,5 +39,31 @@ def check_the_finish_pace_is_net_and_counts_today():
         "an hour-old history must be priced over a whole day"
 
 
+def check_a_concept_is_priced_by_what_builds_on_it():
+    """Concepts are worth different XP, foundations most (Seth, 2026-09-29:
+    "not all concepts are equally important"), and one solved problem reads
+    on the order of 5-15 XP, not a concept's whole 80. No levels."""
+    from app import concept_choice as cc
+    from app import learning_xp as lx
+    worths = [lx.worth_of(n) for n in range(0, 200)]
+    assert worths[0] == lx.WORTH_MIN and worths[-1] == lx.WORTH_MAX, worths[:3]
+    assert all(a <= b for a, b in zip(worths, worths[1:])), "more descendants must never be worth less"
+    assert all(w % lx.WORTH_STEP == 0 for w in worths)
+    assert lx.worth("no.such-concept") == lx.WORTH_MIN, "an unknown concept is priced as a leaf"
+    # A novice's first solved problem, lesson included, on a leaf and on a
+    # foundation: a handful of XP, the foundation more.
+    novice = {"p": 0.02, "R": 1.0, "lesson_seen": False}
+    kc = "no.such-concept"
+    leaf = lx.solve_xp(kc, novice)
+    assert 0 < leaf <= lx.WORTH_MIN * 0.75, f"a leaf's first problem paid {leaf}"
+    worn = {"p": 0.9, "R": 0.5, "lesson_seen": True}
+    assert lx.solve_xp(kc, worn) > 0, "relearning after forgetting must still pay"
+    done = {"p": 0.99, "R": 1.0, "lesson_seen": True}
+    assert lx.solve_xp(kc, done) == 0.0, "past READY a problem pays nothing"
+    assert cc.per_problem(0.0) == 0 and cc.per_problem(0.2) == 5 and cc.per_problem(12.4) == 10
+    assert cc.per_problem(12.6) == 15, "per-problem XP shows to the nearest 5"
+
+
 if __name__ == "__main__":
     check_the_finish_pace_is_net_and_counts_today()
+    check_a_concept_is_priced_by_what_builds_on_it()

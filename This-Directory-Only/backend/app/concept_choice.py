@@ -20,11 +20,17 @@ ABILITY = K, the XP model's knowledge of the concept (app/learning_xp.py):
 P(learned) from the per-concept HMM × FSRS retrievability. Seth chose it over
 the topbar pill ("it seemed not to really display the actual ability") and
 over FSRS alone (memory freshness, not whether it was ever learned). It is
-drawn as XP toward the concept's 80, so the bar and the XP graphs are one
-number. A concept already at the READY line is left off the list — the XP
-model counts it done even where the frontier's own gate
-(`kc_graph.kc_is_learned`) has not closed yet — except the AI's pick, which
-is shown as it is.
+drawn as the meter's fill toward READY. A concept already at the READY line
+is left off the list — the XP model counts it done even where the frontier's
+own gate (`kc_graph.kc_is_learned`) has not closed yet — except the AI's pick,
+which is shown as it is.
+
+XP PER PROBLEM (Seth, 2026-09-29: "not all concepts give the same amount of
+exp ... on the far right, make it such that it displays the amount of exp you
+would get from solving that sort of problem"): `learning_xp.solve_xp` — what
+the model expects one solved problem to add, priced at the concept's worth —
+shown to the nearest XP_STEP, never below it while there is anything left to
+learn ("on the order of magnitude of like 10XP or 15 xp or 5xp").
 
 THE ROUTE for a chosen concept, one question per call, same response shape as
 app/ready_route.py so the client's Route drives both:
@@ -48,13 +54,30 @@ READY = learning_xp.READY
 NOT_READY_K = 0.20
 MIN_ANSWERS = 3
 MAX_ITEMS = 40  # a fuse, far above any honest session
+XP_STEP = 5
+
+
+def _read(user_state, kcs: Iterable[str]) -> dict:
+    """The replay's per-concept readout now. Day boundaries are irrelevant
+    to it, so UTC."""
+    return learning_xp.replay(user_state, timezone.utc, also=tuple(dict.fromkeys(kcs)))
 
 
 def knowledge(user_state, kcs: Iterable[str]) -> Dict[str, float]:
-    """K per concept now. The day boundaries are irrelevant to K, so UTC."""
+    """K per concept now."""
     kcs = tuple(dict.fromkeys(kcs))
-    r = learning_xp.replay(user_state, timezone.utc, also=kcs)
+    r = _read(user_state, kcs)
     return {kc: float(r["also_now"].get(kc, 0.0)) for kc in kcs}
+
+
+def per_problem(xp: float) -> int:
+    """XP to show for one problem: the nearest XP_STEP, at least one step
+    while the model expects any gain at all — a concept just under READY
+    still pays for the problem that takes it there (codex, 2026-09-29: it
+    read "+0")."""
+    if xp <= 1e-9:
+        return 0
+    return max(XP_STEP, XP_STEP * int(round(xp / XP_STEP)))
 
 
 def _pool(kc: str) -> Dict[str, List[int]]:
@@ -70,7 +93,7 @@ def _answers(user_state, kc: str) -> int:
 
 
 def candidates(user_state, n: int = N_CANDIDATES, keep: Optional[str] = None) -> dict:
-    """{"items": [...], "ready_at", "xp_per_concept"} — the AI's pick first.
+    """{"items": [...], "ready_at"} — the AI's pick first.
     `keep`: a paused chosen block's concept, appended when the list would
     leave it out (it left the frontier or the top five mid-block) — the
     list is the only way back into that block."""
@@ -88,7 +111,8 @@ def candidates(user_state, n: int = N_CANDIDATES, keep: Optional[str] = None) ->
         ai = next((kc for kc in frontier if _servable(kc)), None)
     order = ([ai] if ai else []) + [kc for kc in frontier if kc != ai]
     keep = keep if keep in reg else None
-    K = knowledge(user_state, order + ([keep] if keep else []))
+    r = _read(user_state, order + ([keep] if keep else []))
+    K, state = r["also_now"], r["also_state"]
 
     def item(kc):
         node = reg[kc]
@@ -97,7 +121,8 @@ def candidates(user_state, n: int = N_CANDIDATES, keep: Optional[str] = None) ->
             "title": node.get("title") or kc,
             "lesson_title": node.get("lesson_title"),
             "k": round(K[kc], 4),
-            "xp": int(round(100 * min(K[kc], READY))),
+            "xp_per_problem": per_problem(learning_xp.solve_xp(kc, state[kc])),
+            "worth": learning_xp.worth(kc),
             "answers": _answers(user_state, kc),
             "recommended": kc == ai,
         }
@@ -111,7 +136,7 @@ def candidates(user_state, n: int = N_CANDIDATES, keep: Optional[str] = None) ->
             break
     if keep and all(i["kc"] != keep for i in items):
         items.append(item(keep))
-    return {"items": items, "ready_at": READY, "xp_per_concept": learning_xp.XP_PER_CONCEPT}
+    return {"items": items, "ready_at": READY}
 
 
 def plan(user_state, kc: str, served: Iterable[int] = (), skip: Iterable[int] = ()) -> dict:

@@ -27,13 +27,11 @@ REQUIRED_JS = [
     # throwing — which is exactly why they have to be asserted here instead.
     "code-highlight.js",  # tokenised <pre> overlay behind the transparent textarea
     "code-complete.js",  # name-only ghost autocomplete, accepted with Tab
-    # The Learner Home (idle screen): the one button back in, and measured
-    # learning with its two graphs (2026-09-26).
+    # The Learner Home (idle screen): the one button back in, the course and
+    # the week's daily XP bars (2026-09-26; bars only since 2026-09-29).
     "session-idle.js",  # proxies Continue to the real resume/start buttons
-    "xp-charts.js",  # both graphs; xp-panel.js reads its helpers at load
-    "xp-target-drag.js",  # click / drag the course graph to set the target
-    "xp-solved-chart.js",  # the course graph in problems solved; reads xp-charts.js helpers
-    "xp-group-view.js",  # draws the graph column and its dropdowns; before xp-panel.js
+    "xp-charts.js",  # the bars; xp-panel.js reads its helpers at load
+    "xp-group-view.js",  # draws the bars column (one row per member in a group); before xp-panel.js
     "xp-panel.js",
     "concept-choice.js",  # "Or choose a concept": the candidate list (2026-09-28)
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-

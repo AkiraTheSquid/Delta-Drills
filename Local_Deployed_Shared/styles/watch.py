@@ -25,8 +25,6 @@ REQUIRED_CSS = [
     "stats.css",
     "arena.css",
     "nav-drawer.css",
-    # The level chip + the topbar-seam progress bar (../xp.js).
-    "xp.css",
     # The Account-tab test-user roster + the floating switch pill
     # (../test-users-ui.js). Both surfaces are INJECTED by that script, so
     # these class names are the only contract between the two files — nothing
@@ -71,8 +69,9 @@ REQUIRED_TOKENS = (
     "--warn", "--warn-rgb", "--info", "--info-rgb",
     "--accent-2", "--accent-2-rgb",
     "--code-key", "--code-str", "--code-err",
-    # The XP seam gradient (xp.css). Dropping one of these in a single
-    # theme paints the progress bar in the previous theme's colours, or in
+    # The XP gradient (xp-panel.css, concept-choice.css, concept-pill.css;
+    # the retired level pill's xp.css first). Dropping one of these in a single
+    # theme paints the meters in the previous theme's colours, or in
     # nothing at all — the same silent-drop failure as the rest.
     "--xp-from", "--xp-to", "--xp-glow-rgb",
 )
@@ -374,7 +373,6 @@ def check_invariants():
     token_first_files = (
         "scrollbars.css",
         "nav-drawer.css",
-        "xp.css",
         "xp-panel.css",
         "survey.css",
         "courses/page.css",
