@@ -11,8 +11,9 @@
   pipeline.
 
 ## Owns
-- `dd_feedback_watch.py`: the poll loop. Reads every `<user>.feedback.json` and
-  `<user>.lesson-feedback.json` under `/data/user_data` in ONE `flyctl ssh
+- `dd_feedback_watch.py`: the poll loop. Reads every `<user>.feedback.json`,
+  `<user>.lesson-feedback.json` and `<user>.graph_feedback.json` (concept-graph
+  node/edge edits from the map) under `/data/user_data` in ONE `flyctl ssh
   console` call every 60 s, prints one line per entry not announced before,
   announces its own blindness after 5 failed fetches.
 - `SESSION_JOB`: the marker that says this is started by a session, never by a
@@ -92,6 +93,10 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-09-28: Reads `<user>.graph_feedback.json` too. Seth flagged
+  `python.control-flow` as mislabeled on the map and the watcher stayed silent:
+  the graph log's name (`graph_feedback`, underscore) matched neither glob.
+  Graph rows have no `client_id`; they key on kind + source + target.
 - 2026-09-20: Created. Seth: "whenever I submit feedback it automatically sends
   it to that shell and you get notified and it acts as a prompt for you to
   continue working so that you can improve the coding problems or whatever else".

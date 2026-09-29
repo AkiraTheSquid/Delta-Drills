@@ -7,7 +7,8 @@ A learner can flag a drill from the practice page ("Broken", "Unclear", "Wrong
 image", "Good", plus a note) and a lesson from its reading column ("Wrong",
 "Confusing", "Too shallow", "Too verbose", "Good"). Both land in a per-learner
 log on the Fly volume (`app/practice/problem_feedback_router.py`:
-`<user>.feedback.json` and `<user>.lesson-feedback.json`). Until now the last
+`<user>.feedback.json` and `<user>.lesson-feedback.json`; concept-graph edits
+from the map land in `<user>.graph_feedback.json`). Until now the last
 hop was a human one: Seth wrote the note, then came to a session and pasted it.
 His words on 2026-09-20:
 
@@ -83,8 +84,13 @@ BANK = REPO / "Local_Deployed_Shared/questions_structured.json"
 # The loop ends with a sentinel header so an EMPTY directory (no logs yet) is
 # a successful scan and not a failed fetch (codex, 2026-09-20).
 END = "=== END"
+# Drill, lesson and concept-graph logs. The graph one is `graph_feedback`
+# (underscore), which `*.feedback.json` does not match.
+GRAPH_SUFFIX = ".graph_feedback.json"
+LESSON_SUFFIX = ".lesson-feedback.json"
+SUFFIXES = (".feedback.json", LESSON_SUFFIX, GRAPH_SUFFIX)
 REMOTE_CMD = (
-    f"sh -c 'for f in {FLY_DIR}/*.feedback.json {FLY_DIR}/*.lesson-feedback.json; "
+    "sh -c 'for f in " + " ".join(f"{FLY_DIR}/*{sfx}" for sfx in SUFFIXES) + "; "
     "do [ -f \"$f\" ] || continue; echo \"=== $f\"; cat \"$f\"; echo; done; "
     f"echo \"{END}\"'"
 )
@@ -149,7 +155,7 @@ def fetch_local(directory: Path) -> dict | None:
     out = {}
     try:
         for p in sorted(directory.iterdir()):
-            if p.name.endswith(".feedback.json") or p.name.endswith(".lesson-feedback.json"):
+            if p.name.endswith(SUFFIXES):
                 out[str(p)] = parse_log(p.read_text(encoding="utf-8"))
     except OSError:
         return None
@@ -212,12 +218,17 @@ def entry_key(path: str, entry: dict) -> str:
     # Rows from before 2026-08-27 carry no client id: key them by learner (the
     # log's file name) as well, or two learners' same-second reports collapse.
     user = Path(path).name.split(".")[0]
+    if path.endswith(GRAPH_SUFFIX):
+        # Graph edits carry no client id and no question: a node or edge is
+        # named by kind + source + target.
+        return (f"g:{user}|{entry.get('timestamp')}|{entry.get('kind')}|"
+                f"{entry.get('source')}|{entry.get('target')}|{entry.get('tag')}")
     return f"t:{user}|{entry.get('timestamp')}|{entry.get('question_id')}|{entry.get('kc')}|{entry.get('tag')}"
 
 
 def describe(path: str, entry: dict) -> str:
     user = Path(path).name.split(".")[0][:8]
-    lesson = path.endswith(".lesson-feedback.json")
+    lesson = path.endswith(LESSON_SUFFIX)
     when = parse_iso(entry.get("timestamp"))
     if when is None:
         when_s = "?"
@@ -231,6 +242,16 @@ def describe(path: str, entry: dict) -> str:
     if len(note) > NOTE_MAX:
         note = note[:NOTE_MAX] + "…"
     note_s = f' — "{note}"' if note else " — (no note)"
+    if path.endswith(GRAPH_SUFFIX):
+        kind = entry.get("kind") or "?"
+        src, dst = entry.get("source") or "?", entry.get("target")
+        what = f"{src} → {dst}" if dst else src
+        edge = entry.get("edge_type")
+        edge_s = f" ({edge})" if edge else ""
+        label = entry.get("label")
+        label_s = f' “{label}”' if label else ""
+        return (f"[delta-drills GRAPH FEEDBACK] {kind} {what}{edge_s}{label_s} tagged {tag}"
+                f"{note_s}; learner {user}, {when_s}. Fix the concept graph (kc_registry prereqs/lesson).")
     if lesson:
         kc = entry.get("kc") or "?"
         title = entry.get("lesson_title") or ""
