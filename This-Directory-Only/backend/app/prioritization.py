@@ -432,8 +432,19 @@ def narrow_to_next_kc(
         # kc_graph.with_example_first. This is the whole of the third-to-fourth
         # rung fade: no schedule, no counter, just "the ones with something to
         # read come first and then there are none left".
-        preferred = set(kc_graph.with_example_first([q.id for q in fresh]))
-        fresh = [q for q in fresh if q.id in preferred]
+        #
+        # 🔴 Examples first among the drills NOT YET SHOWN, as with_example_first's
+        # own contract says. Fed every unanswered drill, a skipped example drill
+        # stayed the whole preferred pool: python.values-and-names' Solo rung
+        # holds ten drills and one example (q570), so after one Skip the band was
+        # [570] = the drill on screen, the on-screen guard called the rung dry and
+        # the learner was walked to another course with nine drills unseen.
+        # Twelve new learners hit it 2026-09-25..29 (gap watch, "seen all 10").
+        unshown = [q.id for q in fresh if q.id not in served]
+        examples = {qid for qid in kc_graph.with_example_first(unshown)
+                    if lessons.has_worked_example(qid)}
+        if examples:
+            fresh = [q for q in fresh if q.id in examples]
 
     if stage == "worked":
         # The `worked` rung is the concept's first contact, and the question
