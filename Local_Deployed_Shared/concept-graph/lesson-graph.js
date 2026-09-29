@@ -503,7 +503,11 @@
         const buf = []; i++;
         while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
         i++;
-        if (renderCode) out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>");
+        // A `figure <name>` fence keeps its info string so lesson-figures.js can
+        // mount the figure here too. Only that one: carrying every fence's
+        // name would hand this pane's code to the notebook painters.
+        const figure = /^figure\s/.test(fence[1].trim()) ? ' data-fence="' + esc(fence[1].trim()) + '"' : "";
+        if (renderCode) out.push("<pre" + figure + "><code>" + esc(buf.join("\n")) + "</code></pre>");
         continue;
       }
       const heading = line.match(/^(#{1,6})\s+(.*)$/);
