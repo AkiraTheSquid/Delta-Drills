@@ -42,14 +42,17 @@
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=38" />
-  <!-- The Knowledge Graph's view modes (adaptive / condensed / complete) and
-       its bottom-left settings card. AFTER how-it-works.css, which owns the
-       .kg2-* rules it overrides on source order. -->
-  <link rel="stylesheet" href="styles/graph-views.css?v=2" />
-  <!-- The Knowledge Graph's one toolbar + compact legend + edge ink
+  <!-- The Knowledge Graph's view switch (complete / condensed), its area
+       headers and the Courses tab's graph previews. AFTER how-it-works.css,
+       which owns the .kg2-* rules it overrides on source order. -->
+  <link rel="stylesheet" href="styles/graph-views.css?v=3" />
+  <!-- The Knowledge Graph's one toolbar + area Filter + edge ink
        (concept-graph/kg-toolbar.js, kg-look.js). AFTER graph-views.css,
        whose card pieces it re-seats in the bar. -->
-  <link rel="stylesheet" href="styles/kg-toolbar.css?v=1" />
+  <link rel="stylesheet" href="styles/kg-toolbar.css?v=2" />
+  <!-- The side panel (concept-graph/kg-panel.js). AFTER how-it-works.css,
+       which still owns the pane's frame and settings controls. -->
+  <link rel="stylesheet" href="styles/kg-panel.css?v=1" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -74,8 +77,8 @@
   <link rel="stylesheet" href="styles/nav-drawer.css?v=5" />
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
-  <link rel="stylesheet" href="styles/xp-panel.css?v=7" />
-  <link rel="stylesheet" href="styles/xp-group.css?v=5" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=8" />
+  <link rel="stylesheet" href="styles/xp-group.css?v=6" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -269,7 +272,12 @@
            tab here any more: the landing page is #page-welcome, which is NOT a
            tab, and app.js's boot switchTab writes the active state anyway. -->
       <button class="tab" data-tab="learn-about-app" type="button">Learn about the App</button>
-      <button class="tab auth-only" data-tab="knowledge-graph" type="button">Knowledge Graph</button>
+      <!-- Knowledge Graph: no tab in the strip (Seth 2026-09-29, "Remove the
+           tab"); the Courses tab's graph previews open the page. The button
+           stays, `hidden` and NOT .auth-only (the auth pass would un-hide it),
+           because switchTab marks the active tab by data-tab and the
+           solo-route check (watch.py) keeps every routed tab name here. -->
+      <button class="tab" data-tab="knowledge-graph" type="button" hidden>Knowledge Graph</button>
       <button class="tab auth-only" data-tab="split-tool" type="button" hidden>Split Tool</button>
       <button class="tab" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="courses" type="button">Course content</button>
@@ -1358,16 +1366,15 @@
 
 
   <main class="page hidden" id="page-knowledge-graph">
+    <!-- No tab of its own any more (2026-09-29): a course's graph is opened
+         from its preview on the Courses tab (concept-graph/course-graph.js),
+         so the way back is here. OUTSIDE .kg-container, which why-graph.js and
+         instructor-review.js borrow and move. graph-views.js names the course. -->
+    <div class="kg-course-bar">
+      <button type="button" class="kg-course-back" data-goto-tab="courses">← Courses</button>
+      <h2 class="kg-course-title" id="kg-course-title">Knowledge graph</h2>
+    </div>
     <div class="container kg-container kg2">
-      <div class="practice-focus" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 0">
-        <label>Practice focus
-          <select id="practice-target" disabled>
-            <option value="all">Whole curriculum</option>
-            <option value="raytracing-0.1">Ray Tracing 0.1</option>
-          </select>
-        </label>
-        <span id="practice-target-note" role="status" style="font-size:12px">Loading practice focus…</span>
-      </div>
       <!-- Graph first, lesson second — in the DOM, not just in the layout, so
            tab order and the narrow-screen stack both read the way the page
            does: pick a concept on the map, then read what it teaches. -->
@@ -1381,7 +1388,6 @@
             <button type="button" class="kg2-fit" id="kg-fit">Fit</button>
           </div>
           <div id="kg-cy"></div>
-          <div class="kg2-legend" id="kg-legend" data-dd-info="kg-legend"></div>
           <div class="kg2-status" id="kg-status">Loading the graph…</div>
         </div>
         <aside class="kg2-info" id="kg-info">
@@ -1819,7 +1825,9 @@
             <div class="xp-panel-body"></div>
           </section>
           <!-- THE BARS, drawn by practice/xp-group-view.js for practice/xp-panel.js:
-               your week of daily XP — or, in a study group, one row per member. -->
+               your week of daily XP with the draggable target line
+               (practice/xp-target.js) — and, in a study group, the week's
+               leaderboard under it. -->
           <div class="home-graphs is-empty" id="learner-xp-graphs"></div>
         </div>
 
@@ -2388,18 +2396,27 @@ t.manual_seed(0)
   <!-- Node placement + edge routing that cut crossings; runs itself as a
        Worker. BEFORE kg-look.js, which calls it. -->
   <script src="concept-graph/kg-layout.js?v=1" defer></script>
-  <script src="concept-graph/kg-look.js?v=2" defer></script>
+  <script src="concept-graph/kg-look.js?v=3" defer></script>
   <!-- LeetCode (lesson-less) bubbles' concept pages. BEFORE lesson-graph.js,
        which loads them while it builds the graph. -->
   <script src="concept-graph/lessonless-concepts.js?v=1"></script>
-  <script src="concept-graph/lesson-graph.js?v=40" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=41" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=9" defer></script>
+  <script src="concept-graph/graph-views.js?v=10" defer></script>
   <!-- Gathers the controls lesson-graph.js and graph-views.js built into
        one bar across the top. AFTER both; optional. -->
-  <script src="concept-graph/kg-toolbar.js?v=1" defer></script>
+  <script src="concept-graph/kg-toolbar.js?v=2" defer></script>
+  <!-- The side panel (concept / area / cog settings) and the area headers on
+       the map. AFTER lesson-graph.js (DeltaKgCore, deltaSelectKgSection) and
+       graph-views.js (deltaKgView.sections). -->
+  <script src="concept-graph/kg-panel.js?v=1" defer></script>
+  <script src="concept-graph/kg-sections.js?v=1" defer></script>
+  <!-- Each Courses card's graph preview + Maximize. AFTER cytoscape and
+       lesson-graph.js (area colours); course-registry.js is a plain script
+       and has run by then. -->
+  <script src="concept-graph/course-graph.js?v=1" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2519,13 +2536,15 @@ t.manual_seed(0)
   <!-- THE IDLE SCREEN. session-idle.js proxies Continue practicing to the
        hidden resume/start buttons — AFTER timer.js, whose
        `hasPausedSession()` decides which of the two the one button means.
-       xp-panel.js paints the course and the week's XP; xp-group-view.js
-       draws the daily bars under them (xp-charts.js draws the chart), or in
-       a study group one row per member. -->
+       xp-panel.js paints the course and the week's XP; xp-target.js the
+       daily target (today's bar, the finish date, the line's drag knob);
+       xp-group-view.js draws the daily bars under them (xp-charts.js draws
+       the chart) and, in a study group, the week's leaderboard. -->
   <script src="practice/session-idle.js?v=11"></script>
-  <script src="practice/xp-charts.js?v=6"></script>
-  <script src="practice/xp-group-view.js?v=5"></script>
-  <script src="practice/xp-panel.js?v=10"></script>
+  <script src="practice/xp-charts.js?v=7"></script>
+  <script src="practice/xp-target.js?v=1"></script>
+  <script src="practice/xp-group-view.js?v=6"></script>
+  <script src="practice/xp-panel.js?v=11"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
@@ -2603,7 +2622,7 @@ t.manual_seed(0)
        markup exactly where index.html declares it. -->
   <script src="practice/difficulty-dock.js?v=5"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
-  <script src="practice/practice-target.js?v=4"></script>
+  <script src="practice/practice-target.js?v=5"></script>
   <script src="practice/init.js?v=20"></script>
   <script src="practice.js?v=5"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
@@ -2617,15 +2636,15 @@ t.manual_seed(0)
   <script src="stats/weights.js?v=10"></script>
   <script src="stats/predicted-links.js?v=4"></script>
   <script src="stats/predicted-prereqs-temp.js?v=6"></script>
-  <!-- course-registry.js is the shared course list courses.js (catalog cards)
-       and concept-graph/graph-views.js (KG course dropdown, deferred so it
-       always runs later) both read off window.DeltaCourseRegistry. -->
+  <!-- course-registry.js is the shared course list courses.js (catalog cards),
+       concept-graph/graph-views.js (the graph's course scope) and
+       course-graph.js (the previews) read off window.DeltaCourseRegistry. -->
   <script src="concept-graph/course-registry.js?v=2"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=10"></script>
+  <script src="courses.js?v=11"></script>
   <!-- "Add your own course": the MCP prompt it copies, and the in-app
        builder it opens (data → graph → chat → page, in that order). -->
   <script src="course-builder/mcp-instructions.js?v=2"></script>

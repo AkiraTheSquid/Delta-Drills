@@ -628,6 +628,10 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
   const buildCourseCard = (course, index) => {
     const card = document.createElement("div");
     card.className = "course-catalog-card";
+    // concept-graph/course-graph.js mounts the row's graph preview by this id
+    // (its MutationObserver sees the rows land; mounting here, before the row
+    // is attached, would race its sweep of detached previews).
+    card.dataset.course = course.id;
 
     const num = document.createElement("span");
     num.className = "course-catalog-card-num";

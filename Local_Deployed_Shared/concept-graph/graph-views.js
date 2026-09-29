@@ -1,50 +1,36 @@
 /* concept-graph/graph-views.js — how much of the Knowledge Graph a learner sees.
  *
- * lesson-graph.js draws every concept, every time. For a learner that is the
- * wrong first picture: 64 bubbles with three of them relevant today. This file
- * layers THREE views over that one graph and a settings card in the
- * bottom-left corner of the canvas to switch between them:
+ * lesson-graph.js draws every concept, every time. This file layers TWO views
+ * over that one graph (a segment in kg-toolbar.js's bar switches them):
  *
- *   adaptive  — the learner's LEARNING HORIZON: the concepts the tutor can
- *               serve now (unlocked, not yet learned) plus everything they
- *               build on. The rest of the map is laid out but INVISIBLE —
- *               every bubble keeps its slot, so the horizon sits exactly
- *               where it sits in the complete view and nothing shuffles as
- *               it grows. Tapping a bubble reveals its direct prerequisites
- *               BELOW it (fan-in, blue) and the concepts it unlocks ABOVE it
- *               (fan-out, orange) — the next things to study; tapping a
- *               revealed node reveals its neighbours in turn, and tapping the
- *               background folds them all away. The camera never moves on a
- *               tap: the view fits the horizon once, when it is entered.
+ *   complete  — the whole graph, laid out with each SECTION as one cluster
+ *               (kg-look.js `routeLayout`'s `groupBy`), so kg-sections.js can
+ *               hang one header over each area.
  *   condensed — one bubble per ARENA section (−1.0 Python, −1.1 arrays,
  *               0.0, 0.1, …) with the number of prerequisite links between
  *               sections on the edges. Tapping a section opens it into its
  *               concepts, in place, inside a labelled frame.
- *   complete  — the whole graph, exactly as lesson-graph.js has always drawn it.
  *
- * The card also folds out a Chapters list to hide whole sections from all
- * three views.
+ * and ONE scope: a COURSE (`window.deltaSetKgCourseFilter`). The Courses tab's
+ * Maximize (course-graph.js) sets it, so the full-page graph shows that
+ * course's own concepts plus everything they build on. There is no picker on
+ * the graph any more (Seth, 2026-09-29: "we don't have to add … a menu to
+ * isolate it to whichever curriculum"). The Adaptive horizon view and the
+ * Chapters filter went with that cleanup; hiding an area is now the Filter's
+ * per-area practice switch (kg-toolbar.js), which greys it out instead.
  *
- * 🔴 The graph stays lesson-graph.js's. Adaptive and complete operate on ITS
- * Cytoscape instance (`window.deltaConceptGraphCy()`) under the same contract
- * instructor-graph-edit.js honours. The Chapters filter is the only
- * `cy.remove` on that instance (collection kept, `.restore()`d before the
- * next view). Adaptive never removes: what is beyond the horizon gets a
- * `visibility: hidden` + `events: no` BYPASS, so dagre still lays it out and
- * the horizon keeps the complete view's geometry — a removed node gives up
- * its slot and the map re-packs. A bypass on a node's border would outrank
- * the gate-state classes (locked / frontier / next-up) that file paints, so
- * fan colours are `underlay-*` on nodes (a halo, not the border) and a
- * bypass on the incident EDGES only; every bypass is cleared by name when the
- * view resets.
+ * 🔴 The graph stays lesson-graph.js's. Complete operates on ITS Cytoscape
+ * instance (`window.deltaConceptGraphCy()`) under the same contract
+ * instructor-graph-edit.js honours. The course scope is the only `cy.remove`
+ * on that instance (collection kept, `.restore()`d before the next view).
  *
  * Condensed is a SECOND, private Cytoscape instance in an overlay over the
  * same box. Section nodes have no lesson, no lattice row and no learner
  * model, and lesson-graph.js's tap handler would try to render one; giving
  * them their own canvas keeps that file's assumptions true (every node id is
  * a KC). Tapping a concept inside an opened section hands off to
- * `window.deltaFocusConceptGraphKc`, so the lesson pane and the learner-model
- * dock — both lesson-graph.js's — light up exactly as they do from the map.
+ * `window.deltaFocusConceptGraphKc`, so the side panel lights up exactly as
+ * it does from the map.
  *
  * Section membership is asked of lesson-graph.js when it exports it
  * (`window.deltaKcSection`); until then the same rule is mirrored from
@@ -54,17 +40,8 @@
 
   const $ = (id) => document.getElementById(id);
   const VIEW_KEY = "dd_kg_view";
-  const CHAPTERS_OFF_KEY = "dd_kg_chapters_off";
-  const CHAPTERS_OPEN_KEY = "dd_kg_chapters_open";
   const COURSE_KEY = "dd_kg_course";
-  const MODES = ["adaptive", "condensed", "complete"];
-  // Mirrors of lesson-graph.js's gates, used ONLY by the guest/offline mirror
-  // of the frontier — a signed-in learner gets the server's `state`.
-  const UNLOCK_T = 0.85, LEARNED_T = 0.95;
-  // Fan colours. Blue = what this needs (fan-in, drawn below); orange = what
-  // this unlocks (fan-out, drawn above). Neither is the gold lesson-graph.js
-  // uses for the selected chain nor the red of a plain prerequisite arrow.
-  const FAN_IN = "#3d8bfd", FAN_OUT = "#f28c28";
+  const MODES = ["complete", "condensed"];
 
   /* ---------------- section taxonomy ---------------------------------- */
   // Prep tiers are ours; ARENA's sections come from the exercise map's slugs.
@@ -88,7 +65,6 @@
   };
 
   let arenaSlugByKc = {};        // kc -> notebook slug, earliest wins
-  let arenaMapLoaded = false;
   const loadArenaMap = () =>
     fetch("lessons/arena_exercise_kcs.json", { cache: "no-cache" })
       .then((r) => (r.ok ? r.json() : null))
@@ -104,7 +80,6 @@
               if (kc && !arenaSlugByKc[kc]) arenaSlugByKc[kc] = slug;
             });
           });
-          arenaMapLoaded = true;
         }
       })
       .catch(() => {});
@@ -139,48 +114,48 @@
   let cy = null;                 // lesson-graph.js's instance
   let ccy = null;                // the condensed instance (ours)
   let condensedLay = null;       // its running layout, stopped before a rebuild
-  let mode = "adaptive";
-  let chaptersOff = new Set();
-  let courseFilter = null;       // a course-registry id, or null = "All concepts"
+  // "adaptive" (pre-2026-09-29) is gone; a stored one reads as complete.
+  let mode = "complete";
+  let courseFilter = null;       // a course-registry id, or null = every concept
   let courseVisible = null;      // Set: that course's milestones + prereq closure, or null while loading/off
   const courseMilestones = {};   // course id -> Set, resolved lazily from course-registry.js
-  let courseSelectEl = null;
-  let expanded = new Set();      // adaptive: KCs whose neighbourhood is revealed
   let openSections = new Set();  // condensed: sections opened into concepts
   let removed = null;            // cy collection of everything we took off the canvas
-  let ghosted = null;            // cy collection hidden in place (adaptive: beyond the horizon)
-  let shown = new Set();         // adaptive: ids currently visible
-  let fanStyled = null;          // cy collection carrying our fan bypass styles
   const parents = {}, children = {}, nodeLesson = {}, nodeLabel = {};
   let allKcs = [];
-  let panel = null, hintEl = null, chaptersEl = null;
+  let panel = null, hintEl = null;
   let origFocus = null;          // lesson-graph.js's deltaFocusConceptGraphKc, pre-wrap
   let applying = false;
 
   try { const m = localStorage.getItem(VIEW_KEY); if (MODES.includes(m)) mode = m; } catch (_) {}
-  try {
-    const off = JSON.parse(localStorage.getItem(CHAPTERS_OFF_KEY) || "[]");
-    if (Array.isArray(off)) chaptersOff = new Set(off.filter((x) => typeof x === "string"));
-  } catch (_) {}
   try { courseFilter = localStorage.getItem(COURSE_KEY) || null; } catch (_) {}
 
   const persist = () => {
     try {
       localStorage.setItem(VIEW_KEY, mode);
-      localStorage.setItem(CHAPTERS_OFF_KEY, JSON.stringify([...chaptersOff]));
       if (courseFilter) localStorage.setItem(COURSE_KEY, courseFilter);
       else localStorage.removeItem(COURSE_KEY);
     } catch (_) {}
   };
+  // The page head (index.html's course title) and kg-sections.js follow the
+  // scope; the detail is the course id or null.
+  const paintCourseTitle = () => {
+    const el = document.getElementById("kg-course-title");
+    if (!el) return;
+    const course = courseFilter && window.DeltaCourseRegistry && window.DeltaCourseRegistry.get(courseFilter);
+    el.textContent = courseFilter ? (course ? course.label : courseFilter) : "All courses";
+  };
+  const announceCourse = () => {
+    paintCourseTitle();
+    window.dispatchEvent(new CustomEvent("delta:kg-course-changed", { detail: { course: courseFilter } }));
+  };
 
-  /* ---------------- course filter (concept-graph/course-registry.js) --- */
-  // Same shape as the Chapters filter (a takeOff on every view, `chapterHidden`
-  // below) but scoped to ONE course's own concepts plus their prerequisite
-  // closure, so picking a course roots the graph on it without a second
-  // rendering path. `courseVisible` is null while off OR while that course's
-  // milestone set hasn't resolved yet (course-registry.js's ARENA lookup is a
-  // fetch) — null reads as "don't hide anything", same fail-open the Chapters
-  // filter uses before its own map has loaded.
+  /* ---------------- course scope (concept-graph/course-registry.js) ---- */
+  // A takeOff on every view: ONE course's own concepts plus their
+  // prerequisite closure, so picking a course roots the graph on it without a
+  // second rendering path. `courseVisible` is null while off OR while that
+  // course's milestone set hasn't resolved yet (course-registry.js's ARENA
+  // lookup is a fetch) — null reads as "don't hide anything" (fail open).
   const resolveCourseMilestones = (id, course) => {
     if (courseMilestones[id]) return Promise.resolve(courseMilestones[id]);
     // Registry script not loaded yet (or blocked) is a TRANSIENT failure —
@@ -196,15 +171,14 @@
     const requested = courseFilter;
     const course = window.DeltaCourseRegistry && window.DeltaCourseRegistry.get(requested);
     // A ONCE-valid id the registry no longer knows (e.g. stale localStorage
-    // after a course was removed) resets to "All" instead of silently
-    // filtering the graph to nothing while the dropdown shows no selection.
-    // A registry that hasn't loaded yet is different (see resolveCourseMilestones)
-    // and falls through to the normal fail-open retry path below.
+    // after a course was removed) resets to every concept instead of silently
+    // filtering the graph to nothing. A registry that hasn't loaded yet is
+    // different (see resolveCourseMilestones) and fails open below.
     if (window.DeltaCourseRegistry && !course) {
       courseFilter = null;
       courseVisible = null;
       persist();
-      if (courseSelectEl) courseSelectEl.value = "";
+      announceCourse();
       applyView();
       return;
     }
@@ -223,93 +197,28 @@
   };
   const courseHidden = (kc) => !!(courseFilter && courseVisible && !courseVisible.has(kc));
 
-  // courses.js's "View course" (lesson-list detail) calls this to land on the
-  // KG tab already scoped to that course, instead of the learner re-picking it
-  // from the dropdown. Safe before the panel exists — buildPanel() below reads
-  // `courseFilter` back out when it wires the select.
+  // The Courses tab's Maximize (course-graph.js) and "View course"
+  // (courses.js) call this to land on the graph already scoped to that
+  // course. Safe before the graph exists: init() applies `courseFilter`.
   window.deltaSetKgCourseFilter = (id) => {
+    // Another course: whatever was selected may not be on its graph.
+    if ((id || null) !== courseFilter) window.DeltaKgCore?.deselect?.();
     courseFilter = id || null;
     courseVisible = null;
     persist();
-    if (courseSelectEl) courseSelectEl.value = courseFilter || "";
-    applyCourseFilter();
+    announceCourse();
+    if (cy) applyCourseFilter();
   };
 
-  /* ---------------- the learner's frontier ---------------------------- */
   const readiness = (kc) => {
     if (typeof window.deltaKcReadinessInfo !== "function") return NaN;
     const info = window.deltaKcReadinessInfo(kc);
     return info && Number.isFinite(info.r) ? info.r : NaN;
   };
-  // Server truth first (`state` from kc_graph.kc_report — the same gate the
-  // practice queue uses); the browser mirror only for a guest with no report.
-  // `frontierDone` is set when the learner has evidence and NOTHING is left
-  // on the frontier (everything unlocked is learned) — the view then shows
-  // the summit (concepts nothing depends on) and the hint says why, instead
-  // of relabelling mastered roots as "practise now". The roots are only the
-  // answer when there is no evidence at all.
-  let frontierDone = false;
-  const frontierSet = () => {
-    const lattice = typeof window.getKcLattice === "function" ? window.getKcLattice() : null;
-    const out = new Set();
-    let learnedAny = false;
-    if (lattice && lattice.kcs && Object.keys(lattice.kcs).length) {
-      allKcs.forEach((kc) => {
-        const row = lattice.kcs[kc];
-        if (!row) return;
-        if (row.state === "frontier") out.add(kc);
-        if (row.state === "learned") learnedAny = true;
-      });
-      if (!out.size && lattice.next_kc && parents[lattice.next_kc]) out.add(lattice.next_kc);
-    } else {
-      allKcs.forEach((kc) => {
-        const r = readiness(kc);
-        if (Number.isFinite(r) && r >= LEARNED_T) { learnedAny = true; return; }
-        const locked = (parents[kc] || []).some((p) => {
-          const pr = readiness(p);
-          return !(Number.isFinite(pr) && pr >= UNLOCK_T);
-        });
-        if (!locked) out.add(kc);
-      });
-    }
-    frontierDone = !out.size && learnedAny;
-    if (!out.size) {
-      allKcs.forEach((kc) => {
-        const edges = frontierDone ? children[kc] : parents[kc];
-        if (!(edges || []).length) out.add(kc);
-      });
-    }
-    return out;
-  };
 
   /* ---------------- main-instance plumbing ---------------------------- */
-  // Only OUR bypass properties come off: lesson-graph.js's recolor() sets
-  // background-color / background-opacity / border-style as bypasses too,
-  // and a bare removeStyle() would strip an inferred node's dashed border
-  // and a disabled node's grey along with the halo.
-  // `display` too: a fan edge may be a shortcut kg-look.js hides, and the fan
-  // is exactly the direct links, so it shows.
-  const FAN_PROPS = "line-color target-arrow-color width opacity display underlay-color underlay-opacity underlay-padding";
-  const clearFans = () => {
-    if (fanStyled && fanStyled.length) fanStyled.forEach((e) => e.removeStyle(FAN_PROPS));
-    fanStyled = null;
-  };
-  // Hidden in place: the element keeps its slot in the layout, draws nothing
-  // and takes no pointer events. Named properties only, same reason as above.
-  const GHOST_PROPS = "visibility events";
-  const clearGhosts = () => {
-    if (ghosted && ghosted.length) ghosted.removeStyle(GHOST_PROPS);
-    ghosted = null;
-  };
-  const ghost = (eles) => {
-    if (!eles || !eles.length) return;
-    eles.style({ visibility: "hidden", events: "no" });
-    ghosted = (ghosted || cy.collection()).union(eles);
-  };
   const restoreAll = () => {
     if (!cy) return;
-    clearFans();
-    clearGhosts();
     if (removed && removed.length) removed.restore();
     removed = cy.collection();
   };
@@ -342,10 +251,8 @@
       cy.edges().forEach((e) => e.addClass(path.has(e.source().id()) && path.has(e.target().id()) ? "hl" : "faded"));
     });
   };
-  const chapterHidden = (kc) => chaptersOff.has(sectionOf(kc).id);
 
   let mainLay = null;            // the running main layout, stopped before the next
-  let mainLaidOut = false;       // the main canvas has been laid out by this file
   const layoutMain = (fitEles, opts) => {
     const o = opts || {};
     // A view switch inside the previous layout's 320 ms would otherwise leave
@@ -356,12 +263,15 @@
     // cut crossings, and a hidden edge it still counts only costs it moves.
     // kg-look.js runs dagre itself so the edges can follow the routes it
     // computes (see routeLayout there); cytoscape-dagre is the fallback.
+    // Grouped by section: each area is one cluster, so its header
+    // (kg-sections.js) sits over one block instead of a scatter.
     const look = window.DeltaKgLook;
     const dagreOpts = {
       name: window.cytoscapeDagre ? "dagre" : "cose",
       rankDir: "BT", nodeSep: 26, rankSep: o.rankSep || 150, edgeSep: 12,
       animate: o.animate !== false, animationDuration: 320, animationEasing: "ease-out",
       fit: false, padding: 40, nodeDimensionsIncludeLabels: true,
+      groupBy: (kc) => sectionOf(kc).id,
       // kg-look.js refines the layout off-thread and calls this when the
       // nodes have glided to their final places (not if the learner has
       // panned or zoomed since).
@@ -371,7 +281,6 @@
       (look ? look.layoutEles(cy) : cy.elements()).layout(dagreOpts);
     lay.one("layoutstop", () => { if (mainLay === lay) fitTo(fitEles, o.pad); });
     mainLay = lay;
-    mainLaidOut = true;
     lay.run();
   };
   // Fit, but never so close that three bubbles fill the screen.
@@ -386,71 +295,6 @@
   const bbCenter = (eles) => {
     const bb = eles.boundingBox();
     return { x: (bb.x1 + bb.x2) / 2, y: (bb.y1 + bb.y2) / 2 };
-  };
-
-  /* ---------------- adaptive ------------------------------------------ */
-  // The horizon: the frontier and everything it builds on. Expanding a node
-  // adds its direct neighbours both ways — what it needs and what comes next.
-  const adaptiveVisible = () => {
-    const vis = closure([...frontierSet()]);
-    expanded.forEach((kc) => {
-      vis.add(kc);
-      (parents[kc] || []).forEach((p) => vis.add(p));
-      (children[kc] || []).forEach((c) => vis.add(c));
-    });
-    return new Set([...vis].filter((kc) => !chapterHidden(kc)));
-  };
-
-  const paintFans = () => {
-    clearFans();
-    fanStyled = cy.collection();
-    expanded.forEach((kc) => {
-      const node = cy.getElementById(kc);
-      if (!node.length) return;
-      node.incomers("edge").forEach((e) => {
-        e.style({ "line-color": FAN_IN, "target-arrow-color": FAN_IN, "width": 3, "opacity": 1, "display": "element" });
-        fanStyled = fanStyled.union(e);
-        const src = e.source();
-        if (!expanded.has(src.id())) {
-          src.style({ "underlay-color": FAN_IN, "underlay-opacity": 0.28, "underlay-padding": 7 });
-          fanStyled = fanStyled.union(src);
-        }
-      });
-      node.outgoers("edge").forEach((e) => {
-        e.style({ "line-color": FAN_OUT, "target-arrow-color": FAN_OUT, "width": 3, "opacity": 1, "display": "element" });
-        fanStyled = fanStyled.union(e);
-        const tgt = e.target();
-        if (!expanded.has(tgt.id())) {
-          tgt.style({ "underlay-color": FAN_OUT, "underlay-opacity": 0.28, "underlay-padding": 7 });
-          fanStyled = fanStyled.union(tgt);
-        }
-      });
-    });
-    // lesson-graph.js fades everything off the selected node's prerequisite
-    // chain; the fan is the point of this view, so it stays lit.
-    fanStyled.removeClass("faded");
-  };
-
-  const applyAdaptive = (o) => {
-    shown = adaptiveVisible();
-    // Beyond the horizon: still on the canvas, still laid out, not drawn.
-    // An edge shows only when both of its ends do.
-    ghost(cy.nodes().filter((n) => !shown.has(n.id())));
-    ghost(cy.edges().filter((e) => !shown.has(e.source().id()) || !shown.has(e.target().id())));
-    const onCanvas = cy.nodes().filter((n) => shown.has(n.id()));
-    // Same layout as the complete view, on the WHOLE graph: the horizon's
-    // bubbles land where they land there, and switching views moves nothing.
-    // A tap (`still`) only changes what is drawn, never where: every slot is
-    // already laid out, so neither the layout nor the camera runs again —
-    // zooming in on each tap was tried and pulled (Seth, 2026-09-13).
-    if (!(o.still && mainLaidOut)) layoutMain(onCanvas.length ? onCanvas : cy.nodes(), { rankSep: 150, pad: 60 });
-    const n = [...frontierSet()].filter((kc) => !chapterHidden(kc)).length;
-    const tapHint = `Tap one to reveal what it <span class="kgv-in">needs</span> (below) and what comes <span class="kgv-out">next</span> (above); tap the background to fold them away.`;
-    setHint(frontierDone
-      ? `Nothing left on your horizon — everything unlocked is learned. Showing the summit. ${tapHint}`
-      : n
-        ? `Your horizon: <b>${n}</b> concept${n === 1 ? "" : "s"} you can practise now, and what they build on. ${tapHint}`
-        : "Nothing on your horizon in the chapters shown.");
   };
 
   /* ---------------- condensed ------------------------------------------ */
@@ -521,8 +365,8 @@
   const condensedElements = () => {
     const secs = {};            // id -> { meta, kcs: [] }
     allKcs.forEach((kc) => {
+      if (courseHidden(kc)) return;
       const s = sectionOf(kc);
-      if (chaptersOff.has(s.id)) return;
       if (!secs[s.id]) secs[s.id] = { meta: s, kcs: [] };
       secs[s.id].kcs.push(kc);
     });
@@ -623,8 +467,8 @@
       });
       ccy.on("tap", "node.kc", (evt) => {
         // Straight to lesson-graph.js's own focus, NOT the wrapper below: the
-        // learner stays in the condensed view and gets the lesson pane and
-        // the learner-model dock for that concept.
+        // learner stays in the condensed view and gets the side panel for
+        // that concept.
         evt.stopPropagation();
         const kc = evt.target.id();
         const f = origFocus || window.deltaFocusConceptGraphKc;
@@ -650,22 +494,19 @@
   };
 
   /* ---------------- apply ---------------------------------------------- */
-  const applyView = (opts) => {
+  const applyView = () => {
     if (!cy || applying) return;
     applying = true;
     try {
-      const o = opts || {};
       restoreAll();
       const selId = selectedId();
-      // Chapter filter applies to every view.
-      takeOff(cy.nodes().filter((n) => chapterHidden(n.id()) || courseHidden(n.id())));
+      takeOff(cy.nodes().filter((n) => courseHidden(n.id())));
       // By id, not under `panel`: kg-toolbar.js moves the segment into its bar.
       document.querySelectorAll("#kg-view-seg [data-view]").forEach((b) => {
         const on = b.dataset.view === mode;
         b.classList.toggle("active", on);
         b.setAttribute("aria-pressed", on ? "true" : "false");
       });
-      panel.dataset.view = mode;
       const graphEl = document.querySelector(".kg2-graph");
       if (graphEl) graphEl.dataset.kgView = mode;
       if (mode === "condensed") {
@@ -673,39 +514,19 @@
         buildCondensed();
       } else {
         showCondensed(false);
-        if (mode === "adaptive") applyAdaptive(o);
-        else {
-          layoutMain(cy.nodes(), { rankSep: 150, pad: 36 });
-          setHint("Everything. Tap a concept for its prerequisite chain.");
-        }
+        layoutMain(cy.nodes(), { rankSep: 150, pad: 36 });
+        setHint("");
         reselect(selId);
-        if (mode === "adaptive") paintFans();   // after reselect: the fan stays lit
       }
       persist();
+      window.dispatchEvent(new CustomEvent("delta:kg-view-changed", { detail: { mode } }));
     } finally { applying = false; }
   };
 
-  /* ---------------- the settings card --------------------------------- */
+  /* ---------------- the view segment ---------------------------------- */
+  // Built here, moved into the bar by kg-toolbar.js (#kg-view-seg,
+  // #kg-view-hint are looked up by id).
   const setHint = (html) => { if (hintEl) hintEl.innerHTML = html; };
-
-  const buildChapters = () => {
-    if (!chaptersEl) return;
-    const seen = {};
-    allKcs.forEach((kc) => { const s = sectionOf(kc); if (!seen[s.id]) seen[s.id] = { meta: s, n: 0 }; seen[s.id].n += 1; });
-    const list = Object.values(seen).sort((a, b) => sectionOrder(a.meta) - sectionOrder(b.meta));
-    chaptersEl.innerHTML = list.map(({ meta, n }) =>
-      `<label class="kgv-chapter"><input type="checkbox" data-sid="${meta.id}"${chaptersOff.has(meta.id) ? "" : " checked"}>` +
-      `<span class="kgv-swatch" style="background:${meta.color}"></span>` +
-      `<span class="kgv-chapter-label">${esc(meta.label)}</span><span class="kgv-chapter-n">${n}</span></label>`).join("") +
-      (arenaMapLoaded || typeof window.deltaKcSection === "function" ? "" :
-        '<div class="kgv-warn">Section map unavailable — every concept reads as prep.</div>');
-    chaptersEl.querySelectorAll("input[data-sid]").forEach((cb) => cb.addEventListener("change", () => {
-      if (cb.checked) chaptersOff.delete(cb.dataset.sid); else chaptersOff.add(cb.dataset.sid);
-      applyView();
-    }));
-  };
-
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   const buildPanel = () => {
     const graph = document.querySelector(".kg2-graph");
@@ -715,54 +536,20 @@
     panel.className = "kgv-panel";
     panel.setAttribute("role", "group");
     panel.setAttribute("aria-label", "Graph view");
-    let chaptersOpen = false;
-    try { chaptersOpen = localStorage.getItem(CHAPTERS_OPEN_KEY) === "1"; } catch (_) {}
-    const courses = (window.DeltaCourseRegistry && window.DeltaCourseRegistry.list()) || [];
     panel.innerHTML =
-      '<div class="kgv-head"><span class="kgv-title">View</span>' +
-        '<button type="button" class="kgv-reset" id="kg-view-reset" title="Collapse what you expanded">Reset</button></div>' +
       '<div class="kgv-seg" id="kg-view-seg">' +
-        '<button type="button" data-view="adaptive" title="Only your knowledge frontier; tap to expand">Adaptive</button>' +
-        '<button type="button" data-view="condensed" title="One bubble per section">Condensed</button>' +
-        '<button type="button" data-view="complete" title="Every concept">Complete</button>' +
+        '<button type="button" data-view="complete" title="Every concept, grouped by area">Complete</button>' +
+        '<button type="button" data-view="condensed" title="One bubble per area">Condensed</button>' +
       "</div>" +
-      (courses.length ?
-        '<div class="kgv-course"><label class="kgv-course-label" for="kg-view-course">Course</label>' +
-        '<select id="kg-view-course" class="kgv-course-select" title="Root the graph on one course\'s own concepts">' +
-          '<option value="">All concepts</option>' +
-          courses.map((c) => `<option value="${esc(c.id)}">${esc(c.label)}</option>`).join("") +
-        "</select></div>"
-        : "") +
-      '<div class="kgv-hint" id="kg-view-hint"></div>' +
-      '<details class="kgv-chapters"' + (chaptersOpen ? " open" : "") + '><summary>Chapters</summary>' +
-        '<div class="kgv-chapter-list" id="kg-view-chapters"></div></details>';
+      '<div class="kgv-hint" id="kg-view-hint"></div>';
     graph.appendChild(panel);
     graph.classList.add("has-kgv");
     hintEl = $("kg-view-hint");
-    chaptersEl = $("kg-view-chapters");
     panel.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
       if (mode === b.dataset.view) return;
       mode = b.dataset.view;
       applyView();
     }));
-    $("kg-view-reset").addEventListener("click", () => {
-      expanded.clear(); openSections.clear();
-      applyView();
-    });
-    courseSelectEl = $("kg-view-course");
-    if (courseSelectEl) {
-      courseSelectEl.value = courseFilter || "";
-      courseSelectEl.addEventListener("change", () => {
-        courseFilter = courseSelectEl.value || null;
-        courseVisible = null;
-        persist();
-        applyCourseFilter();
-      });
-      if (courseFilter) applyCourseFilter();
-    }
-    const det = panel.querySelector("details.kgv-chapters");
-    det.addEventListener("toggle", () => { try { localStorage.setItem(CHAPTERS_OPEN_KEY, det.open ? "1" : "0"); } catch (_) {} });
-    buildChapters();
   };
 
   /* ---------------- wiring --------------------------------------------- */
@@ -783,75 +570,37 @@
     });
   };
 
-  const onMainTap = (evt) => {
-    if (mode !== "adaptive") return;
-    const kc = evt.target.id();
-    if (expanded.has(kc)) {
-      // Already open: nothing new to reveal, but lesson-graph.js just faded
-      // everything off the chain — relight the fans.
-      paintFans();
-      return;
-    }
-    expanded.add(kc);
-    applyView({ still: true });
-  };
-  // Tap off: back to the horizon. lesson-graph.js's own background handler
-  // has already cleared the selection chain by the time this runs.
-  const onBackgroundTap = (evt) => {
-    if (evt.target !== cy || mode !== "adaptive" || !expanded.size) return;
-    expanded.clear();
-    applyView({ still: true });
-  };
-
   const init = () => {
     cy = typeof window.deltaConceptGraphCy === "function" ? window.deltaConceptGraphCy() : null;
     if (!cy || panel) return !!panel;
     removed = cy.collection();
     snapshotGraph();
     buildPanel();
-    cy.on("tap", "node", onMainTap);
-    cy.on("tap", onBackgroundTap);
-    // A graded attempt can move the frontier; recolor() is when the numbers
-    // settle. Re-apply only if the visible set actually changed — a layout on
-    // every repaint would make the map jump under the learner.
-    let lastVis = "";
-    window.addEventListener("delta:kc-readiness-changed", () => {
-      if (mode !== "adaptive" || applying) return;
-      const vis = [...adaptiveVisible()].sort().join("|");
-      if (vis === lastVis) return;
-      lastVis = vis;
-      applyView();
-    });
-    lastVis = [...adaptiveVisible()].sort().join("|");
-    // Jumping to a concept from the Practice tab must find it on the canvas.
+    // Jumping to a concept from the Practice tab must find it on the canvas:
+    // out of the condensed overlay, and out of a course scope that hides it.
     const orig = window.deltaFocusConceptGraphKc;
     if (typeof orig === "function") {
       origFocus = orig;
       window.deltaFocusConceptGraphKc = (kc) => {
         if (kc && parents[kc]) {
-          if (mode === "condensed") {
-            // An outside jump (Practice's "See in knowledge graph") lands on
-            // the real map, opened around that concept.
-            mode = "adaptive"; expanded.add(kc); applyView();
-          } else if (mode === "adaptive" && !shown.has(kc)) {
-            expanded.add(kc); applyView({ still: true });
-          }
+          let again = false;
+          if (courseHidden(kc)) { courseFilter = null; courseVisible = null; announceCourse(); again = true; }
+          if (mode === "condensed") { mode = "complete"; again = true; }
+          if (again) applyView();
         }
-        const r = orig(kc);
-        // orig's selectNode fades everything off the prerequisite chain, and
-        // it ran AFTER paintFans here (the tap path runs them the other way).
-        if (mode === "adaptive") paintFans();
-        return r;
+        return orig(kc);
       };
     }
     // Section labels/colours come from lesson-graph.js when it exports them;
-    // otherwise the map has to be read before the chapter list is right.
-    loadArenaMap().then(() => { buildChapters(); if (mode !== "complete") applyView(); });
-    applyView();
+    // otherwise the map has to be read before the grouping is right.
+    loadArenaMap().then(() => { if (typeof window.deltaKcSection !== "function") applyView(); });
+    if (courseFilter) applyCourseFilter(); else applyView();
+    announceCourse();
     return true;
   };
 
   const boot = () => {
+    paintCourseTitle();
     if (init()) return;
     window.addEventListener("delta:practice-target-graph-ready", () => init(), { once: true });
     let tries = 0;
@@ -864,15 +613,26 @@
   window.deltaKgView = {
     mode: () => mode,
     set: (m) => { if (MODES.includes(m)) { mode = m; applyView(); } },
-    // Same view, laid out again — kg-look.js's node look changed size.
-    // A node-look switch (lesson-graph.js calls this on
-    // `delta:kg-look-changed`): the condensed sheet is replaced whole, since
-    // patching node.kc would leave the old look's properties under the new
-    // rule, then the current view is laid out again.
+    // The course scope (a course-registry id, or null for every concept).
+    course: () => courseFilter,
+    // Same view, laid out again. A node-look switch (lesson-graph.js calls
+    // this on `delta:kg-look-changed`): the condensed sheet is replaced
+    // whole, since patching node.kc would leave the old look's properties
+    // under the new rule, then the current view is laid out again.
     relayout: () => { if (ccy) ccy.style(condensedSheet()); applyView(); },
-    reset: () => { expanded.clear(); openSections.clear(); applyView(); },
-    frontier: () => [...frontierSet()],
-    shown: () => [...shown],
     condensed: () => ccy,
+    // Every area in the course scope, in chapter order, with its concepts:
+    // [{id, label, color, kcs:[…]}]. kg-toolbar.js's Filter lists these;
+    // kg-sections.js heads them.
+    sections: () => {
+      const by = {};
+      allKcs.forEach((kc) => {
+        if (courseHidden(kc)) return;
+        const s = sectionOf(kc);
+        if (!by[s.id]) by[s.id] = { id: s.id, label: s.label, color: s.color, order: sectionOrder(s), kcs: [] };
+        by[s.id].kcs.push(kc);
+      });
+      return Object.values(by).sort((a, b) => a.order - b.order);
+    },
   };
 })();

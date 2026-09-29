@@ -258,7 +258,10 @@ def check_disabled_concepts_have_an_optional_graph_treatment():
     and Categories from repainting a disabled concept as active.
     """
     src = _read(os.path.join(HERE, 'lesson-graph.js'))
-    assert 'id="kg-set-dim-disabled"' in src, (
+    # The toggle moved with the rest of the settings into the side panel's cog
+    # (kg-panel.js, 2026-09-29); the state and the painting stay here.
+    panel = _read(os.path.join(HERE, 'kg-panel.js'))
+    assert 'id="kg-set-dim-disabled"' in panel, (
         'Settings must expose the graph-wide disabled-concept fade toggle'
     )
     assert 'localStorage.setItem(DIM_DISABLED_KEY, String(dimDisabled))' in src, (

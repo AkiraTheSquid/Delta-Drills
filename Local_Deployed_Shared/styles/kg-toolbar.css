@@ -1,8 +1,9 @@
 /* kg-toolbar.css — the Knowledge Graph's one toolbar (concept-graph/kg-toolbar.js),
-   its compact legend, and the edge ink kg-look.js reads.
+   its Filter popover (which areas to practise), and the edge ink kg-look.js
+   reads. The legend is gone (2026-09-29): the area headers label the map.
 
    Linked AFTER how-it-works.css and graph-views.css: it repositions their
-   `.kg2-controls`, `.kg2-legend`, `.kg2-nodata` and `.kgv-*` pieces once they
+   `.kg2-controls`, `.kg2-nodata` and `.kgv-*` pieces once they
    live in the bar, and has to win ties against both. Everything is scoped under
    `.kg2-graph.has-kgt` (set only when the bar was built), so without the script
    the old layout is untouched. */
@@ -39,7 +40,7 @@
    which outranks the `hidden` attribute. */
 .kg2-graph.has-kgt .kgv-panel[hidden] { display: none; }
 
-/* Segments: the view, the colour, the node look. One vocabulary. The
+/* Segments: the view and the colour. One vocabulary. The
    `#kg-colormode` selectors are there to outrank how-it-works.css's own rules
    for that element, which are by ID. */
 .kg2-graph.has-kgt .kgt-seg,
@@ -68,7 +69,7 @@
 .kg2-graph.has-kgt .kgt-seg button:focus-visible,
 .kgt-btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
 
-/* Plain buttons: Filter, Reset, Fit. Reset and Fit are icons. */
+/* Plain buttons: Filter, Fit (an icon). */
 .kgt-btn,
 .kg2-graph.has-kgt .kg2-fit {
   display: inline-flex; align-items: center; gap: 6px; height: var(--kgt-h); box-sizing: border-box;
@@ -87,20 +88,9 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 .kgt-badge[hidden] { display: none; }
-/* graph-views.js's Reset, restyled; nothing to collapse in the complete view. */
-.kg2-graph.has-kgt #kg-view-reset { color: var(--muted); }
-.kg2-graph.has-kgt #kg-view-reset:hover { color: var(--accent-text); }
-.kg2-graph.has-kgt[data-kg-view="complete"] #kg-view-reset { display: none; }
-
 /* lesson-graph.js's corner box (Fit, Colab links), now the bar's right end. */
 .kg2-graph.has-kgt .kgt-bar .kg2-controls { position: static; display: inline-flex; gap: 8px; }
 
-/* Node look: two drawn icons. */
-.kgt-look svg { width: 18px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
-.kgt-look button.active svg { fill: color-mix(in srgb, var(--accent-text) 45%, transparent); }
-.kgt-look button { padding: 0 8px !important; }
-/* Edge style: open lines, never filled. */
-.kgt-edges svg, .kgt-edges button.active svg { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .kgt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---- filter popover --------------------------------------------------- */
@@ -115,17 +105,28 @@
   font-size: 12px; color: var(--text);
 }
 .kgt-pop[hidden] { display: none; }
-.kgt-pop .kgv-course { display: flex; flex-direction: column; align-items: stretch; gap: 5px; }
-.kgt-pop .kgv-course-label,
-.kgt-pop .kgv-chapters > summary {
-  font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+/* Areas: one row per header on the graph. Ticking one off switches every
+   concept in it off for practice (kc-prefs, the cog's own switch). */
+.kgt-pop-title { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.kgt-area-list { display: flex; flex-direction: column; gap: 2px; max-height: 50vh; overflow: hidden auto; margin: 0 -6px; }
+.kgt-area {
+  display: grid; grid-template-columns: auto 10px minmax(0, 1fr) auto; align-items: center; gap: 8px;
+  padding: 5px 6px; border-radius: 7px; cursor: pointer;
 }
-.kgt-pop .kgv-course-select { font-size: 12.5px; padding: 5px 7px; border-radius: 8px; }
-.kgt-pop .kgv-chapters { border-top: 1px solid var(--kgt-line); padding-top: 9px; }
-.kgt-pop .kgv-chapters > summary { list-style: none; pointer-events: none; margin-bottom: 7px; }
-.kgt-pop .kgv-chapters > summary::-webkit-details-marker { display: none; }
-.kgt-pop .kgv-chapter-list { gap: 5px; max-height: 46vh; }
-.kgt-pop .kgv-chapter { font-size: 12px; }
+.kgt-area:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.kgt-area input { margin: 0; accent-color: var(--accent); }
+.kgt-area.is-course-off { cursor: default; color: var(--muted); }
+.kgt-area.is-course-off:hover { background: none; }
+.kgt-swatch { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
+.kgt-area-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kgt-area-n { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.kgt-pop-foot { color: var(--muted); font-size: 11px; line-height: 1.4; border-top: 1px solid var(--kgt-line); padding-top: 8px; }
+/* The old account-wide focus (Ray Tracing 0.1), until it is turned off. */
+.kgt-focus {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 9px; line-height: 1.4;
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.kgt-focus .kgt-btn { flex: 0 0 auto; height: 26px; box-shadow: none; }
 
 .kg2-graph.has-kgt #kg-cy,
 .kg2-graph.has-kgt .kgv-condensed { top: var(--kgt-top, 48px); }
@@ -148,35 +149,6 @@
   background: #e2a92e;
 }
 .kg2-graph.has-kgt .kgt-sub .kg2-nodata[hidden] { display: none; }
-
-/* ---- the legend, alone in the corner now ------------------------------ */
-.kg2-graph.has-kgt .kg2-legend {
-  left: 12px; max-width: calc(100% - 24px); max-height: 46%;
-  align-items: center; gap: 4px 14px; padding: 6px 12px; border-radius: 12px;
-  background: var(--kgt-glass); border-color: var(--kgt-line); box-shadow: var(--kgt-shadow);
-  backdrop-filter: blur(8px); overflow: auto;
-}
-.kg2-graph.has-kgt .kg2-legend-grouped { max-width: calc(100% - 24px); }
-.kg2-graph.has-kgt .kg2-legend-fold { flex: 0 1 auto; }
-.kg2-graph.has-kgt .kg2-legend-fold[open] { flex: 0 0 100%; }
-/* "Key": everything but the colour scale — edge kinds, off / faded, no
-   estimate, the shortcut switch. Closed by default. */
-.kg2-legend-more { flex: 0 1 auto; }
-.kg2-legend-more[open] { flex: 0 0 100%; }
-.kg2-legend-more > summary {
-  cursor: pointer; list-style: none; color: var(--muted); font-weight: 600; font-size: 11.5px;
-  display: inline-flex; align-items: center; gap: 5px;
-}
-.kg2-legend-more > summary::-webkit-details-marker { display: none; }
-.kg2-legend-more > summary::before { content: "ⓘ"; font-size: 12px; }
-.kg2-legend-more > summary:hover { color: var(--text); }
-.kg2-legend-more[open] > summary { margin-bottom: 6px; }
-.kg2-legend-more-body { display: flex; flex-direction: column; gap: 4px; }
-.kg2-li-toggle { cursor: pointer; }
-.kg2-li-toggle input { margin: 0 2px 0 0; }
-/* Edge samples match the canvas (kg-look.js), not the old red. */
-.kg2-graph .kg2-li-edge { border-top-color: var(--kg-edge); }
-.kg2-graph .kg2-li-edge-pre { border-top-style: solid; border-top-width: 1px; }
 
 /* ---- layout tuning panel (kg-tune.js, only with ?kgtune=1) ------------ */
 .kgtu-panel {

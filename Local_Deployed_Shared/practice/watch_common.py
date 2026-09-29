@@ -31,7 +31,8 @@ REQUIRED_JS = [
     # the week's daily XP bars (2026-09-26; bars only since 2026-09-29).
     "session-idle.js",  # proxies Continue to the real resume/start buttons
     "xp-charts.js",  # the bars; xp-panel.js reads its helpers at load
-    "xp-group-view.js",  # draws the bars column (one row per member in a group); before xp-panel.js
+    "xp-target.js",  # the daily target: drag the line's knob, pick the finish date, today's bar
+    "xp-group-view.js",  # draws the bars column (+ the week's leaderboard in a group); before xp-panel.js
     "xp-panel.js",
     "concept-choice.js",  # "Or choose a concept": the candidate list (2026-09-28)
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
