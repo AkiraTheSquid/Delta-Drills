@@ -58,16 +58,53 @@
      with an output that does not belong to it, which is worse than a noisy
      line. */
   const ASSIGN_RE = /^([A-Za-z_]\w*)\s*=[^=]/;
+  const DEF_RE = /^(?:def|class)\s+([A-Za-z_]\w*)/;
+
+  /* Grader plumbing, not input. The LeetCode harness builds a case's
+     arguments with `tree_node([2, 1, 3])` / `list_node([...])` and compares
+     with `is_same_*`; the call already names the builder with its literal,
+     which reads as LeetCode writes the case. Listing the builder's 20-line
+     body under every case buried the input (Seth on q60151, 2026-09-29).
+     `_dd_*` is the grader's own instrumentation (out= view capture). */
+  const HARNESS_HELPERS = new Set([
+    "tree_node", "list_node", "list_node_cycle", "is_same_tree", "is_same_list",
+  ]);
+  const isPlumbing = (name, text) =>
+    HARNESS_HELPERS.has(name) || /^_(?:lc|from|dd)_/.test(name || "") || /\b_dd_/.test(text);
+
+  /* Top-level statements, each with its indented body attached and its
+     indentation KEPT — trimming line by line flattened every `def`/`class`
+     fixture into unreadable, unrunnable text. */
+  function statements(setup) {
+    const out = [];
+    let depth = 0; // open brackets in the current statement (strings ignored)
+    for (const raw of String(setup || "").split("\n")) {
+      if (!raw.trim()) continue;
+      const prev = out.length ? out[out.length - 1] : null;
+      // A body line, a line inside an open bracket (`x = [\n1,\n]`), or the
+      // def/class a decorator sits on all belong to the statement above.
+      if (prev !== null && (/^\s/.test(raw) || depth > 0 || /^@/.test(prev.split("\n").pop()))) {
+        out[out.length - 1] += "\n" + raw.replace(/\s+$/, "");
+      } else {
+        out.push(raw.trim());
+        depth = 0;
+      }
+      for (const ch of raw) depth += "([{".includes(ch) ? 1 : ")]}".includes(ch) ? -1 : 0;
+      if (depth < 0) depth = 0;
+    }
+    return out;
+  }
 
   function inputText(testCase) {
     const call = String(testCase?.call || "").trim();
     if (!call) return "";
     const lines = [];
-    for (const raw of String(testCase?.setup_code || "").split("\n")) {
-      const line = raw.trim();
-      if (!line || line.startsWith("#")) continue;
-      if (/^import\b|^from\b/.test(line)) continue;
-      lines.push(line);
+    for (const stmt of statements(testCase?.setup_code)) {
+      if (stmt.startsWith("#")) continue;
+      if (/^import\b|^from\b/.test(stmt)) continue;
+      const name = (stmt.match(DEF_RE) || stmt.match(ASSIGN_RE) || [])[1];
+      if (isPlumbing(name, stmt)) continue;
+      lines.push(stmt);
     }
     /* Keep the fixture lines this call actually reads — a shared setup block
        can bind several names, and listing the unused ones as "the input" is a
@@ -80,7 +117,7 @@
     let wanted = call;
     const kept = [];
     for (let i = lines.length - 1; i >= 0; i -= 1) {
-      const bound = lines[i].match(ASSIGN_RE);
+      const bound = lines[i].match(DEF_RE) || lines[i].match(ASSIGN_RE);
       if (bound && !new RegExp(`\\b${bound[1]}\\b`).test(wanted)) continue;
       kept.unshift(lines[i]);
       wanted += "\n" + lines[i];
