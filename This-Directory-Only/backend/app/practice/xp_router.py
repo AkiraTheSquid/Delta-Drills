@@ -3,18 +3,20 @@
 The numbers are `app/learning_xp.py`'s; this file only reads the learner's
 time zone and stores their target. The Learner Home XP panel and the topbar
 level pill both read GET /xp; the Learner Home's group view reads
-GET /groups/xp, every member's summary (app/group_xp.py).
+GET /groups/xp, every member's summary (app/group_xp.py). Its concept list
+reads GET /concept-candidates, and a concept picked from it runs through
+POST /concept-route (app/concept_choice.py).
 """
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app import group_xp, learning_xp
+from app import concept_choice, group_xp, learning_xp
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.db import get_db
@@ -79,3 +81,23 @@ def groups_xp(
     """Every member's `/xp` summary, for the Learner Home's group view
     (app/group_xp.py). `{group: null}` when the caller is in no group."""
     return group_xp.read_group_xp(db, user, _zone(tz_offset, tz_name))
+
+
+class ConceptRouteRequest(BaseModel):
+    kc: str
+    served: List[int] = Field(default_factory=list)
+    skip: List[int] = Field(default_factory=list)
+
+
+@router.get("/concept-candidates")
+def concept_candidates(keep: Optional[str] = None, user: User = Depends(get_current_user)) -> dict:
+    """The Learner Home's concept list: the AI's pick, then the frontier.
+    `keep` = the concept of a paused chosen block, listed whatever else."""
+    return concept_choice.candidates(get_user_state(str(user.id)), keep=keep)
+
+
+@router.post("/concept-route")
+def concept_route(body: ConceptRouteRequest, user: User = Depends(get_current_user)) -> dict:
+    """The next question on a concept the learner chose, or done — the
+    practice/ready-route.js Route reads it like /ready-route. Read-only."""
+    return concept_choice.plan(get_user_state(str(user.id)), body.kc, body.served, body.skip)

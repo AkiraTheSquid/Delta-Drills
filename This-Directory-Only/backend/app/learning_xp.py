@@ -270,16 +270,20 @@ def _midnight(day: date, zone) -> datetime:
     return datetime.combine(day, time.min, zone)
 
 
-def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
+def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ...] = ()) -> dict:
     """Per-day XP and knowledge from the learner's whole history.
 
     Returns {"days": [date...], "xp": [per-day XP], "knowledge": [course
     knowledge XP at each day's close], "open_knowledge": knowledge at the first
     day's open, "answers": [answers per day], "solved": [answers per day
-    that were right]}."""
+    that were right]}.
+
+    `also`: concepts outside the course whose K is wanted too (the Learner
+    Home's concept list, app/concept_choice.py). They are modelled and
+    returned in "also_now"; no XP total counts them."""
     now = now or datetime.now(timezone.utc)
     scope = scope_kcs()
-    in_scope = set(scope)
+    in_scope = set(scope) | set(also)
     prior = _prior(user_state)
     cfg = memory_model.DEFAULT_CONFIG
     meta = _answer_meta(user_state)
@@ -303,7 +307,7 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
     bound_t = [b.timestamp() / 86400.0 for b in bounds]
 
     mems: Dict[str, memory_model.Memory] = {}
-    obs: Dict[str, List[tuple]] = {kc: [] for kc in scope}
+    obs: Dict[str, List[tuple]] = {kc: [] for kc in in_scope}
     seen_exploit: set = set()
     snap_R: List[Dict[str, float]] = []
     snap_j: List[Dict[str, int]] = []
@@ -392,6 +396,7 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
         "answers": answers,
         "solved": solved,
         "per_kc_now": per_kc_now,
+        "also_now": {kc: knowledge(len(bounds) - 1, kc) for kc in also},
     }
 
 

@@ -33,8 +33,9 @@ REQUIRED_JS = [
     "xp-charts.js",  # both graphs; xp-panel.js reads its helpers at load
     "xp-target-drag.js",  # click / drag the course graph to set the target
     "xp-solved-chart.js",  # the course graph in problems solved; reads xp-charts.js helpers
-    "xp-group-view.js",  # in a group, draws the graph column; before xp-panel.js
+    "xp-group-view.js",  # draws the graph column and its dropdowns; before xp-panel.js
     "xp-panel.js",
+    "concept-choice.js",  # "Or choose a concept": the candidate list (2026-09-28)
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
     # difficulty rating; this file is what still commits the attempt to mastery
     # and still reveals Next problem once it is hidden. A missing file is a

@@ -480,13 +480,15 @@ const KcPractice = (() => {
 
   /** Start a PRACTICE-UNTIL-READY block on `kc` (the exercise dialog).
       `exerciseIds` = the exercise's own bank ids (original + variants). Falls
-      back to the plain scoped ladder when there is no backend to route. */
-  const startRoute = async (kc, { exerciseIds = [], title = null } = {}) => {
+      back to the plain scoped ladder when there is no backend to route.
+      `kind: "choice"` = a concept picked on the Learner Home
+      (practice/concept-choice.js; the same Route, practice/ready-route.js). */
+  const startRoute = async (kc, { exerciseIds = [], title = null, kind = "ready" } = {}) => {
     const ok = await startScoped(kc);
     if (!ok) return false;
     const R = window.ReadyRoute;
     if (!R || typeof practiceMode === "undefined" || practiceMode !== "backend") return true;
-    route = new R.Route({ kc, title: title || kcTitle, exerciseIds });
+    route = new R.Route({ kc, title: title || kcTitle, exerciseIds, kind });
     drillOnly = false;
     routeStep = null;
     queue = [];
@@ -610,6 +612,13 @@ const KcPractice = (() => {
      a scoped run — the ?lesson=<kc> flow keeps its pin. */
   const stop = () => {
     if (!scoped) return;
+    release();
+  };
+
+  /* Let go of ANY concept pin, plain (?lesson=<kc>, Practice ⤢) or scoped —
+     practice/practice-target.js, when the learner switches off the course or
+     focus the pinned concept belongs to (d7e829, 2026-09-28). */
+  const release = () => {
     active = false;
     queue = [];
     served = 0;
@@ -646,6 +655,7 @@ const KcPractice = (() => {
     serialize,
     restore,
     stop,
+    release,
     remaining,
     nextQuestion,
     isActive,

@@ -69,10 +69,16 @@
      Measured: the button was 0×0 with `difficulty-dock` the hidden ancestor.
      `closest(".page")` follows the workspace wherever it is moved, and every
      `.page` is observed below so a tab switch still closes the dock. */
+  /* 🔴 AND NOT ON THE IDLE SCREEN (2026-09-28). A block that ENDS on a
+     rating (an exercise or a chosen concept reaching its verdict,
+     timer.js::finish) puts the Learner Home back with the graded area still
+     un-hidden, and the dock stayed pinned over it — "Next problem" under the
+     learner's summary. `.session-idle` is what hides the question column
+     (styles/practice/timer.css), so it closes the dock too. */
   const _areaIsShowing = () => {
     if (!area || area.classList.contains("hidden")) return false;
     const owner = area.closest(".page");
-    return !!owner && !owner.classList.contains("hidden");
+    return !!owner && !owner.classList.contains("hidden") && !owner.classList.contains("session-idle");
   };
 
   const build = () => {

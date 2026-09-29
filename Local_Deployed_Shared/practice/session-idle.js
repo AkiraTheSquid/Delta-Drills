@@ -18,6 +18,12 @@
      timer.js's own answer — rather than from anything this file tracks.
      The same pattern as the notch (practice/notch-menu.js), for the same
      reason: two copies of what resuming means is how they drift apart.
+
+   "PRACTICE WITH AI" (Seth, 2026-09-28): beside it the Learner Home lists
+   concepts to choose from (practice/concept-choice.js). A paused block on a
+   CHOSEN concept is that list's to continue, not this button's — pressing
+   this one hands the choice back to the algorithm, so that block is dropped
+   and the adaptive queue starts.
    ================================================================ */
 
 (function initSessionIdle() {
@@ -35,6 +41,7 @@
     typeof PracticeSession !== "undefined" ? PracticeSession : window.PracticeSession;
 
   const _resumeBtn = () => document.getElementById("session-resume-btn");
+  const _pausedChoice = () => _session()?.pausedConfig?.()?.exercise?.mode === "choice";
 
   /* A paused session whose saved question can no longer be rebuilt. timer.js
      says so by DISABLING #session-resume-btn and writing the reason into
@@ -58,7 +65,7 @@
     const resumeBtn = _resumeBtn();
     const startBtn = document.getElementById("session-start-btn");
     if (session?.hasPausedSession?.()) {
-      if (resumeBtn && !resumeBtn.disabled) {
+      if (resumeBtn && !resumeBtn.disabled && !_pausedChoice()) {
         resumeBtn.click();
         return;
       }
@@ -70,21 +77,21 @@
 
   /* What the button SAYS depends on which of the three things it is about to
      do, and the differences matter: "Continue practicing" over a paused
-     question is a promise to put that question back, "Start practicing" over
+     question is a promise to put that question back, "Practice with AI" over
      nothing at all is a promise to begin, and over a refused resume it is a
      promise to drop what was saved. All three are true; saying the wrong one
      is not. Never DISABLED — there is always one of the three to do, and a
      dead button on a screen with nothing else on it is a dead end. */
   const _syncLabel = () => {
     if (!continueBtn) return;
-    const paused = !!_session()?.hasPausedSession?.();
+    const paused = !!_session()?.hasPausedSession?.() && !_pausedChoice();
     const refused = _resumeRefused();
     continueBtn.disabled = false;
     continueBtn.textContent = refused
       ? "Start a new question"
       : paused
         ? "Continue practicing"
-        : "Start practicing";
+        : "Practice with AI";
     const summary = document.getElementById("session-summary");
     if (summary && refused) {
       const why = document.getElementById("session-resume-summary");

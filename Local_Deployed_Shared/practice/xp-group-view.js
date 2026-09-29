@@ -1,5 +1,5 @@
 /* ================================================================
-   XP GROUP VIEW — the Learner Home's graphs once you are in a group.
+   XP GROUP VIEW — the Learner Home's graph column, in a group or not.
 
    Seth, 2026-09-27: "if you join a group, it modifies the practice page
    to be such that instead of displaying both graphs, it displays one
@@ -8,22 +8,26 @@
    view where it only shows you and both graphs rather than your graph
    alongside other people's graphs".
 
-   So in a group the right column is:
-     * two selects: Time (Week / Month / 3 months / All — the same range
-       the solo tabs keep, one stored choice) and Graph;
+   So in a group the graph column is:
+     * two selects: Time (Week / Month / 3 months / All — one stored
+       choice, ./xp-panel.js's) and Graph;
      * Graph = Daily XP or Toward the course → one row per member, you
        first, the chart titled with their name (Seth, 2026-09-28: "rows
        instead of the grid with one row for each user"). Every row shares one
        scale (bar height, the course graph's y window, All's x window) so
        the cards can be compared by eye; your own course graph still sets
        your target (./xp-target-drag.js);
-     * Graph = Just me → the solo column, both graphs, without the tabs;
+     * Graph = Just me → both of your own graphs, no one else's;
      * a third select, Measure (Seth, 2026-09-28): XP, or problems solved —
        the bars count right answers and the course graph becomes their
        running total (./xp-solved-chart.js), in every Graph choice.
 
-   Out of a group, or before the roster has come back, `paint` answers
-   false and ./xp-panel.js draws the solo column as it always has.
+   OUT OF A GROUP (Seth, 2026-09-28: "on the left should be a singular
+   graph that you can switch in between for displaying either the bar graph
+   or the cumulative progress along with the second drop down for the time
+   horizon") the same three selects, no group name, and ONE chart: Graph =
+   the daily bars or the course line (no "Just me" — that is all there is).
+   Before the roster has come back the column is drawn solo too.
 
    The roster (GET /api/practice/groups/xp, app/group_xp.py) is read on
    boot and again each time the Learner Home is shown: joining and leaving
@@ -113,6 +117,10 @@
     return wrap;
   }
 
+  // "Just me" means something only beside other people.
+  const graphOptions = () => (roster ? views(measure) : views(measure).filter((v) => v.id !== "me"));
+  const shown = () => (!roster && view === "me" ? "bars" : view);
+
   function controls(ctx) {
     const bar = el("div", "xp-group-controls");
     bar.append(
@@ -120,7 +128,7 @@
         ctx.setRange(id);
         focusSelect(0);
       }),
-      select("Graph", views(measure), view, (id) => {
+      select("Graph", graphOptions(), shown(), (id) => {
         view = id;
         remember(VIEW_KEY, id);
         repaint();
@@ -133,8 +141,10 @@
         focusSelect(2);
       }),
     );
-    const n = roster.members.length;
-    bar.appendChild(el("p", "xp-group-name", `${roster.group.name} · ${n} member${n === 1 ? "" : "s"}`));
+    if (roster) {
+      const n = roster.members.length;
+      bar.appendChild(el("p", "xp-group-name", `${roster.group.name} · ${n} member${n === 1 ? "" : "s"}`));
+    }
     return bar;
   }
   // The column is rebuilt on every change; keep the keyboard where it was.
@@ -205,12 +215,14 @@
     return rows;
   }
 
-  /** Draw the group column into `right`. False when not in a group. */
+  /** Draw the column into `right`: the dropdowns, then the group's rows,
+      or out of a group the one chart (`ctx.solo(measure, which)`). */
   function paint(right, summary, ctx) {
-    if (!roster) return false;
     const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
     const top = controls(ctx);
-    if (view === "me") {
+    if (!roster) {
+      right.replaceChildren(top, ...ctx.solo(measure, shown()));
+    } else if (view === "me") {
       right.replaceChildren(top, ...ctx.solo(measure));
     } else {
       right.replaceChildren(top, cards(ctx, summary));

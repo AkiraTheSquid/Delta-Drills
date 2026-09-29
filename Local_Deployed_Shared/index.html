@@ -70,8 +70,8 @@
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
-  <link rel="stylesheet" href="styles/xp-panel.css?v=5" />
-  <link rel="stylesheet" href="styles/xp-group.css?v=3" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=6" />
+  <link rel="stylesheet" href="styles/xp-group.css?v=4" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -119,7 +119,8 @@
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <!-- The Learner Home: the two-column idle card, and the course
        question's tiles (what survived diagnostic.css, 2026-09-26). -->
-  <link rel="stylesheet" href="styles/practice/home.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/home.css?v=5" />
+  <link rel="stylesheet" href="styles/concept-choice.css?v=1" />
   <!-- The Groups tab (restored 2026-09-27): member rows + activity bars, then
        the board. groups-rows.css FIRST: groups.css overrides it. -->
   <link rel="stylesheet" href="styles/groups-rows.css?v=1" />
@@ -1811,51 +1812,72 @@
 
            So what is left to show here is progress, and one way back in. -->
       <!-- THE LEARNER HOME — one screen, two columns (Seth, 2026-09-26:
-           "simplify it to fit onto a single page"). Left: measured learning
-           (today's XP, level, course, finish, target), the time multiplier
-           and the one way back in. Right: daily XP above course knowledge.
-           Nothing else — no readiness dial, no group board. The copy names
-           no course: the app teaches whatever graph it is given. -->
+           "simplify it to fit onto a single page"; 2026-09-28: "on the left
+           should be a singular graph that you can switch in between ... and
+           a list of candidate concepts to work on"). Left: ONE graph with its
+           Time / Graph / Measure dropdowns, measured learning under it (today's
+           XP, level, course, finish, target). Right: Practice with AI, the
+           concepts to choose from instead, and the time multiplier. The copy
+           names no course: the app teaches whatever graph it is given. -->
       <div class="session-setup" id="practice-session-setup">
         <div class="home-main">
+          <!-- THE GRAPH, drawn by practice/xp-group-view.js for practice/xp-panel.js:
+               one chart and its dropdowns — or, in a study group, one row per
+               member. -->
+          <div class="home-graphs is-empty" id="learner-xp-graphs"></div>
+
           <!-- MEASURED LEARNING (Seth, 2026-09-26). XP is a gain in the model's
                knowledge of each concept, the same for every learner. Today's
                XP, level, course and finish, and the target, built by
                practice/xp-panel.js from /api/practice/xp (app/learning_xp.py)
                via the `delta:xp-summary` event xp.js broadcasts for the level
                pill — one read feeds both. `.is-empty` = no session or the read
-               failed: the card goes, and so do the graphs beside it. -->
+               failed: the card goes, and so does the graph above it. -->
           <section class="learner-xp is-empty" id="learner-xp" aria-labelledby="learner-xp-head">
             <h2 class="learner-xp-head" id="learner-xp-head">Measured learning</h2>
             <div class="xp-panel-body"></div>
           </section>
-
-          <div class="session-go">
-            <!-- THE MULTIPLIER on every problem's own clock (each problem's
-                 allowance comes with the question; practice/session-clock.js).
-                 Seth, 2026-09-14: ".5 for half as much time"; 2026-09-25: up
-                 to 2 and beyond. practice/session-clock-scale.js paints the
-                 factor in force and commits on blur / Enter. Idle screen only,
-                 so a running countdown never moves under the learner. -->
-            <label class="session-clock-scale" for="session-clock-scale">
-              <span class="session-clock-scale-label">Time per problem</span>
-              <span class="session-clock-scale-x" aria-hidden="true">×</span>
-              <input class="session-clock-scale-input" id="session-clock-scale" type="number"
-                     inputmode="decimal" min="0.1" max="4" step="0.05" autocomplete="off"
-                     aria-describedby="session-clock-scale-hint">
-              <span class="session-clock-scale-hint" id="session-clock-scale-hint">0.5 = half, 2 = double</span>
-            </label>
-            <!-- ONE button, two meanings: resume the paused question if there
-                 is one, otherwise start a fresh block. It PROXIES to the
-                 buttons below rather than reimplementing either. -->
-            <button class="primary session-continue-btn" id="session-continue-btn" type="button">Continue practicing</button>
-            <p class="session-summary hidden" id="session-summary"></p>
-          </div>
         </div>
 
-        <!-- THE GRAPHS, drawn by practice/xp-panel.js: daily XP (a week by
-             default, longer on request) above knowledge toward the course. -->
-        <div class="home-graphs is-empty" id="learner-xp-graphs"></div>
+        <div class="home-choice">
+          <div class="session-go">
+            <!-- ONE button, two meanings: resume the paused question if there
+                 is one, otherwise start a fresh block — the algorithm picks
+                 every question ("Practice with AI"). It PROXIES to the buttons
+                 below rather than reimplementing either (practice/session-idle.js). -->
+            <button class="primary session-continue-btn" id="session-continue-btn" type="button">Practice with AI</button>
+            <p class="session-summary hidden" id="session-summary"></p>
+          </div>
+
+          <!-- OR CHOOSE A CONCEPT (Seth, 2026-09-28). practice/concept-choice.js
+               fills it from /api/practice/concept-candidates
+               (backend app/concept_choice.py): five concepts the algorithm
+               would serve, its own pick among them, each with the learner's
+               knowledge of it as XP out of 80 on the topbar concept pill's
+               bar. A chosen concept is practised until it is learned, then
+               this screen comes back; "not ready" says so in a dialog. -->
+          <section class="concept-choice" id="concept-choice" hidden aria-labelledby="concept-choice-head">
+            <h2 class="concept-choice-head" id="concept-choice-head">Or choose a concept</h2>
+            <p class="concept-choice-note">Practice one until it is learned. The AI's pick is marked.</p>
+            <ol class="cc-list"></ol>
+            <p class="cc-error hidden" role="status"></p>
+          </section>
+
+          <!-- THE MULTIPLIER on every problem's own clock (each problem's
+               allowance comes with the question; practice/session-clock.js).
+               Seth, 2026-09-14: ".5 for half as much time"; 2026-09-25: up
+               to 2 and beyond. practice/session-clock-scale.js paints the
+               factor in force and commits on blur / Enter. Idle screen only,
+               so a running countdown never moves under the learner. -->
+          <label class="session-clock-scale" for="session-clock-scale">
+            <span class="session-clock-scale-label">Time per problem</span>
+            <span class="session-clock-scale-x" aria-hidden="true">×</span>
+            <input class="session-clock-scale-input" id="session-clock-scale" type="number"
+                   inputmode="decimal" min="0.1" max="4" step="0.05" autocomplete="off"
+                   aria-describedby="session-clock-scale-hint">
+            <span class="session-clock-scale-hint" id="session-clock-scale-hint">0.5 = half, 2 = double</span>
+          </label>
+        </div>
 
         <!-- 🔴 LIVE, and deliberately off the screen. timer.js binds resume,
              discard and their state (`#session-resume-btn.disabled` is how a
@@ -2431,7 +2453,7 @@ t.manual_seed(0)
   <script src="practice/session-snapshot.js?v=3"></script>
   <script src="practice/dom.js?v=21"></script>
   <script src="practice/bars.js?v=12"></script>
-  <script src="practice/question-examples.js?v=1"></script>
+  <script src="practice/question-examples.js?v=2"></script>
   <!-- Math (multiple-choice) questions: `window.DeltaMath`. Before ui.js
        (renderQuestion mounts it) and lessons.js (the KaTeX pass). -->
   <script src="practice/math-drill.js?v=1"></script>
@@ -2512,15 +2534,15 @@ t.manual_seed(0)
   <!-- THE IDLE SCREEN. session-idle.js proxies Continue practicing to the
        hidden resume/start buttons — AFTER timer.js, whose
        `hasPausedSession()` decides which of the two the one button means.
-       xp-panel.js paints measured learning and the range tabs; xp-charts.js
-       draws the two graphs under them; in a study group xp-group-view.js
-       draws that column instead (dropdowns, one graph type per member). -->
-  <script src="practice/session-idle.js?v=10"></script>
+       xp-panel.js paints measured learning; xp-group-view.js draws the one
+       graph above it and its dropdowns (xp-charts.js draws the chart), or in
+       a study group one row per member. -->
+  <script src="practice/session-idle.js?v=11"></script>
   <script src="practice/xp-charts.js?v=5"></script>
   <script src="practice/xp-target-drag.js?v=1"></script>
   <script src="practice/xp-solved-chart.js?v=1"></script>
-  <script src="practice/xp-group-view.js?v=3"></script>
-  <script src="practice/xp-panel.js?v=7"></script>
+  <script src="practice/xp-group-view.js?v=4"></script>
+  <script src="practice/xp-panel.js?v=8"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
@@ -2566,15 +2588,19 @@ t.manual_seed(0)
   <script src="practice/exercise-planner.js?v=2"></script>
   <!-- The exercise dialog's practice-until-ready route; kc-practice.js
        (startRoute) drives it. -->
-  <script src="practice/ready-route.js?v=1"></script>
+  <script src="practice/ready-route.js?v=2"></script>
   <!-- Ladder entry for a lesson-less concept (LeetCode): its own drills only. -->
   <script src="practice/kc-drill-only.js?v=1"></script>
-  <script src="practice/kc-practice.js?v=11"></script>
+  <script src="practice/kc-practice.js?v=13"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
   <script src="practice/exercise-timer.js?v=5"></script>
-  <script src="practice/exercise-session.js?v=10"></script>
+  <script src="practice/exercise-session.js?v=11"></script>
+  <!-- The Learner Home's "or choose a concept" list. After kc-practice.js
+       (startRoute) and exercise-session.js (whose onEnd announces the end of
+       a chosen concept's block as `dd-exercise-end`). -->
+  <script src="practice/concept-choice.js?v=1"></script>
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
        concept pill which section the reader is in. -->
@@ -2592,9 +2618,9 @@ t.manual_seed(0)
        position, so the order is not strictly load-bearing for the binding —
        but keeping the re-parent last means every earlier script sees the
        markup exactly where index.html declares it. -->
-  <script src="practice/difficulty-dock.js?v=4"></script>
+  <script src="practice/difficulty-dock.js?v=5"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
-  <script src="practice/practice-target.js?v=3"></script>
+  <script src="practice/practice-target.js?v=4"></script>
   <script src="practice/init.js?v=20"></script>
   <script src="practice.js?v=5"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
@@ -2616,7 +2642,7 @@ t.manual_seed(0)
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=7"></script>
+  <script src="courses.js?v=8"></script>
   <!-- After course-registry.js (the tiles). -->
   <script src="practice/course-pick.js?v=2"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
