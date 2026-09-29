@@ -322,11 +322,17 @@ json.dumps(_delta_results)
       }
     }
     const all = outcome.correct && passed === total;
+    // After the grade there is no Submit to point at: this run is a check of
+    // the code as it stands now, beside the verdict the question already has.
+    const reviewing = verdictShown();
     paint(el, question, {
-      title: `${passed} of ${total} test case${total === 1 ? "" : "s"} pass${all ? " — Submit when ready" : ""} · not submitted`,
+      title: `${passed} of ${total} test case${total === 1 ? "" : "s"} pass` +
+        (reviewing ? " · your code now, not graded" : `${all ? " — Submit when ready" : ""} · not submitted`),
       tone: all ? "pass" : "fail",
       body: rows.join("\n"),
-      note: "Checked as a fresh run of all your cells, the same way Submit grades. Nothing is recorded until you Submit.",
+      note: reviewing
+        ? "Checked as a fresh run of all your cells. This question is already graded (below); this run is not recorded."
+        : "Checked as a fresh run of all your cells, the same way Submit grades. Nothing is recorded until you Submit.",
     });
   }
 
@@ -337,6 +343,9 @@ json.dumps(_delta_results)
   async function afterRun(question, code) {
     const my = ++seq;
     if (!question || !String(code || "").trim()) { hide(); return; }
+    // Was a verdict already on screen when ▶ was pressed? (the review phase,
+    // including a review restored from an earlier session)
+    const gradedBefore = verdictShown();
     const el = block();
     if (el) paint(el, question, { title: "Checking test cases…", tone: "pending" });
     let outcome;
@@ -351,10 +360,22 @@ json.dumps(_delta_results)
     if (current && current !== question) return;
     /* A Submit (the learner's, or the clock's) that landed while this check
        was in flight already painted the real verdict; a dry check arriving
-       after it must not paint over the grade. */
-    if (typeof practiceFeedbackArea !== "undefined" && practiceFeedbackArea &&
-        !practiceFeedbackArea.classList.contains("hidden")) return;
+       after it must not paint over the grade.
+
+       🔴 ONLY a verdict that landed DURING the check. A ▶ pressed while a
+       verdict was already up (the review phase) is the learner re-running
+       their code after the grade, and it must show its cases like any other
+       run. The old guard dropped those, leaving "Checking test cases…" on
+       screen forever and the graded failures as the only cases visible —
+       Sindhu, 2026-09-28: a correct Java answer run under a restored timeout
+       review of 60331 showed nothing but "Failed 8 of 8 · got: None". */
+    if (!gradedBefore && verdictShown()) { hide(); return; }
     render(question, outcome);
+  }
+
+  function verdictShown() {
+    return typeof practiceFeedbackArea !== "undefined" && !!practiceFeedbackArea &&
+      !practiceFeedbackArea.classList.contains("hidden");
   }
 
   return { afterRun, check, render, hide, hideUnless, runPyodideTests };

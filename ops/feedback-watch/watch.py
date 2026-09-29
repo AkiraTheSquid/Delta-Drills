@@ -63,6 +63,14 @@ def check_public_api():
     lesson = {"kc": "torch.linalg-basics", "lesson_title": "T", "tag": "confusing", "client_id": "d", "timestamp": now.isoformat()}
     line = mod.describe('/x/u1.lesson-feedback.json', lesson)
     assert line.startswith('[delta-drills LESSON FEEDBACK] torch.linalg-basics'), line
+    graph = {"kind": "node", "source": "python.control-flow", "target": None, "tag": "mislabeled",
+             "note": "under python basics", "timestamp": now.isoformat()}
+    line = mod.describe('/x/u1.graph_feedback.json', graph)
+    assert line.startswith('[delta-drills GRAPH FEEDBACK] node python.control-flow tagged mislabeled'), line
+    edge = dict(graph, kind="edge", source="cnn.a", target="cnn.b", tag="should_not_exist")
+    assert mod.entry_key('/x/u1.graph_feedback.json', graph) != mod.entry_key('/x/u1.graph_feedback.json', edge), \
+        "two graph edits in the same second must not share a key"
+    assert 'graph_feedback.json' in mod.REMOTE_CMD, "the Fly scan must read the graph feedback log (missed Seth's 09-28 note)"
     legacy = {"timestamp": "t", "question_id": 1, "tag": "broken"}
     assert mod.entry_key('/x/u1.feedback.json', legacy) != mod.entry_key('/x/u2.feedback.json', legacy), "a legacy key must carry the learner"
     # a restart announces what the on-disk set does not hold, whatever its age
