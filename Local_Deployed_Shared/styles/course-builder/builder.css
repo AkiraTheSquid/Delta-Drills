@@ -1,0 +1,604 @@
+/* Course builder — #page-course-builder (course-builder/course-builder.js).
+   Chat on the left, the course graph (or one lesson) on the right, a
+   draggable divider between, and a full-screen mode for the right half.
+
+   The look is a drafting table: the chat is the app's panel, the graph sits
+   on a faint dot grid like drafting paper, labels are small caps. Tokens
+   only (styles/variables.css), so every theme restyles it. The lesson view
+   reuses the Knowledge Graph's lesson classes (.kg2-*, how-it-works.css). */
+
+#page-course-builder {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  padding: 0;
+}
+
+#page-course-builder.hidden {
+  display: none;
+}
+
+.cb-shell {
+  --cb-left: 40%;
+  --cb-grid: color-mix(in srgb, var(--text) 9%, transparent);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ---- top strip -------------------------------------------------------- */
+.cb-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cb-top-title {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: auto;
+}
+
+.cb-top-title h1 {
+  margin: 0;
+  color: var(--white);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cb-eyebrow {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cb-back {
+  padding: 6px 4px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cb-back:hover {
+  color: var(--text);
+}
+
+.cb-top-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cb-course-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cb-course-select {
+  padding: 6px 8px;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+}
+
+/* ---- buttons ---------------------------------------------------------- */
+.cb-btn,
+.cb-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cb-btn:hover:not(:disabled),
+.cb-icon-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.cb-btn:disabled,
+.cb-icon-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.cb-btn-solid {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: transparent;
+}
+
+.cb-btn-solid:hover:not(:disabled) {
+  border-color: transparent;
+  filter: brightness(1.08);
+}
+
+.cb-icon-btn {
+  padding: 5px 9px;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* ---- the split -------------------------------------------------------- */
+.cb-split {
+  display: grid;
+  grid-template-columns: var(--cb-left) 10px minmax(0, 1fr);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cb-chat-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--panel-deep);
+}
+
+.cb-chat-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+.cb-chat-root > deep-chat {
+  flex: 1 1 auto;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Attached concepts, above the thread. */
+.cb-tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cb-tray[hidden] {
+  display: none;
+}
+
+.cb-tray-label {
+  margin-right: 2px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 240px;
+  padding: 3px 4px 3px 9px;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  animation: cb-chip-in 0.2s ease-out;
+}
+
+@keyframes cb-chip-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+.cb-chip-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.cb-chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-chip-x {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cb-chip-x:hover {
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+/* ---- divider ---------------------------------------------------------- */
+.cb-divider {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: var(--border);
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.cb-divider-grip {
+  width: 4px;
+  height: 44px;
+  border-radius: 4px;
+  background: var(--muted-dim);
+  transition: background-color 0.15s ease, height 0.15s ease;
+}
+
+.cb-divider:hover .cb-divider-grip,
+.cb-divider:focus-visible .cb-divider-grip,
+.cb-shell.is-dragging .cb-divider-grip {
+  height: 72px;
+  background: var(--accent);
+}
+
+.cb-divider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Mid-drag: no text selection, and the chat's iframe-like shadow DOM
+   cannot swallow the pointer. */
+.cb-shell.is-dragging {
+  cursor: col-resize;
+  user-select: none;
+}
+
+.cb-shell.is-dragging .cb-chat-pane,
+.cb-shell.is-dragging .cb-view-pane {
+  pointer-events: none;
+}
+
+/* ---- right half ------------------------------------------------------- */
+.cb-view-pane {
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background-color: var(--canvas-bg);
+  background-image: radial-gradient(var(--cb-grid) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+.cb-view-bar {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  pointer-events: none;
+}
+
+.cb-view-bar > * {
+  pointer-events: auto;
+}
+
+.cb-crumb {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cb-crumb-name {
+  overflow: hidden;
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-crumb-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cb-crumb .cb-eyebrow {
+  white-space: nowrap;
+}
+
+/* A narrow graph pane (divider dragged right): drop the words the bar can
+   live without before the course name starts truncating. */
+@container (max-width: 560px) {
+  .cb-crumb-graph .cb-eyebrow,
+  .cb-crumb-count,
+  .cb-full-label {
+    display: none;
+  }
+}
+
+.cb-crumb-lesson {
+  align-items: center;
+}
+
+.cb-view-pane[data-view="graph"] .cb-crumb-lesson,
+.cb-view-pane[data-view="graph"] .cb-lesson-chat,
+.cb-view-pane[data-view="lesson"] .cb-crumb-graph,
+.cb-view-pane[data-view="lesson"] .cb-fit {
+  display: none;
+}
+
+.cb-view-tools {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+.cb-full-off,
+.cb-shell.is-full .cb-full-on {
+  display: none;
+}
+
+.cb-shell.is-full .cb-full-off {
+  display: inline;
+}
+
+.cb-full-on,
+.cb-full-off {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Full screen: the right half takes the whole page. */
+.cb-shell.is-full .cb-split {
+  grid-template-columns: 0 0 minmax(0, 1fr);
+}
+
+.cb-shell.is-full .cb-chat-pane,
+.cb-shell.is-full .cb-divider {
+  visibility: hidden;
+  overflow: hidden;
+}
+
+.cb-graph-host {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  color: var(--text);
+  outline: none;
+}
+
+.cb-graph-host[hidden] {
+  display: none;
+}
+
+.cb-graph-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.cb-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- node card -------------------------------------------------------- */
+.cb-card {
+  position: absolute;
+  z-index: 10;
+  width: 272px;
+  padding: 14px 14px 12px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 14px 40px var(--shadow-strong);
+  animation: cb-card-in 0.16s ease-out;
+}
+
+.cb-card[hidden] {
+  display: none;
+}
+
+@keyframes cb-card-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.cb-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cb-card-title {
+  color: var(--white);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cb-card-x {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cb-card-x:hover {
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+.cb-card-id {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-card-meter {
+  height: 5px;
+  margin: 11px 0 9px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--input-bg);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.cb-card-meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.cb-card-stats {
+  display: grid;
+  gap: 5px;
+  margin: 0 0 12px;
+  font-size: 12.5px;
+}
+
+.cb-card-stats > div {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.cb-card-stats dt {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  line-height: 1.75;
+  text-transform: uppercase;
+}
+
+.cb-card-stats dd {
+  margin: 0;
+}
+
+.cb-card-dim {
+  color: var(--muted);
+}
+
+.cb-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.cb-card-actions .cb-btn {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+/* ---- lesson ----------------------------------------------------------- */
+.cb-lesson-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 64px max(24px, 6%) 40px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.cb-lesson-host[hidden] {
+  display: none;
+}
+
+.cb-lesson-host > * {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cb-view-pane[data-view="lesson"] .cb-view-bar {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+  pointer-events: auto;
+}
+
+/* ---- narrow: stack, chat above graph --------------------------------- */
+@media (max-width: 820px) {
+  .cb-top {
+    flex-wrap: wrap;
+  }
+  /* The divider leaves the grid (display:none), so two rows, not three —
+     a third, zero-height row would be where the graph pane lands. */
+  .cb-split,
+  .cb-shell.is-full .cb-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(260px, 45%) minmax(0, 1fr);
+  }
+  .cb-divider {
+    display: none;
+  }
+  .cb-shell.is-full .cb-split {
+    grid-template-rows: 0 minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-chip,
+  .cb-card {
+    animation: none;
+  }
+}
