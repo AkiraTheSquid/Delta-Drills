@@ -87,7 +87,7 @@
             </button>
           </div>
         </div>
-        <div class="cb-graph-host" tabindex="-1"><p class="cb-status">Loading the graph…</p></div>
+        <div class="cb-graph-host" tabindex="0" aria-label="Concept graph. Arrow keys step through the concepts and open each one's card; Escape closes it."><p class="cb-status">Loading the graph…</p></div>
         <article class="cb-lesson-host" hidden></article>
       </section>
     </div>`;
@@ -289,6 +289,8 @@
   const onShown = () => {
     fitPage();
     if (!built) build();
+    // An empty canvas means the last load failed: retry it on every reopen.
+    else if (!window.DDBuilderGraph.count()) showCourse();
     else requestAnimationFrame(() => window.DDBuilderGraph.resize());
   };
 

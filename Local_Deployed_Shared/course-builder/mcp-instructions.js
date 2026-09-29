@@ -11,7 +11,9 @@
    one there and update it here.
    🔴 The editing password never goes through the AI: the text has the
    learner log in from their own terminal (`dd-content login`), which writes
-   the same session file the MCP server reads. */
+   the same session file the MCP server reads — and via `--password -`
+   (stdin, from a silent `read`), so the secret is in neither shell history
+   nor the process list. */
 (function () {
   "use strict";
 
@@ -22,8 +24,8 @@
 SETUP (once)
 1. Clone the repo and start in it: git clone ${REPO} && cd Delta-Drills
 2. The repo ships a .mcp.json that registers "delta-drills-content" (command: ./content-mcp/bin/dd-content-mcp). Enable it, and confirm its 28 tools are listed.
-3. Reading is open. Writing needs the shared editing password. Do NOT ask me to paste it into this chat: ask me to run this in my own terminal, which starts the same 12-hour session the MCP server uses:
-   ./content-mcp/bin/dd-content login --password '<the password>'
+3. Reading is open. Writing needs the shared editing password. Do NOT ask me to paste it into this chat: ask me to run this in my own terminal (it prompts silently, keeps the password out of shell history, and starts the same 12-hour session the MCP server uses):
+   read -rs -p "Delta Drills editing password: " DD_PW && printf '%s' "$DD_PW" | ./content-mcp/bin/dd-content login --password - ; unset DD_PW
    Then call content_status to confirm writes are unlocked.
 
 HOW TO BUILD THE COURSE

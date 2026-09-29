@@ -166,6 +166,19 @@
     card.querySelector('[data-act="chat"]').focus({ preventScroll: true });
   };
 
+  /* Keyboard: the canvas has no focusable nodes, so the arrow keys walk
+     them in reading order (top to bottom, then left to right), centring
+     each one and opening its card — whose buttons Tab then reaches. */
+  const step = (dir) => {
+    if (!cy || !cy.nodes().length) return;
+    const nodes = cy.nodes().sort((a, b) => (a.position("y") - b.position("y")) || (a.position("x") - b.position("x")));
+    const cur = card.hidden ? -1 : nodes.toArray().findIndex((n) => n.id() === card.dataset.kc);
+    const i = cur < 0 ? (dir > 0 ? 0 : nodes.length - 1) : (cur + dir + nodes.length) % nodes.length;
+    const n = nodes[i];
+    cy.center(n);
+    openCard(n.id());
+  };
+
   const onCardClick = (e) => {
     const act = e.target.closest("[data-act]")?.dataset.act;
     const id = card.dataset.kc;
@@ -202,7 +215,11 @@
     card.hidden = true;
     card.addEventListener("click", onCardClick);
     host.append(canvas, card);
-    host.addEventListener("keydown", (e) => { if (e.key === "Escape" && !card.hidden) closeCard(); });
+    host.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !card.hidden) { closeCard(); host.focus({ preventScroll: true }); return; }
+      const dir = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (dir) { e.preventDefault(); step(dir); }
+    });
     window.addEventListener("delta:kg-look-changed", () => { if (cy) { cy.style(sheet()); layout(); } });
     window.addEventListener("delta:theme-changed", () => { readInk(); if (cy) cy.style().update(); });
     window.addEventListener("delta:adaptive-state-changed", () => { if (cy) cy.style().update(); });

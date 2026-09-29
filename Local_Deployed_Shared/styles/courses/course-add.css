@@ -145,13 +145,6 @@
 }
 
 @media (max-width: 720px) {
-  .course-catalog-card {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .course-catalog-card-actions {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-  }
   .course-add-option {
     grid-template-columns: 1fr;
   }

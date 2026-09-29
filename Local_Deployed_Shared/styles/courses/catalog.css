@@ -139,3 +139,15 @@
 .course-lesson-item:hover {
   border-color: var(--accent);
 }
+
+/* Phone: the number and the text share the first row, the actions drop
+   to a full-width second row. */
+@media (max-width: 720px) {
+  .course-catalog-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .course-catalog-card-actions {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+  }
+}

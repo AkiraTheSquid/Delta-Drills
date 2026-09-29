@@ -59,5 +59,6 @@
 - **The chat plans, it does not build** — `ACTIVE (by design, 2026-09-29)`. Seth picked "wire to existing AI" over a write-capable builder. The graph shows an existing course; the Copy route is how a course is actually written.
 
 ## Recent Changes
+- 2026-09-29: Second critic pass. Arrow keys on the focused graph walk the concepts in reading order and open each card (Tab reaches its buttons, Escape returns to the graph); reopening the page retries a failed graph load; the copied login reads the password from a silent `read` into `--password -`, out of shell history and argv.
 - 2026-09-29: Critic pass. Graph `show()` resolves `null` when a later call superseded it (rapid course switch); the chat rebuilds and clears its attachments on `delta:auth-state-changed` when the identity changed; New chat uses `DDConceptualChat.resetChat`; the copied instructions have the learner run `dd-content login` in their own terminal instead of handing the password to the AI; option relabelled "Plan it here with the AI".
 - 2026-09-29: Created. Authored in `Delta-Drills-Deployed` at Seth's request; must be ported to `Delta-Drills-Local`/main before the next deploy or the deploy sync overwrites it.
