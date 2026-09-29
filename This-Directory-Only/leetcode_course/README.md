@@ -10,6 +10,8 @@
   (Grokking's only DP pattern is 0/1 knapsack). Prereq + encompassing edges.
 - `tags.csv`: TypeSafe pattern tags + clean-up scores per problem.
 - `bank.jsonl`: the selected problems with concept, tests and `difficulty_score`.
+- `concept_notes.md`: the learner-facing page for each concept, one `## <kc id>`
+  section: what the pattern is, when to reach for it, a Python template.
 
 ## Does NOT own
 - The scripts that produce these: `../scripts/leetcode_course/`.
@@ -17,7 +19,7 @@
   `lessons/kc_registry.json`) — the course is not wired in yet.
 
 ## Key Files
-- `patterns.json`, `tags.csv`, `bank.jsonl` (see Owns).
+- `patterns.json`, `tags.csv`, `bank.jsonl`, `concept_notes.md` (see Owns).
 
 ## Data & External Dependencies
 - Problems from NeetCode 250 + Striver A2Z (core) and the big LeetCode sheet
@@ -51,6 +53,8 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-09-28: `concept_notes.md` added: a page for all 41 concepts, shown when the
+  concept is clicked on the Knowledge Graph (`export_concepts.py` → `concepts.json`).
 - 2026-09-25: Wired into the app (pass 2). `scripts/leetcode_course/export_app.py` turns
   `bank.jsonl` into `Local_Deployed_Shared/lessons/leetcode/problems.json` (383 drills,
   q60000+, 40 concepts; ordered-set left out with 0 drills); course toggle on the Courses tab.

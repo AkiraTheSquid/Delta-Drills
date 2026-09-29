@@ -1160,11 +1160,17 @@ window.LessonGate = LessonGate;
     document.querySelectorAll(".page").forEach((candidate) =>
       candidate.classList.toggle("hidden", candidate.id !== "page-practice"));
     if (page) page.classList.remove("session-idle");
-    window.LessonGate.showLesson(kc, _beginLadder).then((shown) => {
-      if (!shown) {
-        const text = document.getElementById("question-text");
-        if (text) text.textContent = `No lesson found for "${kc}". Check the KC id.`;
-      }
+    window.LessonGate.showLesson(kc, _beginLadder).then(async (shown) => {
+      if (shown) return;
+      // No lesson: a drill-only concept (LeetCode, practice/kc-drill-only.js)
+      // goes straight to its drills — but only once the boot fetch is over. A
+      // lesson page normally covers that fetch; without one, its late answer
+      // overwrote PracticeAPI.currentQuestion AND the screen with the queue's
+      // pick (a math drill under leetcode.dp-1d, 2026-09-28).
+      const drills = window.KcDrillOnly ? await window.KcDrillOnly.entry(kc) : null;
+      if (drills) { await window.__practiceBoot; _beginLadder(); return; }
+      const text = document.getElementById("question-text");
+      if (text) text.textContent = `No lesson found for "${kc}". Check the KC id.`;
     });
   };
   if (document.readyState === "loading") {

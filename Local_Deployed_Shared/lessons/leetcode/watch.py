@@ -58,6 +58,11 @@ def check_invariants():
         kcs = {k["id"] for k in json.load(fh)["kcs"] if k["id"].startswith("leetcode.")}
     stray = sorted({r["leetcode_kc"] for r in rows} - kcs)
     assert not stray, f"drills target unregistered concepts: {stray}"
+    # The Knowledge Graph opens concepts.json for a LeetCode bubble (there is no
+    # lesson); a registered concept without a page opens blank again.
+    pages = _load("concepts.json")["kcs"]
+    blank = sorted(k for k in kcs if not (pages.get(k) or {}).get("description_markdown"))
+    assert not blank, f"concepts.json has no description for: {blank} (run export_concepts.py)"
 
 
 if __name__ == '__main__':

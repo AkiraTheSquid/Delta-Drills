@@ -28,6 +28,9 @@
 - `select_bank.py`: concept assignment, clean-up filter, fallback top-up to FLOOR.
 - `rate_difficulty.py`: per-concept 15..100 difficulty via `../typesafe_difficulty/`.
 - `check_graph.py`: DAG / encompassing ⊆ prereqs / redundancy / reachability.
+- `export_concepts.py`: `concept_notes.md` + `problems.json` → the Knowledge Graph's
+  `lessons/leetcode/concepts.json`. It fails if a concept has no notes. `export_app.py`
+  calls it last; run it on its own after editing the notes.
 
 ## Data & External Dependencies
 - Raw inputs outside the repo in `RAW_DIR` = `~/.cache/delta-drills/leetcode/`
@@ -69,6 +72,7 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-09-28: `export_concepts.py` added and called at the end of `export_app.py`.
 - 2026-09-25: `drill_format.py`: each drill gets `secs_allowed` = base by LeetCode difficulty (Easy 15 / Medium 25 / Hard 40 min; unlabeled rows placed by TypeSafe score) × pattern weight (graphs/DP/backtracking/trie 1.2, arrays/hashing/two-pointers/stack 0.85) × TypeSafe spread ±15% (+5 min for a design class), clamped 5–60 min. Dataset statements are rewritten to markdown: `### Example N` / `### Constraints`, **Input:**/**Output:**/**Explanation:** labels, constraints as a list with formulas code-spanned and flattened superscripts restored (`105` → `10^5`, `231` → `2^31`).
 - 2026-09-25: `export_app.py` added, the last pipeline step. It grades every drill
   (the reference passes, the bare starter fails) and writes problems.json, ids.json, the

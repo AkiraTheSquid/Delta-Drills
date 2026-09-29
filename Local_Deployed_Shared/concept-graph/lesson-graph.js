@@ -2094,6 +2094,12 @@
       });
     });
     (structured.lessons || []).forEach((l) => l.kps.forEach((kp) => { contentByKc[kp.kc] = kp; }));
+    // Lesson-less courses (LeetCode) have no KP; their bubbles open a concept
+    // page instead — concept-graph/lessonless-concepts.js. A real KP wins.
+    try {
+      const pages = window.DDLessonlessConcepts ? await window.DDLessonlessConcepts.load() : {};
+      Object.entries(pages).forEach(([kc, kp]) => { if (kcById[kc] && !contentByKc[kc]) contentByKc[kc] = kp; });
+    } catch (_) {}
 
     buildLegend();
 
