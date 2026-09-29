@@ -14,8 +14,9 @@
    The list and every decision in it are the backend's
    (GET /api/practice/concept-candidates, app/concept_choice.py): five
    concepts the algorithm would serve, its own pick first, each with the
-   learner's knowledge K drawn as XP out of 80 on the topbar concept pill's
-   bar (styles/concept-pill.css). This file draws them and starts a block.
+   learner's knowledge K drawn as XP out of 80 over a slim copy of the
+   topbar concept pill's meter (styles/concept-choice.css). This file draws
+   them and starts a block.
 
    A CHOSEN CONCEPT runs the exercise dialog's route with `kind: "choice"`
    (practice/ready-route.js → POST /api/practice/concept-route): the concept
@@ -85,38 +86,38 @@
     return ex?.mode === "choice" ? ex.kc : null;
   };
 
-  /* The topbar pill's markup (index.html #dd-concept): the fill, then the
-     label twice — the second copy on the fill, clipped to it. */
-  function pill(title, pct) {
-    const p = el("span", "dd-concept");
-    p.setAttribute("aria-hidden", "true");
-    p.style.setProperty("--dd-concept-pct", `${pct}%`);
-    const layer = (on) => {
-      const t = el("span", `dd-concept-text${on ? " dd-concept-text--on" : ""}`);
-      t.appendChild(el("span", "dd-concept-label", title));
-      return t;
-    };
-    p.append(el("span", "dd-concept-fill"), layer(false), layer(true));
-    return p;
-  }
-
-  function row(it, full, paused) {
+  /* A row is a ledger line (Seth, 2026-09-28, on v1 — the full topbar pill
+     per row, label written on the fill: "this just doesn't look that good").
+     The name gets its own line and is never cut; the XP is a figure in the
+     home's numeral face; the pill stays as the meter under them — its track,
+     its fill, its colours — slimmed to a rule, so no word straddles a seam. */
+  function row(it, full, paused, i) {
     const xp = Math.max(0, Math.min(full, Number(it.xp) || 0));
-    const b = el("button", `cc-row${it.recommended ? " is-ai" : ""}`);
+    const b = el("button", `cc-row${it.recommended ? " is-ai" : ""}${paused ? " is-paused" : ""}`);
     b.type = "button";
-    b.title = it.title;
+    b.style.setProperty("--cc-i", i);
     b.setAttribute(
       "aria-label",
       `${paused ? "Continue" : "Practice"} ${it.title} — ${xp} of ${full} XP` +
         `${it.recommended ? ", the AI's pick" : ""}${it.answers ? "" : ", not tried yet"}`,
     );
-    const meta = el("span", "cc-meta");
-    meta.appendChild(el("span", "cc-xp", `${xp} / ${full} XP`));
-    if (it.recommended) meta.appendChild(el("span", "cc-tag cc-tag--ai", "AI pick"));
-    if (paused) meta.appendChild(el("span", "cc-tag cc-tag--continue", "Continue"));
-    if (!it.answers) meta.appendChild(el("span", "", "not tried yet"));
-    if (it.lesson_title) meta.appendChild(el("span", "cc-lesson", it.lesson_title));
-    b.append(pill(it.title, (xp / full) * 100), meta);
+    // What the row is, before its name: the AI's pick, the paused block.
+    const flags = [];
+    if (paused) flags.push(el("span", "cc-flag cc-flag--continue", "Paused · continue"));
+    if (it.recommended) flags.push(el("span", "cc-flag cc-flag--ai", "AI pick"));
+    if (flags.length) {
+      const eyebrow = el("span", "cc-eyebrow");
+      eyebrow.append(...flags);
+      b.appendChild(eyebrow);
+    }
+    const sub = [it.lesson_title, it.answers ? "" : "not tried yet"].filter(Boolean).join(" · ");
+    const figure = el("span", "cc-figure");
+    figure.append(el("span", "cc-xp", String(xp)), el("span", "cc-of", `/ ${full} XP`));
+    const bar = el("span", "cc-bar");
+    bar.setAttribute("aria-hidden", "true");
+    bar.style.setProperty("--cc-pct", `${(xp / full) * 100}%`);
+    bar.appendChild(el("span", "cc-bar-fill"));
+    b.append(el("span", "cc-title", it.title), figure, el("span", "cc-sub", sub), bar);
     b.addEventListener("click", () => choose(it, paused));
     const li = el("li", "cc-item");
     li.appendChild(b);
@@ -130,7 +131,7 @@
     r.hidden = !items.length;
     const full = Number(data?.xp_per_concept) || 80;
     const paused = pausedKc();
-    r.querySelector(".cc-list")?.replaceChildren(...items.map((it) => row(it, full, it.kc === paused)));
+    r.querySelector(".cc-list")?.replaceChildren(...items.map((it, i) => row(it, full, it.kc === paused, i)));
   }
 
   const fail = (text) => {
