@@ -206,6 +206,14 @@ const PracticeAPI = {
         return ladderQ;
       }
     }
+    // A drill-only concept (LeetCode) ends with its own drills: its subtopic
+    // is the whole course, so the focused queue below is not "this concept".
+    const drillOnlyDone = window.KcPractice?.drillOnlyDone?.();
+    if (drillOnlyDone) {
+      const err = new Error(drillOnlyDone);
+      err.contentExhausted = { message: drillOnlyDone };
+      throw err;
+    }
     if (practiceMode === "backend") {
       // Admin on localhost — use backend API
       // focus_subtopic pins the backend queue to one subtopic for single-KC

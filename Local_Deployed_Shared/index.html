@@ -2382,7 +2382,10 @@ t.manual_seed(0)
        Worker. BEFORE kg-look.js, which calls it. -->
   <script src="concept-graph/kg-layout.js?v=1" defer></script>
   <script src="concept-graph/kg-look.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=37" defer></script>
+  <!-- LeetCode (lesson-less) bubbles' concept pages. BEFORE lesson-graph.js,
+       which loads them while it builds the graph. -->
+  <script src="concept-graph/lessonless-concepts.js?v=1"></script>
+  <script src="concept-graph/lesson-graph.js?v=38" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
@@ -2461,7 +2464,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=36"></script>
+  <script src="practice/api.js?v=37"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=41"></script>
   <script src="practice/kernel.js?v=8"></script>
@@ -2526,7 +2529,7 @@ t.manual_seed(0)
        `PracticeSession` through the shared classic-script scope (timer.js
        above), which is why it is not a module. -->
   <script src="practice/lesson-timer.js?v=1"></script>
-  <script src="practice/lessons.js?v=48"></script>
+  <script src="practice/lessons.js?v=49"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=8"></script>
@@ -2564,7 +2567,9 @@ t.manual_seed(0)
   <!-- The exercise dialog's practice-until-ready route; kc-practice.js
        (startRoute) drives it. -->
   <script src="practice/ready-route.js?v=1"></script>
-  <script src="practice/kc-practice.js?v=10"></script>
+  <!-- Ladder entry for a lesson-less concept (LeetCode): its own drills only. -->
+  <script src="practice/kc-drill-only.js?v=1"></script>
+  <script src="practice/kc-practice.js?v=11"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
@@ -2591,7 +2596,7 @@ t.manual_seed(0)
   <script src="practice/feedback-panel.js?v=3"></script>
   <script src="practice/practice-target.js?v=3"></script>
   <script src="practice/init.js?v=20"></script>
-  <script src="practice.js?v=4"></script>
+  <script src="practice.js?v=5"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
        files survive because the rest of the app depends on them:
          weights.js            → practice/adaptive.js, practice/questions.js

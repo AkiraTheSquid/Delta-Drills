@@ -67,6 +67,11 @@ const KcPractice = (() => {
      question came from, so a grade can be read against it. */
   let route = null;
   let routeStep = null;
+  /* A lesson-less concept (LeetCode): its entry came from practice/
+     kc-drill-only.js, not a KP. The ladder IS the whole session — nothing
+     takes over when it is spent — and a drill served on an earlier visit comes
+     back once, after the unseen ones, instead of being skipped. */
+  let drillOnly = false;
 
   /* This ladder's rung names, in the vocabulary the REST of the app already
      speaks. `item.kind` is this file's word for the authored bucket a drill
@@ -227,11 +232,18 @@ const KcPractice = (() => {
     return buildPracticeQuestionFromBank(bankQ, overrides);
   };
 
-  /** Start the ladder for a KC. Returns false when the KC has no lesson data. */
+  // A drill-only concept's subtopic is its whole course ("LeetCode:
+  // Patterns"), so a mastery crossing there is not THIS concept's — no gate.
+  const _barKeys = () => (drillOnly ? [] : subtopicKeys);
+
+  /** Start the ladder for a KC. Returns false when the KC has neither lesson
+   *  data nor drills of its own (practice/kc-drill-only.js). */
   const start = async (kc) => {
     if (!window.LessonGate || typeof window.LessonGate.getKpEntry !== "function") return false;
-    const entry = await window.LessonGate.getKpEntry(kc);
+    let entry = await window.LessonGate.getKpEntry(kc);
+    if (!entry && window.KcDrillOnly) entry = await window.KcDrillOnly.entry(kc);
     if (!entry) return false;
+    drillOnly = !!entry.drillOnly;
     await loadQuestionsBank();
 
     kcId = kc;
@@ -260,7 +272,7 @@ const KcPractice = (() => {
     window.__lessonDemoOnly = false;
 
     if (window.CompetencyBar) {
-      window.CompetencyBar.init(subtopicKeys);
+      window.CompetencyBar.init(_barKeys());
       window.CompetencyBar.beginPractice();
     }
     return true;
@@ -351,7 +363,12 @@ const KcPractice = (() => {
       const item = queue[served++];
       const q = _hydrate(item);
       if (q) {
-        if (!(await _claim(q))) continue;
+        if (!(await _claim(q)) && !item.review) {
+          // Seen on an earlier visit: a drill-only ladder re-queues it once,
+          // behind everything unseen; a KP ladder leaves it to the queue.
+          if (drillOnly) queue.push({ ...item, review: true });
+          continue;
+        }
         q.ladder_kind = item.kind;
         _stamp(q, item);
         if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);
@@ -366,6 +383,15 @@ const KcPractice = (() => {
   };
 
   const isActive = () => active && (!!route || !!planner || !!queue.length);
+
+  /* The sentence to end on once a drill-only ladder is spent, else null.
+     practice/api.js throws it as content-exhausted rather than falling through
+     to the subtopic queue, which for LeetCode is the whole course. */
+  const drillOnlyDone = () => {
+    if (!drillOnly || !kcId || isActive()) return null;
+    return `You've worked through every drill on ${kcTitle || kcId}. ` +
+      "Pick another concept on the Knowledge Graph to keep going.";
+  };
 
   /* ── exercise-scoped entry points (practice/exercise-session.js) ──── */
 
@@ -444,6 +470,7 @@ const KcPractice = (() => {
       });
     }
     planner = new P.Planner({ quota, target, prereqs, attemptFirst });
+    drillOnly = false;
     queue = [];
     served = 0;
     lastItem = null;
@@ -460,6 +487,7 @@ const KcPractice = (() => {
     const R = window.ReadyRoute;
     if (!R || typeof practiceMode === "undefined" || practiceMode !== "backend") return true;
     route = new R.Route({ kc, title: title || kcTitle, exerciseIds });
+    drillOnly = false;
     routeStep = null;
     queue = [];
     served = 0;
@@ -544,6 +572,7 @@ const KcPractice = (() => {
       route: route ? route.serialize() : null,
       routeStep: route ? routeStep : null,
       lastItem: planner || route ? lastItem : null,
+      drillOnly,
     };
   };
 
@@ -551,6 +580,7 @@ const KcPractice = (() => {
     if (!saved || typeof saved !== "object" || !saved.kc) return false;
     kcId = String(saved.kc);
     kcTitle = saved.title ? String(saved.title) : kcId;
+    drillOnly = saved.drillOnly === true;
     subtopicKeys = Array.isArray(saved.subtopicKeys) ? saved.subtopicKeys.filter(Boolean) : [];
     queue = Array.isArray(saved.remaining)
       ? saved.remaining.filter((it) => it && Number.isFinite(it.questionId) && STAGE_FOR_KIND[it.kind])
@@ -569,7 +599,7 @@ const KcPractice = (() => {
     window.__kcFocusSubtopic = _compositeKey();
     window.__lessonDemoOnly = false;
     if (window.CompetencyBar) {
-      window.CompetencyBar.init(subtopicKeys);
+      window.CompetencyBar.init(_barKeys());
       window.CompetencyBar.beginPractice();
     }
     return true;
@@ -588,6 +618,7 @@ const KcPractice = (() => {
     route = null;
     routeStep = null;
     lastItem = null;
+    drillOnly = false;
     kcId = null;
     kcTitle = null;
     subtopicKeys = [];
@@ -618,6 +649,7 @@ const KcPractice = (() => {
     remaining,
     nextQuestion,
     isActive,
+    drillOnlyDone,
     get scoped() { return scoped ? { ...scoped, inserted: scoped.inserted.slice() } : null; },
     get kc() { return kcId; },
     get subtopicKeys() { return subtopicKeys.slice(); },

@@ -7,6 +7,8 @@ Writes three things, each owned wholesale for its `leetcode.*` / lc-1 slice:
     has at least one drill (a drill-less concept in a standalone course would
     leave the picker a frontier node it can never serve).
   - lessons/qmatrix_tags.json: question id -> its one target concept.
+Then export_concepts.py rewrites lessons/leetcode/concepts.json (the graph's
+concept pages) from concept_notes.md and the drills just written.
 
 Ids: lessons/leetcode/ids.json maps problem id -> question id, append-only
 from ID_FLOOR, so a re-export never renumbers a drill a learner has answered.
@@ -25,6 +27,7 @@ import json
 import sys
 from pathlib import Path
 
+import export_concepts
 from drill_format import clock_secs, statement_markdown
 
 HERE = Path(__file__).resolve().parent
@@ -282,6 +285,12 @@ def _sync_atoms(kept: list[dict], rows: list[dict]) -> None:
 def main() -> int:
     graph = json.loads((COURSE_DIR / "patterns.json").read_text())["kcs"]
     titles = {k["id"]: k["title"] for k in graph}
+    # Checked before anything is written: failing after would leave new drills
+    # beside concept pages describing the old ones.
+    problem = export_concepts.notes_problem(graph)
+    if problem:
+        print(problem, file=sys.stderr)
+        return 1
     bank = [json.loads(line) for line in open(COURSE_DIR / "bank.jsonl")]
     ids_path = OUT_DIR / "ids.json"
     ids = json.loads(ids_path.read_text()) if ids_path.exists() else {}
@@ -329,7 +338,8 @@ def main() -> int:
     dropped = [k["id"] for k in graph if k["id"] not in served]
     print(f"{len(rows)} drills -> {OUT_DIR / 'problems.json'}; skipped {len(skipped)}: {skipped[:20]}")
     print(f"{len(kept)} concepts registered; no drills (left out): {dropped}")
-    return 0
+    # The Knowledge Graph's concept pages quote drill counts and examples.
+    return export_concepts.main()
 
 
 if __name__ == "__main__":
