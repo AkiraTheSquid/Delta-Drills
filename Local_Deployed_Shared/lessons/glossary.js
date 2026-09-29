@@ -370,6 +370,22 @@ window.DD_GLOSSARY = {
       kc: "math.determinants-invertibility",
       def: "A single number from a square matrix; for 2×2 it is ad − bc. Nonzero means every right-hand side has exactly one solution; zero means none or infinitely many.",
     },
+    /* Seth on math.barycentric-coordinates, 2026-09-29: "nondegenerate
+       triangle — you need to add a link to the concept for this". No page
+       defines the phrase; what it means is independence of the two edges,
+       which linear-combinations teaches (and is that page's prerequisite). */
+    {
+      term: "nondegenerate triangle",
+      aliases: ["nondegenerate triangles", "degenerate triangle", "degenerate triangles"],
+      kc: "math.linear-combinations",
+      def: "A triangle whose three corners are not on one line. Its edges B − A and C − A are linearly independent, so they span a plane and every point of it has exactly one pair of weights u, v. A degenerate triangle has collapsed to a segment or a point.",
+    },
+    {
+      term: "barycentric coordinates",
+      aliases: ["barycentric coordinate", "barycentric weights"],
+      kc: "math.barycentric-coordinates",
+      def: "Three weights (1 − u − v, u, v) on a triangle's corners A, B, C that add to one and rebuild a point as their weighted sum. All three nonnegative means the point is in the filled triangle.",
+    },
   ],
 };
 

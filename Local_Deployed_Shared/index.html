@@ -64,6 +64,7 @@
   <link rel="stylesheet" href="styles/courses/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/infotips.css?v=2" />
   <link rel="stylesheet" href="styles/jargon.css?v=1" />
+  <link rel="stylesheet" href="styles/lesson-figures.css?v=1" />
   <!-- The hamburger menu the tab strip moves into below 900px. Before
        responsive.css, like every other feature stylesheet. -->
   <link rel="stylesheet" href="styles/nav-drawer.css?v=5" />
@@ -2349,8 +2350,9 @@ t.manual_seed(0)
        injected later is re-derived from the DOM by infotips.js's observer. -->
   <script src="infotips-registry.js?v=16"></script>
   <script src="infotips.js?v=2"></script>
-  <script src="lessons/glossary.js?v=3"></script>
-  <script src="jargon.js?v=2"></script>
+  <script src="lessons/glossary.js?v=4"></script>
+  <script src="jargon.js?v=3"></script>
+  <script src="lesson-figures.js?v=1"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
        must already have captured (and dotted) the tabs where the markup put
@@ -2407,7 +2409,7 @@ t.manual_seed(0)
   <!-- LeetCode (lesson-less) bubbles' concept pages. BEFORE lesson-graph.js,
        which loads them while it builds the graph. -->
   <script src="concept-graph/lessonless-concepts.js?v=1"></script>
-  <script src="concept-graph/lesson-graph.js?v=38" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=39" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->

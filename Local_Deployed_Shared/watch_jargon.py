@@ -144,9 +144,19 @@ def check_jargon_links():
     )
 
     # ── the two rules that keep it a signpost, not wallpaper ───────
-    assert "used.has(rec.kc)" in engine, (
-        "only the FIRST mention of a concept per section may be linked — ten "
+    # Per TERM since 2026-09-29: two terms can share a teaching page, and
+    # keying on the concept left "nondegenerate triangle" bare because "linear
+    # combinations" (same page) came first in the paragraph.
+    assert "used.has(rec.term)" in engine, (
+        "only the FIRST mention of a term per section may be linked — ten "
         "underlined 'tensor's in one lesson is wallpaper"
+    )
+    assert "span.dataset.jargonTerm = rec.term" in engine, (
+        "each link must carry its term: the popup and the per-term rule read it"
+    )
+    assert "t.term === el.dataset.jargonTerm" in engine, (
+        "the popup must resolve the term the learner pointed at: looked up by "
+        "concept, a second term on the same page shows the first term's definition"
     )
     assert "rec.kc === selfKc" in engine and "_selfKc" in engine, (
         "a term must not be linked inside the lesson that teaches it: the "

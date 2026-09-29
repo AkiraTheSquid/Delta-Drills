@@ -18,13 +18,17 @@ This lesson builds on linear combinations and coordinates. Here the vectors are 
 
 For a nondegenerate triangle with vertices $A$, $B$, $C$, begin at $A$ and combine two edges. Expanding regroups the same point as a weighted sum of vertices:
 $$P=A+u(B-A)+v(C-A)=(1-u-v)A+uB+vC.$$
-These three vertex weights are barycentric coordinates. They add to one.
+These three vertex weights are the **barycentric coordinates** of $P$. They add to one.
 
 The point belongs to the filled triangle exactly when all three weights are nonnegative:
 $$u\ge0,\qquad v\ge0,\qquad u+v\le1.$$
-Independent bounds $u\le1$ and $v\le1$ admit the whole parallelogram. The sum bound cuts away the half beyond edge $BC$.
+Separate bounds $0\le u\le1$ and $0\le v\le1$ admit the whole parallelogram. The sum bound cuts away the half beyond edge $BC$.
 
 Boundaries count: $u=0$ is edge $AC$, $v=0$ is edge $AB$, and $u+v=1$ is edge $BC$, provided the other weights are nonnegative. Vertices are special boundary cases. For a triangle in 3D, the weights describe points of its plane, not every point in space.
+
+```figure barycentric
+Interactive figure (in the app): click or drag P around triangle ABC to read u, v and the three weights; the dashed parallelogram is what the separate bounds on u and v allow.
+```
 
 With $u=v=0.6$ the weight on $A$ is $1-1.2=-0.2$:
 

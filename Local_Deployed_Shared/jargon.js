@@ -75,6 +75,7 @@
     "code", "pre", "kbd", "samp", "script", "style", "textarea",
     "a", "button", "h1", "h2", "h3", "h4", "h5", "h6",
     ".dd-jargon", ".dd-jargon-pop", ".nbv-cell", ".katex",
+    ".dd-figure", // an interactive figure (lesson-figures.js): SVG text is not prose
   ].join(",");
 
   const MAX_LINKS_PER_SCOPE = 12;   // a page, not a dictionary
@@ -181,14 +182,20 @@
     while ((m = RE.exec(text)) !== null) {
       if (made >= budget) break;
       const rec = byForm.get(m[0].toLowerCase());
-      // Only the FIRST mention of a concept in a section is linked. Ten
+      // Only the FIRST mention of a term in a section is linked. Ten
       // underlines on ten "tensor"s is wallpaper; one is a signpost.
-      if (!rec || used.has(rec.kc) || rec.kc === selfKc) continue;
-      used.add(rec.kc);
+      // Keyed on the TERM, not the concept: two terms can share a teaching
+      // page ("linear combination" and "nondegenerate triangle" both point
+      // at math.linear-combinations), and keying on the concept left the
+      // second one bare in the one paragraph that needed it (Seth on
+      // math.barycentric-coordinates, 2026-09-29).
+      if (!rec || used.has(rec.term) || rec.kc === selfKc) continue;
+      used.add(rec.term);
       if (m.index > cursor) frag.appendChild(document.createTextNode(text.slice(cursor, m.index)));
       const span = document.createElement("span");
       span.className = "dd-jargon";
       span.dataset.jargonKc = rec.kc;
+      span.dataset.jargonTerm = rec.term;
       span.setAttribute("role", "link");
       span.setAttribute("tabindex", "0");
       span.setAttribute("aria-label", rec.term + " — what this means");
@@ -227,7 +234,7 @@
     // Belt and braces: if anything ever hands this function a region that is
     // already partly decorated, those concepts are spent before it starts.
     const used = new Set(
-      [...root.querySelectorAll(".dd-jargon")].map((el) => el.dataset.jargonKc),
+      [...root.querySelectorAll(".dd-jargon")].map((el) => el.dataset.jargonTerm),
     );
     let budget = MAX_LINKS_PER_SCOPE;
     // Collected up front: replaceChild mutates the tree the walker is walking.
@@ -373,7 +380,10 @@
 
   const openPop = (el, { fromKeyboard = false } = {}) => {
     const kc = el.dataset.jargonKc;
-    const rec = GLOSSARY.terms.find((t) => t.kc === kc);
+    // By term: a concept can teach several terms, and the first term filed
+    // under the concept is not the word the learner pointed at.
+    const rec = GLOSSARY.terms.find((t) => t.term === el.dataset.jargonTerm)
+      || GLOSSARY.terms.find((t) => t.kc === kc);
     if (!rec) return;
     buildPop();
     // Moving the pointer straight from one term to the next never closes the
