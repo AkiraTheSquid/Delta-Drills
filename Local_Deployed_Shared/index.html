@@ -70,9 +70,8 @@
   <link rel="stylesheet" href="styles/nav-drawer.css?v=5" />
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
-  <link rel="stylesheet" href="styles/xp.css?v=3" />
-  <link rel="stylesheet" href="styles/xp-panel.css?v=6" />
-  <link rel="stylesheet" href="styles/xp-group.css?v=4" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=7" />
+  <link rel="stylesheet" href="styles/xp-group.css?v=5" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -120,8 +119,8 @@
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <!-- The Learner Home: the two-column idle card, and the course
        question's tiles (what survived diagnostic.css, 2026-09-26). -->
-  <link rel="stylesheet" href="styles/practice/home.css?v=5" />
-  <link rel="stylesheet" href="styles/concept-choice.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/home.css?v=6" />
+  <link rel="stylesheet" href="styles/concept-choice.css?v=3" />
   <!-- The Groups tab (restored 2026-09-27): member rows + activity bars, then
        the board. groups-rows.css FIRST: groups.css overrides it. -->
   <link rel="stylesheet" href="styles/groups-rows.css?v=1" />
@@ -203,7 +202,7 @@
          strip's position moved with whatever sat beside it. The topbar is a
          `1fr auto 1fr` grid now (styles/layout.css) — two EQUAL side columns
          with the strip in an auto column between them, so the strip is
-         centred on the viewport no matter how wide the level pill grows.
+         centred on the viewport no matter how wide the left side grows.
          Seth's call, 2026-08-23. Each side is a real element rather than a
          bare child because a grid places children by cell, and the left side
          holds two controls. -->
@@ -216,32 +215,9 @@
               aria-label="Menu" aria-expanded="false" aria-controls="nav-drawer">
         <span class="nav-toggle-bars" aria-hidden="true"></span>
       </button>
-      <!-- LEVEL PILL — and the progress bar. The chip colours in from the left
-           as the learner works; there is no separate bar anywhere. FAR LEFT
-           (Seth, 2026-08-23): it is the one piece of state the learner owns, and
-           the corner is where a reader's eye starts. The brand line that used to
-           sit here is gone — it said the app's name to someone already inside
-           the app — and `.logo`, the empty spacer that survived it, went with
-           the flex layout the spacer existed to prop up.
-
-           The label is written TWICE on purpose. `.dd-level-text--on` is the
-           copy that sits ON the fill, in `--on-accent`, clipped to the filled
-           width; the base layer keeps the normal colours for the part of the
-           pill the fill has not reached. One text colour cannot be legible on
-           both a near-transparent chip and a saturated gradient across three
-           themes — see styles/xp.css. The duplicate is aria-hidden so the
-           aria-live region announces the level once, not twice. -->
-      <div class="dd-level" id="dd-level" aria-live="polite">
-        <span class="dd-level-fill" aria-hidden="true"></span>
-        <span class="dd-level-text">
-          <span class="dd-level-label">Level</span>
-          <span class="dd-level-num" id="dd-level-num">1</span>
-        </span>
-        <span class="dd-level-text dd-level-text--on" aria-hidden="true">
-          <span class="dd-level-label">Level</span>
-          <span class="dd-level-num" id="dd-level-num-on">1</span>
-        </span>
-      </div>
+      <!-- 🪦 THE LEVEL PILL lived here (the `Level N` chip that filled as a
+           progress bar) until Seth, 2026-09-29: "remove the leveling system".
+           The Learner Home shows the course and its percentage instead. -->
     </div>
     <!-- 🔴 NO ⓘ DOTS IN HERE ANY MORE (Seth, 2026-08-23: "there's information
          icons literally everywhere"). Each tab used to carry a sibling
@@ -321,8 +297,8 @@
          writes `#question-number` and `practice/stage-ladder.js` still reads it
          back, and the ladder's own render is what feeds this chip.
 
-         🔴 THE LABEL IS WRITTEN TWICE, exactly as the level pill on the left
-         writes its own — see the long note there and in styles/xp.css. One text
+         🔴 THE LABEL IS WRITTEN TWICE (the retired level pill's trick, 2026-08-23).
+         One text
          colour cannot be legible on both a near-transparent chip and a
          saturated fill across three themes, so the base layer is coloured for
          the empty track and the clipped copy is coloured for the fill. The copy
@@ -1813,31 +1789,27 @@
 
            So what is left to show here is progress, and one way back in. -->
       <!-- THE LEARNER HOME — one screen, two columns (Seth, 2026-09-26:
-           "simplify it to fit onto a single page"; 2026-09-28: "on the left
-           should be a singular graph that you can switch in between ... and
-           a list of candidate concepts to work on"). Left: ONE graph with its
-           Time / Graph / Measure dropdowns, measured learning under it (today's
-           XP, level, course, finish, target). Right: Practice with AI, the
-           concepts to choose from instead, and the time multiplier. The copy
-           names no course: the app teaches whatever graph it is given. -->
+           "simplify it to fit onto a single page"). Left, since 2026-09-29
+           ("in the top left it says which course you're in, and to the right
+           of the left column it displays your percentage completion ... it
+           doesn't have all the fancy drop downs: it just has the bar graph
+           with your learning every day and above it it says how much exp you
+           gained"): the course and its percentage, the week's XP, the daily
+           bars. Right: Practice with AI, the concepts to choose from instead
+           with the XP one problem on each would earn, and the time multiplier. -->
       <div class="session-setup" id="practice-session-setup">
         <div class="home-main">
-          <!-- THE GRAPH, drawn by practice/xp-group-view.js for practice/xp-panel.js:
-               one chart and its dropdowns — or, in a study group, one row per
-               member. -->
-          <div class="home-graphs is-empty" id="learner-xp-graphs"></div>
-
-          <!-- MEASURED LEARNING (Seth, 2026-09-26). XP is a gain in the model's
-               knowledge of each concept, the same for every learner. Today's
-               XP, level, course and finish, and the target, built by
-               practice/xp-panel.js from /api/practice/xp (app/learning_xp.py)
-               via the `delta:xp-summary` event xp.js broadcasts for the level
-               pill — one read feeds both. `.is-empty` = no session or the read
-               failed: the card goes, and so does the graph above it. -->
-          <section class="learner-xp is-empty" id="learner-xp" aria-labelledby="learner-xp-head">
-            <h2 class="learner-xp-head" id="learner-xp-head">Measured learning</h2>
+          <!-- THE COURSE AND THE WEEK, built by practice/xp-panel.js from
+               /api/practice/xp (app/learning_xp.py) via the `delta:xp-summary`
+               event xp.js broadcasts. XP is a gain in the model's knowledge of
+               each concept, the same for every learner. `.is-empty` = no
+               session or the read failed: the header goes, and so do the bars. -->
+          <section class="learner-xp is-empty" id="learner-xp" aria-label="Your course">
             <div class="xp-panel-body"></div>
           </section>
+          <!-- THE BARS, drawn by practice/xp-group-view.js for practice/xp-panel.js:
+               your week of daily XP — or, in a study group, one row per member. -->
+          <div class="home-graphs is-empty" id="learner-xp-graphs"></div>
         </div>
 
         <div class="home-choice">
@@ -1853,9 +1825,9 @@
           <!-- OR CHOOSE A CONCEPT (Seth, 2026-09-28). practice/concept-choice.js
                fills it from /api/practice/concept-candidates
                (backend app/concept_choice.py): five concepts the algorithm
-               would serve, its own pick among them, each with the learner's
-               knowledge of it as XP out of 80 on the topbar concept pill's
-               bar. A chosen concept is practised until it is learned, then
+               would serve, its own pick among them, each with the XP one
+               solved problem on it would earn (2026-09-29) over the learner's
+               knowledge of it on the topbar concept pill's bar. A chosen concept is practised until it is learned, then
                this screen comes back; "not ready" says so in a dialog. -->
           <section class="concept-choice" id="concept-choice" hidden aria-labelledby="concept-choice-head">
             <h2 class="concept-choice-head" id="concept-choice-head">Or choose a concept</h2>
@@ -2296,7 +2268,7 @@ t.manual_seed(0)
        key is derived from the signed-in email, so the listener has to be
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
-  <script src="xp.js?v=4"></script>
+  <script src="xp.js?v=5"></script>
   <script src="solo-route.js?v=7"></script>
   <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
        second column — a three-state Tiptap checklist per day, ported from
@@ -2536,15 +2508,13 @@ t.manual_seed(0)
   <!-- THE IDLE SCREEN. session-idle.js proxies Continue practicing to the
        hidden resume/start buttons — AFTER timer.js, whose
        `hasPausedSession()` decides which of the two the one button means.
-       xp-panel.js paints measured learning; xp-group-view.js draws the one
-       graph above it and its dropdowns (xp-charts.js draws the chart), or in
+       xp-panel.js paints the course and the week's XP; xp-group-view.js
+       draws the daily bars under them (xp-charts.js draws the chart), or in
        a study group one row per member. -->
   <script src="practice/session-idle.js?v=11"></script>
-  <script src="practice/xp-charts.js?v=5"></script>
-  <script src="practice/xp-target-drag.js?v=1"></script>
-  <script src="practice/xp-solved-chart.js?v=1"></script>
-  <script src="practice/xp-group-view.js?v=4"></script>
-  <script src="practice/xp-panel.js?v=9"></script>
+  <script src="practice/xp-charts.js?v=6"></script>
+  <script src="practice/xp-group-view.js?v=5"></script>
+  <script src="practice/xp-panel.js?v=10"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
@@ -2602,7 +2572,7 @@ t.manual_seed(0)
   <!-- The Learner Home's "or choose a concept" list. After kc-practice.js
        (startRoute) and exercise-session.js (whose onEnd announces the end of
        a chosen concept's block as `dd-exercise-end`). -->
-  <script src="practice/concept-choice.js?v=2"></script>
+  <script src="practice/concept-choice.js?v=3"></script>
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
        concept pill which section the reader is in. -->

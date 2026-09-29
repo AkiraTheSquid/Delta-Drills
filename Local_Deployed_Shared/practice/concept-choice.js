@@ -14,9 +14,18 @@
    The list and every decision in it are the backend's
    (GET /api/practice/concept-candidates, app/concept_choice.py): five
    concepts the algorithm would serve, its own pick first, each with the
-   learner's knowledge K drawn as XP out of 80 over a slim copy of the
-   topbar concept pill's meter (styles/concept-choice.css). This file draws
-   them and starts a block.
+   XP one solved problem on it would earn and the learner's knowledge K on
+   a slim copy of the topbar concept pill's meter (styles/concept-choice.css).
+   This file draws them and starts a block.
+
+   XP PER PROBLEM (Seth, 2026-09-29: "not all concepts give the same amount
+   of exp right? ... on the far right, make it such that it displays the
+   amount of exp you would get from solving that sort of problem using the
+   same layout, but with different numbers"): the server's `xp_per_problem`
+   (app/learning_xp.py::solve_xp) — the model's expected gain from one
+   solved problem, priced at the concept's worth, to the nearest 5. The
+   figure sits where "57 / 80 XP" did; the meter under the row is still the
+   concept's knowledge toward READY.
 
    A CHOSEN CONCEPT runs the exercise dialog's route with `kind: "choice"`
    (practice/ready-route.js → POST /api/practice/concept-route): the concept
@@ -49,7 +58,7 @@
     return n;
   };
 
-  let data = null; // {items, ready_at, xp_per_concept}
+  let data = null; // {items, ready_at}
   let busy = false;
   let seq = 0;
 
@@ -88,17 +97,19 @@
 
   /* A row is a ledger line (Seth, 2026-09-28, on v1 — the full topbar pill
      per row, label written on the fill: "this just doesn't look that good").
-     The name gets its own line and is never cut; the XP is a figure in the
-     home's numeral face; the pill stays as the meter under them — its track,
-     its fill, its colours — slimmed to a rule, so no word straddles a seam. */
-  function row(it, full, paused, i) {
-    const xp = Math.max(0, Math.min(full, Number(it.xp) || 0));
+     The name gets its own line and is never cut; the XP one problem earns
+     is a figure in the home's numeral face; the pill stays as the meter
+     under them — its track, its fill, its colours — slimmed to a rule, so no
+     word straddles a seam. */
+  function row(it, readyAt, paused, i) {
+    const xp = Math.max(0, Math.round(Number(it.xp_per_problem) || 0));
+    const known = Math.max(0, Math.min(1, (Number(it.k) || 0) / readyAt));
     const b = el("button", `cc-row${it.recommended ? " is-ai" : ""}${paused ? " is-paused" : ""}`);
     b.type = "button";
     b.style.setProperty("--cc-i", i);
     b.setAttribute(
       "aria-label",
-      `${paused ? "Continue" : "Practice"} ${it.title} — ${xp} of ${full} XP` +
+      `${paused ? "Continue" : "Practice"} ${it.title} — ${xp} XP a problem, ${Math.round(known * 100)}% learned` +
         `${it.recommended ? ", the AI's pick" : ""}${it.answers ? "" : ", not tried yet"}`,
     );
     // What the row is, before its name: the AI's pick, the paused block.
@@ -112,10 +123,10 @@
     }
     const sub = [it.lesson_title, it.answers ? "" : "not tried yet"].filter(Boolean).join(" · ");
     const figure = el("span", "cc-figure");
-    figure.append(el("span", "cc-xp", String(xp)), el("span", "cc-of", `/ ${full} XP`));
+    figure.append(el("span", "cc-xp", `+${xp}`), el("span", "cc-of", "XP / problem"));
     const bar = el("span", "cc-bar");
     bar.setAttribute("aria-hidden", "true");
-    bar.style.setProperty("--cc-pct", `${(xp / full) * 100}%`);
+    bar.style.setProperty("--cc-pct", `${known * 100}%`);
     bar.appendChild(el("span", "cc-bar-fill"));
     b.append(el("span", "cc-title", it.title), figure, el("span", "cc-sub", sub), bar);
     b.addEventListener("click", () => choose(it, paused));
@@ -129,9 +140,9 @@
     if (!r) return;
     const items = data?.items || [];
     r.hidden = !items.length;
-    const full = Number(data?.xp_per_concept) || 80;
+    const readyAt = Number(data?.ready_at) || 0.8;
     const paused = pausedKc();
-    r.querySelector(".cc-list")?.replaceChildren(...items.map((it, i) => row(it, full, it.kc === paused, i)));
+    r.querySelector(".cc-list")?.replaceChildren(...items.map((it, i) => row(it, readyAt, it.kc === paused, i)));
   }
 
   const fail = (text) => {
@@ -159,7 +170,7 @@
       resumeBtn.click();
       return;
     }
-    // Already learned (only the AI's pick is listed at 80/80): nothing to
+    // Already learned (only the AI's pick is listed at READY): nothing to
     // route — the algorithm's own queue is what practising it means.
     if (Number(it.k) >= (Number(data?.ready_at) || 0.8)) {
       document.getElementById("session-continue-btn")?.click();

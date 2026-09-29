@@ -2,7 +2,8 @@
 """XP = measured learning (app/learning_xp.py, 2026-09-26).
 
 Covers Seth's rules for the yardstick:
-  * the course costs the same XP for every learner;
+  * the course costs the same XP for every learner, each concept its worth
+    (more for what the course builds on; 2026-09-29), and there are no levels;
   * explore probes tell the MODEL where the learner is — a correct probe is
     starting credit, not XP;
   * 5 of 7 after the lesson is more learning than 1 of 6;
@@ -37,6 +38,9 @@ def check(name, cond, detail=""):
 UTC = timezone.utc
 SCOPE = X.scope_kcs()
 CODE_KC = next(k for k in SCOPE if k.startswith("torch."))
+# The thresholds below were set when every concept paid 80; since 2026-09-29
+# a concept pays its worth, so they scale by CODE_KC's.
+F = X.worth(CODE_KC) / 80
 START = datetime(2026, 9, 1, 15, 0, tzinfo=UTC)
 
 
@@ -66,8 +70,11 @@ def seq(day, pattern, probe=False, gap_min=6):
 
 print("course price")
 empty = run(state(), START)
-check("course = concepts × 80", empty["course"]["total_xp"] == len(SCOPE) * 80,
+check("course = the sum of its concepts' worth", empty["course"]["total_xp"] == sum(X.worth(k) for k in SCOPE),
       f'{empty["course"]["total_xp"]} for {len(SCOPE)} concepts')
+check("a foundation is worth more than a leaf",
+      X.worth(min(SCOPE, key=X.worth)) < X.worth(max(SCOPE, key=X.worth)))
+check("no levels", not {"level", "into", "need"} & set(empty))
 strong = run(state(level="strong"), START)
 check("same price for a strong learner", strong["course"]["total_xp"] == empty["course"]["total_xp"])
 check("strong prior = more starting knowledge, not XP",
@@ -76,19 +83,19 @@ check("strong prior = more starting knowledge, not XP",
 print("explore vs exploit")
 now = START + timedelta(hours=3)
 probe_day = run(state(probes=[(CODE_KC, START + timedelta(minutes=5 * i), True) for i in range(3)]), now)
-check("3 correct explore probes: little XP", probe_day["today"]["xp"] < 10, f'{probe_day["today"]["xp"]} XP')
+check("3 correct explore probes: little XP", probe_day["today"]["xp"] < 10 * F, f'{probe_day["today"]["xp"]} XP')
 check("…but the model now thinks the learner knows more",
-      probe_day["knowledge"] > empty["knowledge"] + 30,
+      probe_day["knowledge"] > empty["knowledge"] + 30 * F,
       f'{probe_day["knowledge"]} vs {empty["knowledge"]}')
 learn_day = run(state({CODE_KC: seq(START, "0011111")}), now)
-check("lesson + 5 of 7 after two misses: real XP", learn_day["today"]["xp"] > 40, f'{learn_day["today"]["xp"]} XP')
+check("lesson + 5 of 7 after two misses: real XP", learn_day["today"]["xp"] > 40 * F, f'{learn_day["today"]["xp"]} XP')
 one_of_six = run(state({CODE_KC: seq(START, "000001")}), now)
 five_of_seven = run(state({CODE_KC: seq(START, "1101101")}), now)
 check("1 of 6 earns less than 5 of 7", one_of_six["today"]["xp"] < five_of_seven["today"]["xp"],
       f'{one_of_six["today"]["xp"]} < {five_of_seven["today"]["xp"]}')
 single = run(state({CODE_KC: seq(START, "1")}), now)
-check("one correct answer is not a whole concept", single["today"]["xp"] < 60, f'{single["today"]["xp"]} XP')
-check("…a concept caps at 80 XP", learn_day["today"]["xp"] <= 80.0 + 1e-6)
+check("one correct answer is not a whole concept", single["today"]["xp"] < 60 * F, f'{single["today"]["xp"]} XP')
+check("…a concept caps at its worth", learn_day["today"]["xp"] <= X.worth(CODE_KC) + 1e-6)
 
 
 def logged_only(uid, rows, probe, sources=None):
@@ -107,7 +114,7 @@ def logged_only(uid, rows, probe, sources=None):
 evicted_probes = run(logged_only("xp-evicted-probe", seq(START, "111"), True), now)
 evicted_exploit = run(logged_only("xp-evicted-exploit", seq(START, "111"), False), now)
 check("a probe the ladder window dropped is still a probe (attempt-log flag)",
-      evicted_probes["today"]["xp"] < 10 < evicted_exploit["today"]["xp"],
+      evicted_probes["today"]["xp"] < 10 * F < evicted_exploit["today"]["xp"],
       f'{evicted_probes["today"]["xp"]} vs {evicted_exploit["today"]["xp"]} XP')
 # Rows from before the probe flag (2026-09-19..26): the log recorded whether
 # the lesson had ever been read. Never read = measured what they came with.
@@ -115,7 +122,7 @@ unread = run(logged_only("xp-old-unread", seq(START, "111"), None, {"days_since_
 read = run(logged_only("xp-old-read", seq(START, "111"), None, {"days_since_read": 0.2}), now)
 pre_field = run(logged_only("xp-old-prefield", seq(START, "111"), None), now)
 check("an unflagged old answer made before the lesson was ever read is a probe",
-      unread["today"]["xp"] < 10 < read["today"]["xp"],
+      unread["today"]["xp"] < 10 * F < read["today"]["xp"],
       f'{unread["today"]["xp"]} vs {read["today"]["xp"]} XP')
 check("…and one older than that field (before explore probes existed) is exploit",
       abs(pre_field["today"]["xp"] - evicted_exploit["today"]["xp"]) < 1e-6)
@@ -175,8 +182,7 @@ placed = state(probes=[(CODE_KC, START + timedelta(minutes=5 * i), True) for i i
 check("placement credit fades with time like any answer",
       run(placed, START + timedelta(days=120))["knowledge"] < probe_day["knowledge"])
 
-print("levels and targets")
-check("level = 1 + earned // 80", relearned["level"] == 1 + int(relearned["earned"] // 80))
+print("targets")
 check("date target spreads today's-open remainder",
       X.daily_target({"mode": "date", "date": "2026-09-10"}, 1000.0, date(2026, 9, 1)) == 100)
 check("date target on the day itself asks for all of it",
@@ -217,7 +223,7 @@ app.dependency_overrides[auth.get_current_user] = lambda: api_user
 client = TestClient(app)
 tz = "tz_offset=300&tz_name=America/Chicago"
 got = client.get(f"/api/practice/xp?{tz}")
-check("GET /xp answers for a new learner", got.status_code == 200 and got.json()["level"] == 1
+check("GET /xp answers for a new learner", got.status_code == 200 and "level" not in got.json()
       and got.json()["target"] is None, str(got.status_code))
 check("unknown zone name falls back to the offset",
       client.get("/api/practice/xp?tz_offset=0&tz_name=Not/AZone").status_code == 200)

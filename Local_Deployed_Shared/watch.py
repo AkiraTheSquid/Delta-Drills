@@ -290,11 +290,13 @@ def check_invariants():
         "#account-menu is absolutely positioned against .topbar-side--right; "
         "without the containing block it hangs off the viewport"
     )
-    level_pos = index_html.find('id="dd-level"')
+    # The level pill is retired (Seth, 2026-09-29: "remove the leveling system").
+    assert 'id="dd-level"' not in index_html, "the retired level pill is back in the topbar"
+    left_pos = index_html.find('class="topbar-side topbar-side--left"')
     mid_pos = index_html.find('<div class="topbar-mid">')
     acct_pos = index_html.find('id="topbar-account"')
-    assert -1 not in (level_pos, mid_pos, acct_pos), "topbar lost the pill, the middle cell or the account control"
-    assert level_pos < mid_pos < acct_pos, (
+    assert -1 not in (left_pos, mid_pos, acct_pos), "topbar lost its left side, the middle cell or the account control"
+    assert left_pos < mid_pos < acct_pos, (
         "topbar source order changed. It is placed by grid-column now, but "
         "DOM order is still the reading order and the tab order"
     )

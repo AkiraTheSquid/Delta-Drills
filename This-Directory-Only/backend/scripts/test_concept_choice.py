@@ -7,7 +7,8 @@ is learned (back to the Learner Home) or the model says the learner is not
 ready for it. Covers:
 
   * the list: at most five, the AI's pick first and flagged, every entry on
-    the knowledge frontier, ability as XP out of 80;
+    the knowledge frontier, ability as K, and the XP one solved problem would
+    earn on the order of 5-15, a multiple of 5 (2026-09-29);
   * the route serves the chosen concept itself, never a prerequisite, and never
     asks a question twice in one session;
   * three right answers → done, "ready" (K crossed the 80% line);
@@ -66,7 +67,10 @@ check("the AI's pick is first and the only one flagged",
       items[0]["recommended"] and not any(i["recommended"] for i in items[1:]))
 check("every entry is on the frontier", all(i["kc"] in front for i in items),
       str([i["kc"] for i in items if i["kc"] not in front]))
-check("ability is XP out of 80", all(0 <= i["xp"] <= 80 for i in items) and got["xp_per_concept"] == 80)
+check("ability is K in [0, 1]", all(0 <= i["k"] <= 1 for i in items))
+check("XP per problem: a multiple of 5, a problem's worth not a concept's",
+      all(i["xp_per_problem"] % 5 == 0 and 0 < i["xp_per_problem"] <= i["worth"] for i in items),
+      str([(i["kc"], i["xp_per_problem"], i["worth"]) for i in items]))
 KC = items[0]["kc"]
 off = next(kc for kc in kc_graph._registry() if kc not in {i["kc"] for i in items})
 kept = concept_choice.candidates(st, keep=off)["items"]

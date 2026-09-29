@@ -12,11 +12,24 @@ MORE problems for the same XP, never a different price for the course.
 
 THE UNIT
 --------
-1 XP = one percentage point of knowledge on one concept, counted up to the
-READY line (80%). The course is every concept in the ARENA graph through 0.2,
-prerequisites included (`study_group_progress.sections()`), so the whole
-course costs `len(scope) × 80` XP for everyone. A level is one concept's worth:
-LEVEL_XP = 80.
+Knowledge of a concept is counted up to the READY line (80%), and reaching
+it pays the concept's WORTH. Until 2026-09-29 every concept was worth 80 XP
+(one point per percentage point) and a level was one concept. Seth,
+2026-09-29: "not all concepts are equally important. some should give more
+experience than others", a problem should read "on the order of magnitude of
+like 10XP or 15 xp or 5xp ... rather than the current 80xp", and "remove the
+leveling system". So:
+
+  worth(c) = 10 + 5·log2(1 + descendants(c)), to the nearest 5, in 10..40
+
+where descendants is the concept's coreness (`kc_graph._closure`, the value
+the picker and placement already rank by): what the course builds on it. A
+leaf is worth 10, a concept three others need 20, the foundations 40. The
+same for every learner — Graph Settings weights are the learner's and never
+touch the price. XP from a concept = worth × min(K, READY) / READY, so a
+problem earns roughly 5–15 XP (`solve_xp`). The course is every concept in the
+ARENA graph through 0.2, prerequisites included
+(`study_group_progress.sections()`), and costs Σ worth for everyone. No levels.
 
 KNOWLEDGE OF ONE CONCEPT
 ------------------------
@@ -56,7 +69,7 @@ reported as provisional for the same reason.
 
 DAILY XP
 --------
-XP_day = Σ_c 100 · max(0, min(K_c(close), READY) − min(K_c(open), READY))
+XP_day = Σ_c worth(c)/READY · max(0, min(K_c(close), READY) − min(K_c(open), READY))
 
 Floored per concept per day: forgetting never removes XP already earned, and
 relearning what a break took away (R back up) earns it again — Seth: FSRS
@@ -64,7 +77,7 @@ still decays, but progress toward the goal is still rewarded. `remaining` is
 read off today's K, so forgetting raises it honestly. What CAN move a past
 day's XP is new evidence: the smoothing re-reads the whole chain, so a run of
 later misses can lower the belief that a concept was learned on Tuesday, and
-Tuesday's XP (and the level) with it. That is the model correcting itself,
+Tuesday's XP with it. That is the model correcting itself,
 not the learner losing anything, and it is why today is provisional.
 
 STATELESS, like `memory_model`: replayed from the ladder, the attempt log and
@@ -74,14 +87,17 @@ the placement probes on every read. Nothing here writes practice state except
 from __future__ import annotations
 
 import math
+from functools import lru_cache
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 
 from app import attempt_log, bkt_mastery, kc_explore, kc_renames, memory_model
 
 READY = 0.80
-XP_PER_CONCEPT = int(round(READY * 100))
-LEVEL_XP = XP_PER_CONCEPT
+READY_PCT = int(round(READY * 100))
+WORTH_MIN, WORTH_MAX, WORTH_STEP = 10, 40, 5
+# The course's name on the Learner Home (app/course_registry.py's label).
+COURSE_NAME = "ARENA"
 
 # Learning rates, P(unlearned → learned), per opportunity. v0 values, not a
 # fit — fit from pooled logs with the rest of the planner model. Anchored on
@@ -123,6 +139,24 @@ def scope_kcs() -> List[str]:
     for area in study_group_progress.sections():
         out.extend(area["kcs"])
     return list(dict.fromkeys(out))
+
+
+@lru_cache(maxsize=1)
+def _worths() -> Dict[str, int]:
+    from app import kc_graph  # the registry is heavy; only on use
+    descendants, _depth = kc_graph._closure()
+    return {kc: worth_of(n) for kc, n in descendants.items()}
+
+
+def worth_of(descendants: int) -> int:
+    """XP a concept with this many descendants is worth at READY (see THE UNIT)."""
+    raw = WORTH_MIN + 5.0 * math.log2(1 + max(0, descendants))
+    return int(min(WORTH_MAX, max(WORTH_MIN, WORTH_STEP * round(raw / WORTH_STEP))))
+
+
+def worth(kc: str) -> int:
+    """A concept outside the registry is priced as a leaf."""
+    return _worths().get(kc, WORTH_MIN)
 
 
 def _prior(user_state) -> float:
@@ -280,7 +314,8 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
 
     `also`: concepts outside the course whose K is wanted too (the Learner
     Home's concept list, app/concept_choice.py). They are modelled and
-    returned in "also_now"; no XP total counts them."""
+    returned in "also_now" (K) and "also_state" (what `solve_xp` needs); no
+    XP total counts them."""
     now = now or datetime.now(timezone.utc)
     scope = scope_kcs()
     in_scope = set(scope) | set(also)
@@ -374,30 +409,53 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
 
     smoothed = {kc: _smooth(prior, o) for kc, o in obs.items() if o}
 
-    def knowledge(b: int, kc: str) -> float:
+    def belief(b: int, kc: str) -> float:
         sm = smoothed.get(kc)
-        p = sm[snap_j[b].get(kc, 0)] if sm else prior
-        return p * snap_R[b].get(kc, 1.0)
+        return sm[snap_j[b].get(kc, 0)] if sm else prior
 
+    def knowledge(b: int, kc: str) -> float:
+        return belief(b, kc) * snap_R[b].get(kc, 1.0)
+
+    # XP per unit of capped K: a concept pays its worth at READY.
+    rate = [worth(kc) / READY for kc in scope]
     capped = [[min(knowledge(b, kc), READY) for kc in scope] for b in range(len(bounds))]
     xp, closing = [], []
     for i in range(n_days):
-        gain = sum(max(0.0, c1 - c0) for c0, c1 in zip(capped[i], capped[i + 1]))
-        xp.append(100.0 * gain)
-        closing.append(100.0 * sum(capped[i + 1]))
-    per_kc_now = {kc: knowledge(len(bounds) - 1, kc) for kc in scope}
+        xp.append(sum(w * max(0.0, c1 - c0) for w, c0, c1 in zip(rate, capped[i], capped[i + 1])))
+        closing.append(sum(w * c for w, c in zip(rate, capped[i + 1])))
+    last = len(bounds) - 1
+    per_kc_now = {kc: knowledge(last, kc) for kc in scope}
     return {
         "scope": scope,
         "days": [first + timedelta(days=i) for i in range(n_days)],
         "xp": xp,
         "knowledge": closing,
-        "open_knowledge": 100.0 * sum(capped[0]),
-        "today_open_knowledge": 100.0 * sum(capped[n_days - 1]),
+        "open_knowledge": sum(w * c for w, c in zip(rate, capped[0])),
+        "today_open_knowledge": sum(w * c for w, c in zip(rate, capped[n_days - 1])),
         "answers": answers,
         "solved": solved,
         "per_kc_now": per_kc_now,
-        "also_now": {kc: knowledge(len(bounds) - 1, kc) for kc in also},
+        "also_now": {kc: knowledge(last, kc) for kc in also},
+        "also_state": {kc: {"p": belief(last, kc), "R": snap_R[last].get(kc, 1.0),
+                            "lesson_seen": kc in seen_exploit} for kc in also},
     }
+
+
+def solve_xp(kc: str, state: dict) -> float:
+    """The XP the model expects from SOLVING the next problem on `kc` (the
+    Learner Home's concept list): the concept's lesson first if it has never
+    been practised, then a correct exploit answer and its practice step —
+    the forward filter `_smooth` runs — with recall back to 1, as a correct
+    answer is a retrieval. `state` is one entry of replay's "also_state".
+    An estimate: the smoothed replay that pays the XP can move some of it to
+    an earlier day, and the day's floor can hold some back."""
+    p, R = float(state["p"]), float(state["R"])
+    g, s = _likelihood(kc, None, False)
+    p1 = p if state.get("lesson_seen") else p + (1.0 - p) * T_LESSON
+    right = (1.0 - s) * R + g * (1.0 - R)
+    post = p1 * right / (p1 * right + (1.0 - p1) * g)
+    after = post + (1.0 - post) * T_ANSWER
+    return worth(kc) / READY * max(0.0, min(after, READY) - min(p * R, READY))
 
 
 # --- the readout -------------------------------------------------------------
@@ -449,9 +507,8 @@ def daily_target(target: Optional[dict], remaining_open: float, today: date) -> 
 def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
     now = now or datetime.now(timezone.utc)
     r = replay(user_state, zone, now)
-    total = len(r["scope"]) * XP_PER_CONCEPT
+    total = sum(worth(kc) for kc in r["scope"])
     earned = sum(r["xp"])
-    level = 1 + int(earned // LEVEL_XP)
     know_now = r["knowledge"][-1]
     remaining = max(0.0, total - know_now)
     today = r["days"][-1]
@@ -462,12 +519,9 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
     finish = _finish(today, remaining, pace)
     ready = sum(1 for v in r["per_kc_now"].values() if v >= READY - 1e-9)
     return {
-        "course": {"concepts": len(r["scope"]), "total_xp": total, "ready_at": XP_PER_CONCEPT,
-                   "through": "0.2", "ready_concepts": ready},
+        "course": {"name": COURSE_NAME, "concepts": len(r["scope"]), "total_xp": total,
+                   "ready_at": READY_PCT, "through": "0.2", "ready_concepts": ready},
         "earned": round(earned, 1),
-        "level": level,
-        "into": round(earned - (level - 1) * LEVEL_XP, 1),
-        "need": LEVEL_XP,
         "knowledge": round(know_now, 1),
         "starting_credit": round(r["open_knowledge"], 1),
         "remaining": round(remaining, 1),
