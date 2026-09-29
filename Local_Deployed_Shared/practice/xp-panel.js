@@ -11,7 +11,8 @@
    MEASURED LEARNING (#learner-xp, all from GET /api/practice/xp, app/learning_xp.py)
      * today's XP against today's target — the one number to look at;
      * level (80 XP = one concept's worth), course knowledge out of the
-       fixed total, and the projected finish at the learner's pace;
+       fixed total, and the finish: the target date when there is one,
+       else the projected finish at the learner's pace;
      * the target, one line, with the setter behind "Change": finish by a
        date (the server spreads what is left over the days that remain,
        re-read every day) or a fixed XP per day.
@@ -129,20 +130,27 @@
     return wrap;
   }
 
-  /** The finish reading: the projected date at the learner's pace, coloured
-      — with a date target — by whether that pace is enough. The target line
-      below it says what the date asks for. */
+  /** The finish reading. With a date target it IS that date (Seth,
+      2026-09-29: "the date should be october but it's displaying [March]
+      above. it doesn't need to be displayed in two different places next to
+      each other") — coloured by whether the learner's pace gets there, with
+      what it asks for a day under it. Otherwise the projected date at the
+      learner's pace. */
   function pacing(s) {
     const finish = s.projected_finish;
     if (!(s.remaining > 0)) return { value: "Done", sub: "every concept ready", cls: "is-ahead" };
-    let cls = "";
-    if (s.target?.mode === "date" && finish) {
-      cls = s.target.date < s.today.date || finish > s.target.date ? "is-behind" : "is-ahead";
+    if (s.target?.mode === "date") {
+      const passed = s.target.date < s.today.date;
+      return {
+        value: shortDate(s.target.date),
+        sub: passed ? "date passed — set a new one" : `${fmt(s.today.target)} XP/day`,
+        cls: passed || !finish || finish > s.target.date ? "is-behind" : "is-ahead",
+      };
     }
     return {
       value: finish ? shortDate(finish) : "—",
       sub: s.pace > 0 ? `at ${fmt(s.pace)} XP/day` : "no net gain yet",
-      cls,
+      cls: "",
     };
   }
 
@@ -150,12 +158,9 @@
   function targetRow(s) {
     const box = el("div", "xp-target");
     const now = el("div", "xp-target-now");
+    // A date target is already the Finish figure above: only its setter here.
     let words = "none set";
-    if (s.target?.mode === "date") {
-      words = s.target.date < s.today.date
-        ? `by ${shortDate(s.target.date)} (passed)`
-        : `by ${shortDate(s.target.date)} · ${fmt(s.today.target)} XP/day`;
-    }
+    if (s.target?.mode === "date") words = "the Finish date";
     else if (s.target?.mode === "daily") words = `${fmt(s.target.daily)} XP/day`;
     now.append(el("span", "xp-eyebrow", "Target"), el("span", "xp-target-value", words));
     const toggle = el("button", "xp-link", editing ? "Close" : s.target ? "Change" : "Set");
@@ -283,7 +288,7 @@
       "Knowledge is the model's belief you have learned a concept, times how well you still recall it. Finding out what you already knew counts as starting knowledge, not XP.",
       "Today's number settles as you answer more: later answers can move credit to the day the learning actually happened.",
       "Forgetting lowers your knowledge but never takes XP away. Relearning earns XP again.",
-      `Finish divides what is left by your net learning over the last ${s.pace_days || 14} days and today so far, forgetting included, so it moves as you answer.`,
+      `Finish is your target date when you set one — red while your pace would miss it. Without one it divides what is left by your net learning over the last ${s.pace_days || 14} days and today so far, forgetting included, so it moves as you answer.`,
     ].forEach((t) => ul.appendChild(el("li", "", t)));
     d.appendChild(ul);
     return d;
