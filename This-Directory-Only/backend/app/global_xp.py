@@ -12,7 +12,11 @@ account still exists, plus the caller: this week's XP, 0 included. Only a
 log written since the week's Monday midnight (file mtime) is replayed; an
 older one is 0 without reading it. Accounts that never practised are left
 off (360 accounts, 18 logs on 2026-10-01), and so are guest sessions
-(`guest-…@guest.delta-drills.app`, throwaway) with no XP this week.
+(`guest-…@guest.delta-drills.app`, throwaway) with no XP this week, and
+test accounts (`test-…@test.delta-drills.app`, minted by the Account tab's
+test-users.js) always — Seth, 2026-10-01: "make it such that it doesn't
+add test accounts to the leaderboard". Signed in AS one, you still see
+your own row.
 
 ── NAMES ────────────────────────────────────────────────────────────────
 Shown to everyone, by default: the name the learner chose for the board
@@ -51,6 +55,7 @@ logger = logging.getLogger(__name__)
 
 ANON = "Learner"
 GUEST = "Guest"
+TEST_EMAIL_DOMAIN = "test.delta-drills.app"  # = TEST_EMAIL_DOMAIN in test-users.js
 NAME_MAX = 24
 MAX_ROWS = 200  # everyone today (18 logs on 2026-10-01); a bound, not a top-N
 CACHE_S = 120
@@ -76,6 +81,10 @@ def _logs(data_dir=None) -> Dict[str, float]:
     except OSError:
         return {}
     return out
+
+
+def _is_test(email: Optional[str]) -> bool:
+    return str(email or "").lower().strip().endswith("@" + TEST_EMAIL_DOMAIN)
 
 
 def _uuids(ids: Iterable[str]) -> Dict[uuid.UUID, str]:
@@ -160,6 +169,8 @@ def read_board(db: Session, user: User, zone, now: Optional[datetime] = None,
     for uid in users:
         sid = ids[uid]
         is_you = sid == me
+        if not is_you and _is_test(users[uid]):
+            continue
         if is_you or logs.get(sid, 0) >= cut:
             week = _week_xp(sid, zone, now, monday, cached=not is_you)
         else:
@@ -169,8 +180,9 @@ def read_board(db: Session, user: User, zone, now: Optional[datetime] = None,
         name = names.get(uid) or ANON
         rows.append({"display_name": name, "initials": study_groups.initials_from_name(name),
                      "is_you": is_you, "xp": week, "_id": sid})
-    # Ties: you first, then a fixed order so a re-read never shuffles them.
-    rows.sort(key=lambda r: (-(r["xp"] if r["xp"] is not None else -1), not r["is_you"], r["_id"]))
+    # Ties: you first, then by name (then id) so a re-read never shuffles them.
+    rows.sort(key=lambda r: (-(r["xp"] if r["xp"] is not None else -1), not r["is_you"],
+                             r["display_name"].casefold(), r["_id"]))
     for r in rows:
         del r["_id"]
     rank, prev = 0, object()
