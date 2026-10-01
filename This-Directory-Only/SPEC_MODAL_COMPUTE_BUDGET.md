@@ -119,3 +119,101 @@ model swapping · the Colab route (abandoned 09-13, stays abandoned).
   and timer in `~/.config/systemd/user/` (machine config, not in the repo).
 - `This-Directory-Only/backend/app/README.md`: Lifetimes / spend paragraph +
   Recent Changes.
+
+---
+
+# PASS 2 — every section runs, or says where it can't (GPU sections)
+
+Status: SIGNED OFF 2026-10-01 — P1 L4, P2 AUTOMATIC at the section's GPU cell (Seth: "start the gpu when it's needed and disable it when the user is not using it"), P3 5 h, P4 Volume with Seth's token, P5 banner only.
+
+## Goal
+
+Every ARENA section opens on a kernel that can run it, or says on open what it
+needs that the app does not give. GPU time stays inside the same $30/month.
+
+## What the sections need (survey of ARENA 527f937)
+
+| Class | Sections | What decides it |
+|---|---|---|
+| **cpu** (19) | 0.0–0.5, 1.1, 1.2, 1.4.1, 1.5.1–1.5.4, 2.1, 2.2.1, 2.2.2, 2.3, 2.4, 2.5 | toy models or gpt2-small; 2.4 takes the `LOW_GPU_MEM` gpt2-small route |
+| **cpu + API key** (7) | 3.1–3.5, 4.2, 4.5 | OpenRouter / OpenAI clients, no local model |
+| **gpu** (6): fits one 24 GB L4 | 1.3.1 (Llama-2-13b 8-bit, Llama-3.1-8B), 1.3.2 (gpt2-xl from cell 12; gpt-j-6b only via NDIF), 1.3.3 (gemma-2-2b from cell 115 of 226), 1.3.4 (Qwen3-8B, Llama-3.1-8B), 1.4.2 (gemma from cell 78 of 199), 4.3 (R1-Distill 1.5B / 8B) | 2–13 B params in bf16/8-bit |
+| **gpu-big** (2) | 4.1 (Qwen2.5-14B + LoRA, ~30 GB), 4.4 (gemma-2-27b / Qwen3-32B; a Qwen2.5-7B small route exists) | ≥ 14 B params, needs L40S/A100 |
+
+Prices (modal.com/pricing, 2026-10-01). Sandbox GPUs bill at standard rates:
+T4 $0.59/h, L4 $0.80/h, A10 $1.10/h, L40S $1.95/h, A100-80 $2.50/h. An L4 sandbox
+at 0.5 core / 4 GiB is ≈ **$0.97/h**. Late September ran about $1/day of CPU kernels,
+which leaves roughly **$15–20/month ≈ 15–20 L4-hours shared by everyone**.
+
+## Known bugs this pass fixes (no new spend)
+- **ch2 never installs gymnasium.** 2.1–2.3 guard the whole `%pip` line on
+  `import jaxtyping`, which the image already has. Bake that line's packages:
+  `gymnasium[atari,accept-rom-license,other]==0.29.0`, `pygame`. mujoco-py (the
+  2.3 bonus only) stays out.
+- **A hung billing call stops the reaper.** `modal_spend.refresh()` runs inline in
+  the reaper loop (relayed codex flag). A stalled `billing.summary()` would keep
+  idle sandboxes billing. Move the refresh onto its own thread.
+
+## Scope — pass 2
+- **A.** The two fixes above.
+- **B. Compute class per section.** `app/kernel_classes.py` maps an ARENA section
+  number to `cpu | api | gpu | gpu-big`. Opening a non-cpu section shows a
+  one-line banner saying what it needs: "needs an API key: set
+  `os.environ[...]`", "from cell N this section runs on a GPU (H h left this month)", or "needs a GPU larger
+  than the app offers".
+- **C. GPU kernels on gpu sections, automatic.** Each gpu section carries
+  `gpu_from_cell`: the first cell that loads the big model (1.3.3 → 115,
+  1.4.2 → 78, 1.3.2 → 12, the others near their top).
+  - Running a cell at or past that index moves the session onto an L4 sandbox. The
+    kernel restarts and setup is restored, exactly as after an idle restart. A
+    banner says so and shows the GPU hours left.
+  - Cells before it stay on CPU. There is no hopping back per cell: the model and
+    every variable live in the GPU kernel's memory.
+  - Idle 5 min → the GPU sandbox closes (CPU stays 15). The next cell spawns a new
+    one, and the model reloads from the Volume.
+  - The GPU image is a CUDA variant (same packages, CUDA torch). Gated weights
+    (gemma, Llama, Qwen3-8B, R1-8B) are prefetched once into a Modal Volume with
+    Seth's HF token, so learners never see a token.
+  - At most 2 GPU sandboxes at once. Per learner, 5 GPU-hours a month, counted
+    from the usage log (`gpu` field). The $25 workspace cap still applies.
+- **D.** `/kernel/status` → `spend.gpu_hours_mtd` for the learner, plus the remaining GPU hours.
+
+## Not this pass
+gpu-big hardware (L40S/A100), snapshot-on-idle (pass 3), per-learner CPU caps
+(pass 4), API-key storage per learner, NDIF key handling, ch3 package baking
+(its `inspect_ai` guard installs at runtime and works; baking it conflicts with
+ch1's `openai==1.56.1` pin).
+
+## Success criteria
+1. 2.1's setup cell runs no `%pip`, and `gym.make("CartPole-v1")` plus an atari
+   env construct on a fresh kernel.
+2. With `billing.summary` patched to sleep 300 s, the reaper still closes an idle
+   sandbox inside `IDLE_SECONDS + REAP_INTERVAL`.
+3. Opening 1.3.3 shows the gpu banner. 0.1 shows none. 3.1 shows the api banner.
+4. On the test app, a GPU kernel loads gemma-2-2b from the Volume with
+   `HF_HUB_OFFLINE=1`, and `torch.cuda.is_available()` is True. Leaving it idle
+   for 5 min closes it. A learner at the GPU cap is refused with a sentence;
+   their CPU kernel still works.
+5. No regressions: 0.0 / 0.1 / 1.1 cells as in pass 1. Codex `/critic` before deploy.
+
+## Key decisions (signed off 2026-10-01)
+- **P1 GPU tier:** L4 24 GB *(pick: covers all 6 gpu sections, native bf16)* vs
+  T4 16 GB ($0.59; no bf16, fails the 8B models in 1.3.1 / 1.3.4 / 4.3).
+- **P2 How a GPU kernel starts:** AUTOMATIC once a cell at or past `gpu_from_cell`
+  runs (Seth) vs a Switch-to-GPU button vs GPU from the moment the section opens.
+- **P3 Per-learner GPU cap:** 5 h/month *(pick)* vs 3 h vs 10 h.
+- **P4 Gated weights:** prefetched to a Volume with Seth's HF token *(pick)* vs
+  each learner pastes their own HF token.
+- **P5 gpu-big (4.1, 4.4):** banner only, pointing to the 7B route in 4.4 *(pick)*
+  vs offer an L40S with a 2 h cap.
+
+## Touch list
+- `backend/app/modal_kernel.py` (already 645 LOC): image packages (ch2), `gpu=`
+  passthrough only. The GPU image, Volume and cap go in a new
+  `backend/app/modal_gpu.py` so modal_kernel does not grow.
+- `backend/app/modal_spend.py`: refresh thread; `gpu` field and GPU-hours per user.
+- `backend/app/kernel_classes.py`: **new**.
+- `backend/app/practice/kernel_router.py`: `gpu` flag on run/reset; class in status.
+- `Local_Deployed_Shared/practice/arena-notebook.js` (+ the css): banner; GPU flag on
+  runs at or past `gpu_from_cell`.
+- READMEs: `backend/app/`, `practice/`.

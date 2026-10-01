@@ -37,6 +37,10 @@ logger = logging.getLogger(__name__)
 CAP_USD = float(os.environ.get("DD_MODAL_CAP_USD", "25"))
 USAGE_LOG = Path(os.environ.get("DD_KERNEL_USAGE_LOG", "/data/kernel_usage.jsonl"))
 REFRESH_SECONDS = 3600
+# How often the refresher thread wakes to ask `refresh()` whether an hour has
+# passed, and how long startup waits for the first read before serving.
+REFRESH_POLL_SECONDS = 60
+FIRST_READ_WAIT_SECONDS = 20.0
 LAG_SECONDS = 2 * 3600
 # Modal sandbox rates (Sept 2026). Only the fallback when the bill has not
 # been read yet, and a floor under the measured rate.
@@ -52,6 +56,7 @@ CAP_MESSAGE = ("Notebook compute is paused for the month — this month's budget
 _lock = threading.Lock()
 _billed: dict = {"usd": None, "fetched": 0.0, "month": ""}
 _recorded: set[str] = set()
+_refresher_started = False
 
 
 def _month_key(ts: float) -> str:
@@ -141,6 +146,33 @@ def refresh(force: bool = False) -> None:
         return
     with _lock:
         _billed.update(usd=usd, fetched=now, month=month)
+
+
+def start_refresher(first_read_wait: float = FIRST_READ_WAIT_SECONDS) -> None:
+    """Keep the bill fresh on a thread of its own, and wait up to
+    `first_read_wait` for the first read. A billing call that never returns
+    blocks only this thread: the reaper keeps closing sandboxes, and the cap
+    keeps pricing everything after the last good read from the usage log."""
+    global _refresher_started
+    with _lock:
+        if _refresher_started:
+            return
+        _refresher_started = True
+    first_read = threading.Event()
+
+    def _loop() -> None:
+        while True:
+            try:
+                refresh()
+            except Exception:
+                logger.exception("modal spend: refresh failed")
+            first_read.set()
+            time.sleep(REFRESH_POLL_SECONDS)
+
+    threading.Thread(target=_loop, name="modal-spend-refresh", daemon=True).start()
+    if not first_read.wait(first_read_wait):
+        logger.warning("modal spend: no bill after %.0f s; capping on the usage-log estimate",
+                       first_read_wait)
 
 
 def summary(live_starts: list[float], rate_floor: float) -> dict:
