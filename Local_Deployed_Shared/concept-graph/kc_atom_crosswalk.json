@@ -10,7 +10,7 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1909,
+  "questions_joined": 1910,
   "kcs_covered": 125,
   "kcs_total": 125,
   "kcs_measured": 107,
@@ -1651,17 +1651,17 @@
    ]
   },
   "math.barycentric-coordinates": {
-   "n": 8,
-   "reliability": 0.164,
-   "shared_with": 5.1,
+   "n": 9,
+   "reliability": 0.181,
+   "shared_with": 4.5,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "triangle-barycentric",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.164,
-     "n": 8
+     "spec": 0.181,
+     "n": 9
     }
    ]
   },
@@ -2009,27 +2009,27 @@
   },
   "raytracing.mesh-visibility": {
    "n": 22,
-   "reliability": 0.326,
+   "reliability": 0.322,
    "shared_with": 2.1,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "triangle-barycentric",
-     "w": 0.672,
+     "w": 0.668,
      "share": 0.5,
-     "spec": 0.439,
+     "spec": 0.43,
      "n": 22
     },
     {
      "a": "linalg-solve-batched",
-     "w": 0.298,
+     "w": 0.302,
      "share": 0.394,
      "spec": 0.247,
      "n": 17
     },
     {
      "a": "ray-distance-depth",
-     "w": 0.02,
+     "w": 0.021,
      "share": 0.047,
      "spec": 0.143,
      "n": 2
@@ -2117,15 +2117,15 @@
   },
   "raytracing.triangle-intersection": {
    "n": 20,
-   "reliability": 0.382,
-   "shared_with": 1.6,
+   "reliability": 0.374,
+   "shared_with": 1.7,
    "tier": "measured",
    "atoms": [
     {
      "a": "triangle-barycentric",
      "w": 0.998,
      "share": 0.958,
-     "spec": 0.398,
+     "spec": 0.39,
      "n": 20
     },
     {

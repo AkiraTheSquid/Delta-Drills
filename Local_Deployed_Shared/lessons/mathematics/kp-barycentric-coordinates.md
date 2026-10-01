@@ -6,7 +6,7 @@ supporting: [math.intersection-systems, math.singular-systems, math.linear-combi
 new_syntax: []
 previews: []
 concepts: [weights, three-unknowns]
-faded: [50018, 50019, 50022, 50023]
+faded: [50018, 50019, 50118, 50022, 50023]
 guided: []
 independent: [50020, 50024]
 integrated: [50021, 50025]
@@ -76,10 +76,13 @@ assert _delta_output == 'tensor([2., 2., 1.])\n'
 ## Faded practice
 
 ### q50018
-P = A + 0.2(B − A) + 0.3(C − A). What is the weight on A?
+Expanding P = A + 0.2(B − A) + 0.3(C − A) and grouping by vertex gives P = c·A + (…)·B + (…)·C. What is c, the weight on A?
 
 ### q50019
 For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B − A) + v(C − A)?
+
+### q50118
+P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle ABC?
 
 ## Concept: Match a ray point to a triangle point
 

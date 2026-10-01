@@ -23442,6 +23442,18 @@
   "new_syntax": [],
   "source": "kp-independent"
  },
+ "50118": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems",
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
  "60000": {
   "target_kcs": [
    "leetcode.arrays-strings"

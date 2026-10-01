@@ -874,13 +874,19 @@
        "faded_items": [
         {
          "question_id": 50018,
-         "prompt": "P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A). What is the weight on A?",
+         "prompt": "Expanding P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A) and grouping by vertex gives P = c\u00b7A + (\u2026)\u00b7B + (\u2026)\u00b7C. What is c, the weight on A?",
          "starter_code": "",
          "solution": ""
         },
         {
          "question_id": 50019,
          "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B \u2212 A) + v(C \u2212 A)?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50118,
+         "prompt": "P = A + 0.6(B \u2212 A) + 0.5(C \u2212 A). Is P inside the filled triangle ABC?",
          "starter_code": "",
          "solution": ""
         }
@@ -912,13 +918,19 @@
      "faded_items": [
       {
        "question_id": 50018,
-       "prompt": "P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A). What is the weight on A?",
+       "prompt": "Expanding P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A) and grouping by vertex gives P = c\u00b7A + (\u2026)\u00b7B + (\u2026)\u00b7C. What is c, the weight on A?",
        "starter_code": "",
        "solution": ""
       },
       {
        "question_id": 50019,
        "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B \u2212 A) + v(C \u2212 A)?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50118,
+       "prompt": "P = A + 0.6(B \u2212 A) + 0.5(C \u2212 A). Is P inside the filled triangle ABC?",
        "starter_code": "",
        "solution": ""
       },

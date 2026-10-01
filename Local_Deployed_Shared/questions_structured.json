@@ -78288,7 +78288,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "P = A + 0.2(B − A) + 0.3(C − A). What is the weight on A?",
+      "question_text": "Expanding P = A + 0.2(B − A) + 0.3(C − A) and grouping by vertex gives P = c·A + (…)·B + (…)·C. What is c, the weight on A?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -78327,7 +78327,7 @@
         }
       ],
       "correct_choice": "C",
-      "solution_md": "The remaining weight is 1 − 0.2 − 0.3 = 0.5.\n\n- A: 0.2 weights B.\n- B: 0.3 weights C.\n- D: All weights sum to one; A alone does not have weight one.",
+      "solution_md": "Expand both edges and collect the A terms:\n$$P=A+0.2B-0.2A+0.3C-0.3A=(1-0.2-0.3)A+0.2B+0.3C,$$\nso $c=0.5$. The three weights $0.5,0.2,0.3$ add to one.\n\n- A: 0.2 is the weight on B.\n- B: 0.3 is the weight on C.\n- D: 1 is A's coefficient before expanding; each edge term takes part of it back.",
       "verify": {
         "sympy": {
           "truth": "1-Rational(1,5)-Rational(3,10)"
@@ -84326,6 +84326,64 @@
       ],
       "correct_choice": "B",
       "solution_md": "The lesson's worked example gives the first foothold on a new idea, but only an unaided retrieval — struggling a little, sometimes getting it wrong — produces the strengthening the testing effect is named for.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50118,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-barycentric-coordinates.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle ABC?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.barycentric-coordinates",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Inside: 0.6 and 0.5 are each between 0 and 1.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Inside: the three weights add to one.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Outside: the weight on A is negative.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "On edge BC: the weight on A is zero.",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Group by vertex: $P=(1-0.6-0.5)A+0.6B+0.5C=-0.1A+0.6B+0.5C$. A negative weight puts P outside, past edge BC.\n\n- A: Bounding u and v one at a time allows the whole parallelogram, not just the triangle.\n- B: The weights add to one for every point of the plane; inside needs all three nonnegative.\n- D: Edge BC needs the weight on A to be exactly 0, that is u + v = 1.",
       "verify": null,
       "hint": null
     }
