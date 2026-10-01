@@ -97,6 +97,21 @@ single = run(state({CODE_KC: seq(START, "1")}), now)
 check("one correct answer is not a whole concept", single["today"]["xp"] < 60 * F, f'{single["today"]["xp"]} XP')
 check("…a concept caps at its worth", learn_day["today"]["xp"] <= X.worth(CODE_KC) + 1e-6)
 
+print("\n--- the course is the one the learner studies (Seth, 2026-10-01) ---")
+# A LeetCode-only learner's home read "ARENA · through 0.2 · 125 concepts".
+lc_only = state()
+lc_only.course_shares, lc_only.study_courses = {"leetcode": 0.4}, None
+lc = run(lc_only, now)
+check("LeetCode only: the course is LeetCode Patterns",
+      lc["course"]["name"] == "LeetCode Patterns" and lc["course"]["through"] is None, str(lc["course"]))
+check("…priced on LeetCode concepts only",
+      all(k.startswith("leetcode.") for k in X.scope_kcs(lc_only))
+      and lc["course"]["total_xp"] == sum(X.worth(k) for k in X.scope_kcs(lc_only)))
+both = state()
+both.course_shares, both.study_courses = {"leetcode": 0.4, "arena": 0.4}, None
+check("ARENA studied: the course and its price are unchanged",
+      run(both, now)["course"] == empty["course"] and X.scope_kcs(both) == SCOPE)
+
 
 def logged_only(uid, rows, probe, sources=None):
     """Answers that survive ONLY in the attempt log: the 20-row ladder window

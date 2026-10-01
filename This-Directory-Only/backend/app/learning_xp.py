@@ -130,15 +130,49 @@ TARGET_MODES = ("date", "daily")
 
 # --- scope -------------------------------------------------------------------
 
-def scope_kcs() -> List[str]:
+def _standalone_study(user_state) -> List[str]:
+    """The courses a learner studies when ARENA is NOT one of them, else [].
+
+    🔴 Seth, 2026-10-01: a LeetCode-only learner's Learner Home still read
+    "ARENA · through 0.2 · 125 concepts" — the course she was not studying,
+    linear algebra and all, priced into her % complete. Her drills were
+    already LeetCode (course_registry.studied); the home's yardstick was not.
+    A learner who studies ARENA keeps the full list below, unchanged."""
+    if user_state is None:
+        return []
+    from app import course_registry
+    study = course_registry.studied(user_state)
+    return [] if "arena" in study else study
+
+
+def scope_kcs(user_state=None) -> List[str]:
     """Every concept through ARENA 0.2, prerequisites included, in section
-    order. Deliberately the same list for every learner: the price of the
-    course may not depend on who is paying it."""
-    from app import study_group_progress  # heavy import; only on use
+    order. Deliberately the same list for every learner OF A COURSE: the
+    price of the course may not depend on who is paying it. A learner who
+    does not study ARENA (`_standalone_study`) gets only their courses'
+    concepts, priced the same for everyone on that course."""
+    from app import course_registry, study_group_progress  # heavy import; only on use
     out: List[str] = []
     for area in study_group_progress.sections():
         out.extend(area["kcs"])
-    return list(dict.fromkeys(out))
+    out = list(dict.fromkeys(out))
+    study = _standalone_study(user_state)
+    if study:
+        # No fallback to the full list: that would price ARENA under the
+        # standalone course's name, the very leak this scope closes.
+        out = [kc for kc in out if course_registry.course_of(kc) in study]
+    return out
+
+
+def course_info(user_state=None) -> dict:
+    """The Learner Home's course line: name and how far it runs. `through`
+    is ARENA's chapter; a standalone course has none."""
+    study = _standalone_study(user_state)
+    if not study:
+        return {"name": COURSE_NAME, "through": "0.2"}
+    from app import course_registry
+    labels = {c["id"]: c["label"] for c in course_registry.COURSES}
+    return {"name": " + ".join(labels.get(c, c) for c in study), "through": None}
 
 
 @lru_cache(maxsize=1)
@@ -317,7 +351,7 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
     returned in "also_now" (K) and "also_state" (what `solve_xp` needs); no
     XP total counts them."""
     now = now or datetime.now(timezone.utc)
-    scope = scope_kcs()
+    scope = scope_kcs(user_state)
     in_scope = set(scope) | set(also)
     prior = _prior(user_state)
     cfg = memory_model.DEFAULT_CONFIG
@@ -519,8 +553,8 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
     finish = _finish(today, remaining, pace)
     ready = sum(1 for v in r["per_kc_now"].values() if v >= READY - 1e-9)
     return {
-        "course": {"name": COURSE_NAME, "concepts": len(r["scope"]), "total_xp": total,
-                   "ready_at": READY_PCT, "through": "0.2", "ready_concepts": ready},
+        "course": {**course_info(user_state), "concepts": len(r["scope"]), "total_xp": total,
+                   "ready_at": READY_PCT, "ready_concepts": ready},
         "earned": round(earned, 1),
         "knowledge": round(know_now, 1),
         "starting_credit": round(r["open_knowledge"], 1),
