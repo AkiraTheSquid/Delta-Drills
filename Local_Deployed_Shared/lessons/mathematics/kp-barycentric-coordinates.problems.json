@@ -5,7 +5,7 @@
       "id": 50018,
       "kind": "compute",
       "difficulty": 25,
-      "prompt": "P = A + 0.2(B − A) + 0.3(C − A). What is the weight on A?",
+      "prompt": "Expanding P = A + 0.2(B − A) + 0.3(C − A) and grouping by vertex gives P = c·A + (…)·B + (…)·C. What is c, the weight on A?",
       "choices": [
         {
           "key": "A",
@@ -29,7 +29,7 @@
         }
       ],
       "answer": "C",
-      "solution": "The remaining weight is 1 − 0.2 − 0.3 = 0.5.\n\n- A: 0.2 weights B.\n- B: 0.3 weights C.\n- D: All weights sum to one; A alone does not have weight one.",
+      "solution": "Expand both edges and collect the A terms:\n$$P=A+0.2B-0.2A+0.3C-0.3A=(1-0.2-0.3)A+0.2B+0.3C,$$\nso $c=0.5$. The three weights $0.5,0.2,0.3$ add to one.\n\n- A: 0.2 is the weight on B.\n- B: 0.3 is the weight on C.\n- D: 1 is A's coefficient before expanding; each edge term takes part of it back.",
       "verify": {
         "sympy": {
           "truth": "1-Rational(1,5)-Rational(3,10)"
@@ -61,6 +61,32 @@
       ],
       "answer": "B",
       "solution": "u + v = 1.2 makes the weight on A negative.\n\n- A: Separate upper bounds describe a parallelogram.\n- C: AB requires v = 0.\n- D: C requires u = 0, v = 1."
+    },
+    {
+      "id": 50118,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "ABC is a nondegenerate triangle and P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Inside: 0.6 and 0.5 are each between 0 and 1."
+        },
+        {
+          "key": "B",
+          "text": "Inside: the three weights add to one."
+        },
+        {
+          "key": "C",
+          "text": "Outside: the weight on A is negative."
+        },
+        {
+          "key": "D",
+          "text": "On edge BC: the weight on A is zero."
+        }
+      ],
+      "answer": "C",
+      "solution": "Group by vertex: $P=(1-0.6-0.5)A+0.6B+0.5C=-0.1A+0.6B+0.5C$. A negative weight puts P outside, past edge BC.\n\n- A: Bounding u and v one at a time allows the whole parallelogram, not just the triangle.\n- B: The weights add to one for every point of the plane; inside needs all three nonnegative.\n- D: Edge BC needs the weight on A to be exactly 0, that is u + v = 1."
     },
     {
       "id": 50020,

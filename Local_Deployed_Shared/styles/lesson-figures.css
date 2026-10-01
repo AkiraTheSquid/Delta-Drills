@@ -137,3 +137,80 @@
   cursor: pointer;
 }
 .dd-bary-presets button:hover { border-color: var(--accent); }
+
+/* ---- `independence` (../lesson-figure-independence.js) ------------------
+   Edge B − A fixed, C dragged. Green triangle while the edges are
+   independent; it collapses to a red segment on the dashed span line when
+   they are not. */
+.dd-figure-indep .ink-1 { color: var(--warn); fill: var(--warn); }
+.dd-figure-indep .ink-2 { color: var(--accent-2); fill: var(--accent-2); }
+.dd-figure-indep .span-line {
+  stroke: var(--muted-dim);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 5;
+}
+.dd-figure-indep .span-label { fill: var(--muted-dim); font-size: 11px; font-style: italic; }
+.dd-figure-indep .para {
+  fill: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+  stroke: var(--muted-dim);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 5;
+}
+.dd-figure-indep .tri {
+  fill: rgb(var(--ok-rgb) / 0.16);
+  stroke: var(--ok);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.dd-figure-indep.is-flat .tri { stroke: var(--danger); stroke-width: 3.5; }
+.dd-figure-indep .leg { stroke-width: 2.5; stroke-linecap: round; }
+.dd-figure-indep .leg-1 { stroke: var(--warn); }
+.dd-figure-indep .leg-2 { stroke: var(--accent-2); }
+.dd-figure-indep .leg-label { font-size: 12px; font-weight: 600; }
+.dd-figure-indep .vtx { fill: var(--text); stroke: var(--bg); stroke-width: 2; }
+.dd-figure-indep .vtx-label { fill: var(--text); font-size: 15px; font-weight: 700; }
+.dd-figure-indep .pt { fill: var(--white); stroke: var(--accent-2); stroke-width: 3; cursor: grab; }
+.dd-figure-indep.is-flat .pt { stroke: var(--danger); }
+.dd-figure-indep .pt-label { fill: var(--white); font-size: 14px; font-weight: 700; }
+
+.dd-indep-angle {
+  display: grid;
+  grid-template-columns: auto 1fr 3em;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 0.88em;
+  color: var(--muted);
+}
+.dd-indep-angle input { width: 100%; accent-color: var(--accent); }
+.dd-indep-deg { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
+.dd-indep-read { margin-top: 8px; }
+/* The three number lines are monospace so the digits line up; the verdict
+   under them is a sentence and reads in the page font. */
+.dd-indep-edges,
+.dd-indep-cross,
+.dd-indep-area {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.84em;
+  color: var(--muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.dd-indep-verdict {
+  margin-top: 6px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  border-left: 3px solid var(--ok);
+  background: rgb(var(--ok-rgb) / 0.08);
+  color: var(--text);
+  font-size: 0.92em;
+  line-height: 1.4;
+}
+.dd-figure-indep.is-flat .dd-indep-verdict {
+  border-left-color: var(--danger);
+  background: rgb(var(--danger-rgb) / 0.08);
+}
+@media (max-width: 520px) {
+  .dd-indep-angle { grid-template-columns: 1fr 3em; }
+  .dd-indep-angle span { grid-column: 1 / -1; }
+}

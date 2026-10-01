@@ -2205,3 +2205,4 @@
 {"question_id":60318,"atoms":[{"atom_id":"lc-dp-intervals","confidence":1}]}
 {"question_id":60319,"atoms":[{"atom_id":"lc-dp-intervals","confidence":1}]}
 {"question_id":60320,"atoms":[{"atom_id":"lc-dp-intervals","confidence":1}]}
+{"question_id":50118,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
