@@ -115,10 +115,76 @@ def _turn(s: float, f: Optional[float]) -> bool:
     return s >= 1.0 or f is None or f < s
 
 
+def serving_courses(user_state) -> List[str]:
+    """The courses practice serves, registry order: the studied ones
+    (course_registry.studied), a standalone course only while its toggle is
+    on — the same two rules course_registry.course_off applies."""
+    return [c for c in course_registry.studied(user_state)
+            if c == "arena" or share(user_state, c) > 0.0]
+
+
+def _courses_of(qid) -> Set[str]:
+    return {course_registry.course_of(k) for k in kc_graph.question_kcs(qid)}
+
+
+def course_turns(user_state) -> List[str]:
+    """🔑 TWO OR MORE COURSES = AN EVEN SPLIT (Seth, 2026-10-01: "if you
+    have both checked it does both of them 50/50"). The order this request
+    tries the served courses in: ROUND ROBIN — the one answered LONGEST ago
+    first (never, within the last WINDOW answers, before anything; then
+    registry order) — so two courses alternate drill by drill, three take
+    turns. Not "fewest of the last WINDOW": that balances the window, so a
+    learner who ticks a second course after ten ARENA answers got five of
+    the new course in a row and then four ARENA in a row paying it back.
+    A course that has nothing to serve falls through to the next (`rounds`),
+    so a dry course never 409s the request.
+
+    Until then a second course was only an exercise SHARE beside ARENA's
+    graph, and the split came out wherever the pools happened to be dry. A
+    replay with ARENA and LeetCode both ticked: a fresh learner got 30 of 30
+    LeetCode (ARENA's exercise concepts were not servable yet, so every
+    ARENA turn fell back to LeetCode, and LeetCode's own turns took the
+    rest); Seth's state got 30 of 30 ARENA (see practice_targets.includes).
+
+    One course: [that course], and the old share logic decides everything."""
+    courses = serving_courses(user_state)
+    if len(courses) < 2:
+        return courses
+    last = dict.fromkeys(courses, -1)
+    for i, qid in enumerate(attempt_history.recent_question_sequence(user_state, WINDOW)):
+        for c in _courses_of(qid) & set(courses):
+            last[c] = i
+    return sorted(courses, key=lambda c: (last[c], courses.index(c)))
+
+
+def _exercise_turn(user_state, course_id: str) -> bool:
+    """Inside one course's turn of an even split: that course's own share,
+    counted over ITS recent answers only — the other course's answers would
+    halve the fraction and serve ARENA's exercises twice as often as set.
+    A standalone course's pool is the whole course, so after its first
+    answer this is False, the same as with that course alone: its concepts
+    are remediated to their prerequisites (`holds`), not held."""
+    s = share(user_state, course_id)
+    if s <= 0.0:
+        return False
+    n = WINDOW * len(serving_courses(user_state))
+    recent = [q for q in attempt_history.recent_question_sequence(user_state, n)
+              if course_id in _courses_of(q)][-WINDOW:]
+    if not recent:
+        return _turn(s, None)
+    pool = _pool(user_state, course_id)
+    return _turn(s, sum(1 for q in recent if pool & set(kc_graph.question_kcs(q))) / len(recent))
+
+
 def _wanted_course(user_state) -> Optional[str]:
     """The one enabled course whose turn this is, or None (a graph turn).
     First enabled course (registry order) under its own share wins — the
-    same tie-break every other stateless-turn decision in this file uses."""
+    same tie-break every other stateless-turn decision in this file uses.
+    With an even split (`course_turns`), the course whose turn it is, on its
+    own exercise share's turn (`_exercise_turn`); a graph turn otherwise."""
+    turns = course_turns(user_state)
+    if len(turns) > 1:
+        return turns[0] if _exercise_turn(user_state, turns[0]) else None
     for c in enabled_courses(user_state):
         if _turn(share(user_state, c), course_fraction(user_state, c)):
             return c
@@ -154,6 +220,9 @@ def rounds(user_state) -> List[Set[str]]:
     (round 0 excludes every enabled course's pool), then every enabled
     course's pool as fallback (round 1 excludes the graph rest) — identical
     to the old two-pool shape when exactly one course is enabled."""
+    turns = course_turns(user_state)
+    if len(turns) > 1:
+        return _split_rounds(user_state, turns)
     enabled = enabled_courses(user_state)
     if not enabled:
         return [set()]
@@ -164,6 +233,30 @@ def rounds(user_state) -> List[Set[str]]:
     everyone = set().union(*(_pool(user_state, c) for c in enabled))
     rest = set(kc_graph.registry()) - everyone
     return [everyone, rest]
+
+
+def _split_rounds(user_state, turns: List[str]) -> List[Set[str]]:
+    """`rounds` for an even split: each course in turn order, everything
+    outside it skipped. ARENA's turn keeps ARENA's own two halves (its
+    exercise pool vs the rest of its graph, `_exercise_turn` first), so its
+    share still means what it meant with ARENA alone; a standalone course's
+    pool IS the course, one round. Every course is a round, so a dry course
+    falls through to the next, and a course down to review repeats yields to
+    the next one's fresh work (question_pick)."""
+    reg = set(kc_graph.registry())
+    out: List[Set[str]] = []
+    for c in turns:
+        own = {k for k in reg if course_registry.course_of(k) == c}
+        others = reg - own
+        pool = _pool(user_state, c) & own
+        if share(user_state, c) > 0.0 and pool and own - pool:
+            halves = [own - pool, pool]
+            if not _exercise_turn(user_state, c):
+                halves.reverse()
+            out.extend(others | h for h in halves)
+        else:
+            out.append(others)
+    return out
 
 
 def _readiness(user_state, kc: str) -> float:
@@ -245,7 +338,10 @@ def status(user_state, course_id: str) -> dict:
     """What the Courses tab card shows for one course."""
     f = course_fraction(user_state, course_id)
     s = share(user_state, course_id)
-    wanted = _wanted_course(user_state)
+    # In an even split the course whose turn it is, whatever half of it the
+    # turn serves (codex, 2026-10-01: a LeetCode turn read "other").
+    turns = course_turns(user_state)
+    wanted = turns[0] if len(turns) > 1 else _wanted_course(user_state)
     return {
         "course": course_id,
         "share": s,

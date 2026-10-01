@@ -37,16 +37,27 @@ def scope_kcs(target):
     return ancestors(ray_kcs()) if target == RAY else None
 
 
+def _arena(kc):
+    from app import course_registry
+    return course_registry.course_of(kc) == "arena"
+
+
+# 🔴 The target narrows ARENA, never another course (2026-10-01). It used to
+# read every concept outside the 0.1 scope as out, so a learner on the 0.1
+# target who ticked LeetCode too was served NO LeetCode at all: all 383
+# drills failed allows_question, and the even course split (course_mix.
+# course_turns) fell through to ARENA every turn — 30 of 30 in a replay of
+# Seth's state.
 def includes(user_state, kc):
     scope = scope_kcs(getattr(user_state, "practice_target", "all"))
-    return scope is None or kc in scope
+    return scope is None or kc in scope or not _arena(kc)
 
 
 def allows_question(user_state, qid):
     from app import kc_graph
     scope = scope_kcs(getattr(user_state, "practice_target", "all"))
     targets = kc_graph.question_kcs(qid)
-    return scope is None or bool(targets) and set(targets) <= scope
+    return scope is None or bool(targets) and {k for k in targets if _arena(k)} <= scope
 
 
 def placement(user_state):
