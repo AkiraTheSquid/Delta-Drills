@@ -74,7 +74,9 @@
     const id = el("div", "xp-course-id");
     id.append(
       el("h2", "xp-course-name", s.course.name || "Your course"),
-      el("p", "xp-course-sub", `through ${s.course.through} · ${fmt(s.course.concepts)} concepts`),
+      // `through` is ARENA's chapter; a standalone course (LeetCode) has none.
+      el("p", "xp-course-sub",
+        `${s.course.through ? `through ${s.course.through} · ` : ""}${fmt(s.course.concepts)} concepts`),
     );
     const done = el("p", "xp-course-pct");
     done.append(el("span", "xp-course-pct-num", coursePct(s)), el("span", "xp-course-pct-label", "complete"));

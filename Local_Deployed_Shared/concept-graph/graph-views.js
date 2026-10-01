@@ -133,10 +133,18 @@
 
   try { const m = localStorage.getItem(VIEW_KEY); if (MODES.includes(m)) mode = m; } catch (_) {}
   try { courseFilter = localStorage.getItem(COURSE_KEY) || null; } catch (_) {}
+  // `courseFilter` came from `defaultCourse` (what the learner studies), not
+  // a pick: never saved, and recomputed when the course choice changes.
+  let courseDefaulted = false;
+  // A scope set on purpose this session (Courses tab, a concept jump that
+  // cleared it) or saved before: `defaultCourse` never overrides it, even a
+  // null one, and even when its read was already in flight.
+  let coursePicked = !!courseFilter;
 
   const persist = () => {
     try {
       localStorage.setItem(VIEW_KEY, mode);
+      if (courseDefaulted) return;
       if (courseFilter) localStorage.setItem(COURSE_KEY, courseFilter);
       else localStorage.removeItem(COURSE_KEY);
     } catch (_) {}
@@ -208,11 +216,47 @@
     // Another course: whatever was selected may not be on its graph.
     if ((id || null) !== courseFilter) window.DeltaKgCore?.deselect?.();
     courseFilter = id || null;
+    courseDefaulted = false;
+    coursePicked = true;
     courseVisible = null;
     persist();
     announceCourse();
     if (cy) applyCourseFilter();
   };
+
+  /* 🔴 A LEARNER WHO DOES NOT STUDY ARENA (Seth, 2026-10-01: "it's still
+     showing the learner the linear algebra rather than leetcode when they
+     have the leetcode only enabled"). With no course picked the graph opened
+     on every course — ARENA's maths beside the LeetCode she studies. So with
+     no saved pick, the scope is the first course the learner studies when
+     ARENA is not one of them (/course-shares `studied` = the server's
+     course_registry.studied). Not saved: tick ARENA and the whole graph is
+     back. A learner who studies ARENA keeps every course, as before. */
+  let defaultLoads = 0;
+  const defaultCourse = async () => {
+    if (coursePicked) return; // a pick stands
+    if (typeof apiFetch !== "function" || typeof authToken !== "string" || !authToken) return;
+    const mine = ++defaultLoads;
+    let rows;
+    try {
+      const res = await apiFetch("/api/practice/course-shares");
+      if (!res.ok) return;
+      rows = (await res.json()).courses || [];
+    } catch (_) { return; }
+    // A newer read is in flight, or the learner picked a course meanwhile.
+    if (mine !== defaultLoads || coursePicked) return;
+    const studied = rows.filter((r) => r && r.studied).map((r) => r.course);
+    const next = studied.length && !studied.includes("arena") ? studied[0] : null;
+    if (next === courseFilter) return;
+    window.DeltaKgCore?.deselect?.();
+    courseFilter = next;
+    courseDefaulted = !!next;
+    courseVisible = null;
+    announceCourse();
+    if (cy) applyCourseFilter();
+  };
+  // courses.js's toggle and course-pick.js raise it when the choice changes.
+  window.addEventListener("delta:courses-changed", () => { defaultCourse(); });
 
   const readiness = (kc) => {
     if (typeof window.deltaKcReadinessInfo !== "function") return NaN;
@@ -585,7 +629,7 @@
       window.deltaFocusConceptGraphKc = (kc) => {
         if (kc && parents[kc]) {
           let again = false;
-          if (courseHidden(kc)) { courseFilter = null; courseVisible = null; announceCourse(); again = true; }
+          if (courseHidden(kc)) { courseFilter = null; courseDefaulted = false; coursePicked = true; courseVisible = null; announceCourse(); again = true; }
           if (mode === "condensed") { mode = "complete"; again = true; }
           if (again) applyView();
         }
@@ -597,6 +641,7 @@
     loadArenaMap().then(() => { if (typeof window.deltaKcSection !== "function") applyView(); });
     if (courseFilter) applyCourseFilter(); else applyView();
     announceCourse();
+    defaultCourse();
     return true;
   };
 

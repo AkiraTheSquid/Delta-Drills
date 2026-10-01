@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Delta Drills v1.0.16</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="any">
   <!-- delta-drills.vercel.app → deltadrills.com, carrying localStorage across.
        FIRST and SYNCHRONOUS: it may stop the page before anything else reads
        storage on the wrong origin. See domain-move.js. -->
@@ -2425,7 +2427,7 @@ t.manual_seed(0)
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=12" defer></script>
+  <script src="concept-graph/graph-views.js?v=13" defer></script>
   <!-- Gathers the controls lesson-graph.js and graph-views.js built into
        one bar across the top. AFTER both; optional. -->
   <script src="concept-graph/kg-toolbar.js?v=4" defer></script>
@@ -2565,7 +2567,7 @@ t.manual_seed(0)
   <script src="practice/xp-charts.js?v=8"></script>
   <script src="practice/xp-target.js?v=1"></script>
   <script src="practice/xp-group-view.js?v=9"></script>
-  <script src="practice/xp-panel.js?v=12"></script>
+  <script src="practice/xp-panel.js?v=13"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
