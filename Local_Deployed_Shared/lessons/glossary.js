@@ -378,7 +378,10 @@ window.DD_GLOSSARY = {
       term: "nondegenerate triangle",
       aliases: ["nondegenerate triangles", "degenerate triangle", "degenerate triangles"],
       kc: "math.linear-combinations",
-      def: "A triangle whose three corners are not on one line. Its edges B − A and C − A are linearly independent, so they span a plane and every point of it has exactly one pair of weights u, v. A degenerate triangle has collapsed to a segment or a point.",
+      // Seth, 2026-10-01 (lesson feedback, q50019): say it plainly (no area,
+      // corners on one line), show a picture, and tie it to independence.
+      def: "A triangle with real area. A degenerate triangle has been squashed flat: its three corners sit on one line (or on one point), so its area is zero. In vector terms, a triangle is nondegenerate exactly when its edges B − A and C − A are linearly independent, meaning neither is a multiple of the other.",
+      pic: "flat-triangle",
     },
     {
       term: "barycentric coordinates",
@@ -387,6 +390,23 @@ window.DD_GLOSSARY = {
       def: "Three weights (1 − u − v, u, v) on a triangle's corners A, B, C that add to one and rebuild a point as their weighted sum. All three nonnegative means the point is in the filled triangle.",
     },
   ],
+};
+
+/* Pictures a popup can carry (a term's `pic` names one). Static SVG authored
+   here, never learner data, so jargon.js may set it as markup. Colours come
+   from classes in styles/jargon.css, so both themes work. */
+window.DD_GLOSSARY.pics = {
+  "flat-triangle":
+    '<svg viewBox="0 0 310 122" role="img" aria-label="Left: a triangle with area. Right: a flat triangle whose three corners lie on one line.">' +
+      '<polygon class="pic-tri" points="28,96 132,88 66,22"/>' +
+      '<circle class="pic-dot" cx="28" cy="96" r="3.5"/><circle class="pic-dot" cx="132" cy="88" r="3.5"/><circle class="pic-dot" cx="66" cy="22" r="3.5"/>' +
+      '<text class="pic-v" x="16" y="104">A</text><text class="pic-v" x="138" y="96">B</text><text class="pic-v" x="58" y="16">C</text>' +
+      '<line class="pic-flat" x1="172" y1="92" x2="286" y2="50"/>' +
+      '<circle class="pic-dot" cx="172" cy="92" r="3.5"/><circle class="pic-dot" cx="286" cy="50" r="3.5"/><circle class="pic-dot" cx="229" cy="71" r="3.5"/>' +
+      '<text class="pic-v" x="160" y="104">A</text><text class="pic-v" x="292" y="48">B</text><text class="pic-v" x="222" y="62">C</text>' +
+      '<text class="pic-cap" x="80" y="118" text-anchor="middle">nondegenerate: has area</text>' +
+      '<text class="pic-cap pic-cap-flat" x="229" y="118" text-anchor="middle">degenerate: flat, area 0</text>' +
+    '</svg>',
 };
 
 /* Where each concept is taught, for the popup's footer line: kc -> [lesson

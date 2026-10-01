@@ -81,6 +81,34 @@
   color: var(--text);
 }
 
+/* A term's picture (lessons/glossary.js `pics`): static SVG, theme tokens. */
+.dd-jargon-pop-pic {
+  margin-top: 8px;
+}
+.dd-jargon-pop-pic[hidden] {
+  display: none;
+}
+.dd-jargon-pop-pic svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dd-jargon-pop-pic .pic-tri {
+  fill: rgb(var(--ok-rgb) / 0.16);
+  stroke: var(--ok);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.dd-jargon-pop-pic .pic-flat {
+  stroke: var(--danger);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.dd-jargon-pop-pic .pic-dot { fill: var(--text); }
+.dd-jargon-pop-pic .pic-v { fill: var(--text); font-size: 12px; font-weight: 700; }
+.dd-jargon-pop-pic .pic-cap { fill: var(--muted); font-size: 11px; }
+.dd-jargon-pop-pic .pic-cap-flat { fill: var(--danger); }
+
 .dd-jargon-pop-where {
   margin-top: 8px;
   color: var(--muted);

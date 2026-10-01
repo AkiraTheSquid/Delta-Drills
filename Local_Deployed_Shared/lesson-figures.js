@@ -309,7 +309,9 @@
     else mountAll(document);
   }
 
-  const api = { barycentric, pointAt, verdict, mountAll, BUILDERS };
+  /* Other figures live in their own files (lesson-figure-*.js, loaded after
+     this one) and register into BUILDERS with these shared helpers. */
+  const api = { barycentric, pointAt, verdict, mountAll, BUILDERS, el, fmt, round2 };
   if (typeof window !== "undefined") window.LessonFigures = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

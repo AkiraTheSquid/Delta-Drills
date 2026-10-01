@@ -313,6 +313,7 @@
   let pop = null;
   let popTitle = null;
   let popBody = null;
+  let popPic = null;
   let popWhere = null;
   let popGo = null;
   let openFor = null;      // the .dd-jargon element the panel belongs to
@@ -336,10 +337,12 @@
     pop.innerHTML =
       '<div class="dd-jargon-pop-term"></div>' +
       '<div class="dd-jargon-pop-def"></div>' +
+      '<div class="dd-jargon-pop-pic"></div>' +
       '<div class="dd-jargon-pop-where"></div>' +
       '<button type="button" class="dd-jargon-pop-go">Take me to the lesson ↗</button>';
     popTitle = pop.querySelector(".dd-jargon-pop-term");
     popBody = pop.querySelector(".dd-jargon-pop-def");
+    popPic = pop.querySelector(".dd-jargon-pop-pic");
     popWhere = pop.querySelector(".dd-jargon-pop-where");
     popGo = pop.querySelector(".dd-jargon-pop-go");
     popGo.addEventListener("click", () => {
@@ -396,6 +399,11 @@
     openFor = el;
     popTitle.textContent = rec.term;
     popBody.textContent = rec.def || "";
+    // A picture is glossary.js's own static SVG (GLOSSARY.pics), never text a
+    // learner typed, so markup is safe here where the definition is not.
+    const pic = rec.pic && (GLOSSARY.pics || {})[rec.pic];
+    popPic.innerHTML = pic || "";
+    popPic.hidden = !pic;
     const where = (GLOSSARY.kcLesson || {})[kc];
     popWhere.innerHTML = where
       ? "Taught in <strong>" + esc(where[0]) + "</strong> — " + esc(where[1])
