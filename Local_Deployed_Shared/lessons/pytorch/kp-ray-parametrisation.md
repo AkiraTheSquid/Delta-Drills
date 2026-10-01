@@ -18,8 +18,9 @@ direction. ARENA writes every point on it as
 > **P(u) = O + u · D**, with **u ≥ 0**
 
 where **O** is the origin (a point), **D** the direction (a vector), and `u` a
-scalar. `u = 0` is the origin, `u = 1` is one direction-length along, `u = 2`
-twice that. Negative `u` would be *behind* the camera, so it is excluded.
+scalar called the ray's **parameter**: it says how far along the ray you are.
+"The point at parameter `u`" means P(u). `u = 0` is the origin, `u = 1` is one
+direction-length along, `u = 2` twice that. Negative `u` would be *behind* the camera, so it is excluded.
 
 In a tensor the ray is stored as a **(2, 3)** slab — row 0 is the origin, row
 1 the direction, and the three columns are x, y, z:

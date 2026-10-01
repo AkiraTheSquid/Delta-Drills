@@ -26993,7 +26993,7 @@
     "topic": "PyTorch",
     "subtopic": "Rays as tensors",
     "subtopic_key": "PyTorch: Rays as tensors",
-    "question_text": "Return the points at parameters `0, 1, …, n-1` on the ray `[[ox, oy, oz], [dx, dy, dz]]` as a nested list, using `t.arange(n)` and one broadcast.",
+    "question_text": "A ray is stored as `[[ox, oy, oz], [dx, dy, dz]]`: origin O, then direction D. Its point at parameter u is O + u·D, so u says how many direction-lengths to step from the origin. Return the points for u = 0, 1, …, n-1 (the values `t.arange(n)` makes), one point per row, as a nested list, using one broadcast. Example: O = (0, 0, 0), D = (1, 0.5, 0), n = 3 gives [[0, 0, 0], [1, 0.5, 0], [2, 1, 0]].",
     "answer_code": "import torch as t\n\n\ndef solve(ray, n):\n    \"\"\"n integer steps along one ray.\"\"\"\n    ray = t.tensor(ray)\n    u = t.arange(n)[:, None]\n    return (ray[0] + u * ray[1]).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 3)\nprint(solve(*example))\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
