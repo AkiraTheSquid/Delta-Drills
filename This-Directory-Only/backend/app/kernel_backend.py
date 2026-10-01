@@ -69,3 +69,6 @@ def startup() -> None:
     sweep = getattr(backend, "sweep_orphans", None)
     if sweep:
         sweep()
+    reaper = getattr(backend, "start_reaper", None)
+    if reaper:
+        reaper()
