@@ -124,7 +124,7 @@ model swapping · the Colab route (abandoned 09-13, stays abandoned).
 
 # PASS 2 — every section runs, or says where it can't (GPU sections)
 
-Status: SIGNED OFF 2026-10-01 — P1 L4, P2 AUTOMATIC at the section's GPU cell (Seth: "start the gpu when it's needed and disable it when the user is not using it"), P3 5 h, P4 Volume with Seth's token, P5 banner only.
+Status: BUILT 2026-10-01 (backend + frontend + 75 GB ungated weights in the Volume); gated weights WAIT on Seth's `dd-hf-token` Modal secret. SIGNED OFF 2026-10-01 — P1 L4, P2 AUTOMATIC at the section's GPU cell (Seth: "start the gpu when it's needed and disable it when the user is not using it"), P3 5 h, P4 Volume with Seth's token, P5 banner only.
 
 ## Goal
 

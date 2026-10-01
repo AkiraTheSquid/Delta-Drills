@@ -5,6 +5,7 @@ Endpoints (mounted under /api/practice by the parent router):
   POST /kernel/exec
   POST /kernel/reset
   GET  /kernel/status
+  GET  /kernel/compute
 
 `/run-code` (ai_router) stays exactly as it is: grading wants a fresh process
 per submission, and nothing about a notebook session should be able to leak
@@ -22,9 +23,11 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
+from app import modal_gpu
 from app.auth import get_current_user
 from app.kernel_backend import (
     DEFAULT_TIMEOUT_SECONDS,
+    backend,
     kernel_status,
     reset_kernel,
     run_cell,
@@ -126,3 +129,15 @@ def kernel_status_endpoint(user: User = Depends(get_current_user)) -> dict:
     lesson they are on and how long they have been idle.
     """
     return kernel_status(_session_id(user))
+
+
+@router.get("/kernel/compute")
+def kernel_compute(user: User = Depends(get_current_user)) -> dict:
+    """What each ARENA section needs (cpu / api / gpu / gpu-big, and the cell
+    a GPU section moves to the GPU at) plus this learner's GPU hours left. The
+    notebook places its banner and its `#gpu` context from this. GPUs exist
+    only on the Modal backend; the fork backend reports them off."""
+    view = getattr(backend, "compute_view", None)
+    if view is None:
+        return modal_gpu.learner_view(_session_id(user), [], enabled=False)
+    return view(_session_id(user))

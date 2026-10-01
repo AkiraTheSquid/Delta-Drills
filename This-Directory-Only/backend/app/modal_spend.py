@@ -73,7 +73,8 @@ def request_rate(cpu: float, memory_mb: int) -> float:
     return cpu * CPU_USD_PER_CORE_HOUR + memory_mb / 1024 * MEM_USD_PER_GIB_HOUR
 
 
-def record(sandbox_id: str | None, session_id: str, context: str, started: float) -> None:
+def record(sandbox_id: str | None, session_id: str, context: str, started: float,
+           gpu: bool = False) -> None:
     """One usage line for a sandbox that just closed. Once per sandbox: a
     session can be shut down from two paths (reaper and a failed cell), and a
     duplicate line would bill its hours twice."""
@@ -84,10 +85,11 @@ def record(sandbox_id: str | None, session_id: str, context: str, started: float
             return
         _recorded.add(sandbox_id)
     ended = time.time()
-    user = session_id[1:] if session_id.startswith("u") and session_id[1:].isdigit() else None
+    # `u<user id>` (kernel_router); the id is a UUID, not digits.
+    user = session_id[1:] if session_id.startswith("u") else None
     line = {"user": user, "session_id": session_id, "sandbox_id": sandbox_id,
-            "context": context, "started": round(started, 1), "ended": round(ended, 1),
-            "seconds": round(ended - started, 1)}
+            "context": context, "gpu": gpu, "started": round(started, 1),
+            "ended": round(ended, 1), "seconds": round(ended - started, 1)}
     try:
         with USAGE_LOG.open("a") as fh:
             fh.write(json.dumps(line) + "\n")
@@ -97,7 +99,8 @@ def record(sandbox_id: str | None, session_id: str, context: str, started: float
         logger.warning("modal spend: usage log %s not written: %s", USAGE_LOG, exc)
 
 
-def _logged_spans(since: float) -> list[tuple[float, float]]:
+def _logged_spans(since: float) -> list[tuple[float, float, bool, str]]:
+    """(start, end, gpu, session_id) for every logged sandbox alive after `since`."""
     spans = []
     try:
         with USAGE_LOG.open() as fh:
@@ -105,10 +108,11 @@ def _logged_spans(since: float) -> list[tuple[float, float]]:
                 try:
                     row = json.loads(raw)
                     started, ended = float(row["started"]), float(row["ended"])
-                except (ValueError, KeyError, TypeError):
+                    gpu, session_id = bool(row.get("gpu")), str(row.get("session_id") or "")
+                except (ValueError, KeyError, TypeError, AttributeError):
                     continue
                 if ended > since:
-                    spans.append((max(started, since), ended))
+                    spans.append((max(started, since), ended, gpu, session_id))
     except FileNotFoundError:
         pass
     except OSError as exc:
@@ -117,7 +121,17 @@ def _logged_spans(since: float) -> list[tuple[float, float]]:
 
 
 def _overlap(spans, start: float, end: float) -> float:
-    return sum(max(0.0, min(e, end) - max(s, start)) for s, e in spans)
+    return sum(max(0.0, min(span[1], end) - max(span[0], start)) for span in spans)
+
+
+def gpu_hours(session_id: str, live_starts: list[float]) -> float:
+    """This learner's GPU sandbox hours this month: the closed ones in the
+    usage log plus `live_starts`, the GPU sandboxes they have open now."""
+    now = time.time()
+    month_start = _month_start(now)
+    spans = [sp for sp in _logged_spans(month_start) if sp[2] and sp[3] == session_id]
+    spans += [(max(s, month_start), now) for s in live_starts]
+    return _overlap(spans, month_start, now) / 3600
 
 
 def _fetch_month_usd() -> float:
@@ -175,13 +189,18 @@ def start_refresher(first_read_wait: float = FIRST_READ_WAIT_SECONDS) -> None:
                        first_read_wait)
 
 
-def summary(live_starts: list[float], rate_floor: float) -> dict:
-    """The month so far. `live_starts` are the wall-clock starts of the
-    sandboxes open right now; `rate_floor` is what one bills at its requests."""
+def summary(live: list[tuple[float, bool]], cpu_rate: float, gpu_rate: float) -> dict:
+    """The month so far. `live` is (wall-clock start, is GPU) for each sandbox
+    open right now; the rates are what a CPU and a GPU sandbox bill at their
+    requests. The unbilled tail is priced per sandbox kind, never below the
+    measured blend: an hour of L4 must not be priced as an hour of CPU."""
     now = time.time()
     month_start = _month_start(now)
-    spans = _logged_spans(month_start) + [(max(s, month_start), now) for s in live_starts]
+    spans = _logged_spans(month_start) + [(max(s, month_start), now, gpu, "") for s, gpu in live]
+    gpu_spans = [sp for sp in spans if sp[2]]
+    cpu_spans = [sp for sp in spans if not sp[2]]
     kernel_hours = _overlap(spans, month_start, now) / 3600
+    gpu_hours_all = _overlap(gpu_spans, month_start, now) / 3600
     with _lock:
         billed = _billed["usd"] if _billed["month"] == _month_key(now) else None
         fetched = _billed["fetched"]
@@ -190,20 +209,18 @@ def summary(live_starts: list[float], rate_floor: float) -> dict:
         billed_hours = _overlap(spans, month_start, fetched) / 3600
         if billed_hours >= MIN_RATE_HOURS:
             usd_per_hour = billed / billed_hours
-        rate = max(rate_floor, usd_per_hour or 0.0)
-        unbilled_hours = _overlap(spans, fetched - LAG_SECONDS, now) / 3600
-        mtd = billed + unbilled_hours * rate
+        tail_from = fetched - LAG_SECONDS
+        mtd = (billed
+               + _overlap(cpu_spans, tail_from, now) / 3600 * max(cpu_rate, usd_per_hour or 0.0)
+               + _overlap(gpu_spans, tail_from, now) / 3600 * max(gpu_rate, usd_per_hour or 0.0))
     else:
-        mtd = kernel_hours * rate_floor
+        mtd = (kernel_hours - gpu_hours_all) * cpu_rate + gpu_hours_all * gpu_rate
     return {
         "mtd_usd": round(mtd, 2),
         "billed_usd": None if billed is None else round(billed, 2),
         "cap_usd": CAP_USD,
         "kernel_hours_mtd": round(kernel_hours, 2),
+        "gpu_hours_mtd": round(gpu_hours_all, 2),
         "usd_per_kernel_hour": None if usd_per_hour is None else round(usd_per_hour, 3),
         "capped": mtd >= CAP_USD,
     }
-
-
-def over_cap(live_starts: list[float], rate_floor: float) -> bool:
-    return summary(live_starts, rate_floor)["capped"]
