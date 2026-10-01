@@ -4,7 +4,8 @@ The numbers are `app/learning_xp.py`'s; this file only reads the learner's
 time zone and stores their target. The Learner Home XP panel and the topbar
 level pill both read GET /xp; the Learner Home's group view reads
 GET /groups/xp, every member's summary (app/group_xp.py), and its week
-board GET /leaderboard/xp, every learner's XP this week (app/global_xp.py).
+board GET /leaderboard/xp, every learner's XP this week (app/global_xp.py);
+PUT /leaderboard/name sets the name the board lists you under.
 Its concept list
 reads GET /concept-candidates, and a concept picked from it runs through
 POST /concept-route (app/concept_choice.py).
@@ -94,6 +95,23 @@ def leaderboard_xp(
 ) -> dict:
     """Every learner's XP this week, most first (app/global_xp.py)."""
     return global_xp.read_board(db, user, _zone(tz_offset, tz_name))
+
+
+class LeaderboardNameRequest(BaseModel):
+    name: Optional[str] = Field(None, max_length=200)
+
+
+@router.put("/leaderboard/name")
+def leaderboard_name(
+    payload: LeaderboardNameRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """The name the week board shows you under; blank = the default."""
+    try:
+        return {"display_name": global_xp.set_name(db, user, payload.name)}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 class ConceptRouteRequest(BaseModel):

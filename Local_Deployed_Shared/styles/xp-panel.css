@@ -218,6 +218,8 @@
   font-size: 10px;
 }
 .xp-axis.is-now { fill: var(--text); }
+/* Mon–Sun: days of the week still to come (Seth 2026-10-01). */
+.xp-axis.is-ahead { opacity: 0.45; }
 .xp-hatch-ink { fill: var(--xp-ink); }
 
 .xp-bar-hit { fill: transparent; }

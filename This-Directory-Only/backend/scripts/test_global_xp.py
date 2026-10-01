@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """The global week board (app/global_xp.py), 2026-09-30.
 
-Seth: the Learner Home leaderboard covers everyone, not one study group.
+Seth: the Learner Home leaderboard covers everyone, not one study group;
+2026-10-01: everyone who has practised, named by default, renamable.
 Synthetic attempt-log files (only their mtime matters) and an isolated
 SQLite DB; `learning_xp.replay` is stubbed with fixed per-day XP.
 
@@ -86,31 +87,49 @@ class BoardTests(unittest.TestCase):
         self.assertTrue(rows[1]["is_you"])  # a tie puts you first among equals
         self.assertEqual(rows[1]["display_name"], "Me")
         self.assertEqual(rows[0]["display_name"], "Ada")
-        self.assertEqual(rows[2]["display_name"], global_xp.ANON)
+        self.assertEqual(rows[2]["display_name"], "b")  # the email's local part
 
-    def test_name_only_shown_to_a_groupmate(self):
+    def test_names_shown_to_everyone(self):
         me = self.user("me@x.com", {MONDAY: 1.0})
         other = self.user("o@x.com", {MONDAY: 9.0})
-        theirs, mine = self.group(other), self.group(me)
-        self.join(other, theirs, "Private Name")
-        self.join(me, mine, "Me")
+        third = self.user("grace.hopper@x.com", {MONDAY: 5.0})
+        self.join(other, self.group(other), "Their Group Name")
         rows = self.board(me)["rows"]
-        self.assertEqual([r["display_name"] for r in rows], [global_xp.ANON, "Me"])
+        self.assertEqual([r["display_name"] for r in rows], ["Their Group Name", "grace hopper", "me"])
+        self.assertEqual(self.board(third)["week_end"], "2026-10-04")  # Monday through Sunday
+
+    def test_chosen_name_wins_and_resets(self):
+        me = self.user("me@x.com", {MONDAY: 1.0})
+        self.join(me, self.group(me), "Group Me")
+        self.assertEqual(global_xp.set_name(self.db, me, "  Speedy\t Gonzales "), "Speedy Gonzales")
+        self.assertEqual(self.board(me)["rows"][0]["display_name"], "Speedy Gonzales")
+        self.assertEqual(global_xp.set_name(self.db, me, "Again"), "Again")
+        self.assertEqual(global_xp.set_name(self.db, me, ""), "Group Me")  # blank = the default
+        self.assertEqual(self.board(me)["rows"][0]["display_name"], "Group Me")
+        with self.assertRaises(ValueError):
+            global_xp.set_name(self.db, me, "me@x.com")
+        with self.assertRaises(ValueError):
+            global_xp.set_name(self.db, me, "x" * (global_xp.NAME_MAX + 1))
 
     def test_last_week_does_not_count(self):
         me = self.user("me@x.com", {MONDAY - timedelta(days=1): 50.0})
         out = self.board(me)
         self.assertEqual(out["rows"], [{**out["rows"][0], "xp": 0.0}])
 
-    def test_idle_and_zero_learners_left_off_you_kept(self):
-        me = self.user("me@x.com")  # no log at all
-        self.user("old@x.com", {MONDAY: 40.0}, log_age_days=9)  # log untouched since last week
+    def test_idle_learners_listed_at_zero_never_practised_left_off(self):
+        me = self.user("me@x.com")  # no log at all — still listed, as you
+        self.user("old@x.com", {MONDAY: 40.0}, log_age_days=9)  # untouched since last week: 0, not replayed
         self.user("zero@x.com", {})
+        self.user("never@x.com")  # an account that never answered anything
+        self.user("guest-1@guest.delta-drills.app", {})  # an idle guest session
+        g = self.user("guest-2@guest.delta-drills.app", {MONDAY: 2.0}, log_age_days=1)
         (self.dir / "not-a-uuid.attempts.jsonl").write_text("{}\n")
         rows = self.board(me)["rows"]
-        self.assertEqual(len(rows), 1)
-        self.assertTrue(rows[0]["is_you"])
-        self.assertEqual(rows[0]["xp"], 0.0)
+        self.assertEqual([r["display_name"] for r in rows], [global_xp.GUEST, "me", "old", "zero"])
+        self.assertTrue(rows[1]["is_you"])
+        self.assertEqual([r["xp"] for r in rows], [2.0, 0.0, 0.0, 0.0])
+        self.assertEqual([r["rank"] for r in rows], [1, 2, 2, 2])
+        self.assertEqual(global_xp.set_name(self.db, g, "Named Guest"), "Named Guest")
 
     def test_no_identity_leaves(self):
         me = self.user("me@x.com", {MONDAY: 5.0})

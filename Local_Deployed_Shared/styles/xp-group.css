@@ -1,5 +1,5 @@
 /* ================================================================
-   XP-GROUP.CSS — the Learner Home's weekly leaderboard in a study group
+   XP-GROUP.CSS — the Learner Home's weekly leaderboard, everyone
    (../practice/xp-group-view.js, Seth 2026-09-29): under your own bars,
    one row per member, most XP first — rank, name, a bar scaled to the
    leader's week, the number. (🪦 The one-chart-per-member rows of
@@ -41,7 +41,7 @@
   display: grid;
   font-size: 13px;
   gap: 10px;
-  grid-template-columns: 1.6em minmax(5em, 9em) minmax(0, 1fr) auto;
+  grid-template-columns: 1.6em minmax(6em, 14em) minmax(0, 1fr) auto;
 }
 .xp-board-rank {
   color: var(--muted);
@@ -85,3 +85,47 @@
   font-weight: 500;
   margin-left: 7px;
 }
+
+/* ✎ on your own row renames you (Seth 2026-10-01). */
+.xp-board-rename {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 4px;
+  padding: 0 2px;
+}
+.xp-board-rename:hover,
+.xp-board-rename:focus-visible { color: var(--text); }
+.xp-board-name-form { display: flex; flex-direction: column; gap: 2px; grid-column: 2 / 4; overflow: visible; }
+.xp-board-name-input {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--text);
+  font: inherit;
+  min-width: 0;
+  padding: 1px 5px;
+  width: 100%;
+}
+.xp-board-name-error { color: var(--warn); font-size: 11px; white-space: normal; }
+.xp-board-name.is-mine { align-items: baseline; display: flex; }
+.xp-board-name.is-mine .xp-you-tag,
+.xp-board-name.is-mine .xp-board-rename { flex: none; }
+.xp-board-name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.xp-board-name-line { align-items: center; display: flex; gap: 4px; min-width: 0; }
+.xp-board-name-btn {
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  font-size: 11px;
+  padding: 1px 6px;
+}
+.xp-board-name-btn.is-save { color: var(--text); }
+.xp-board-name-btn:disabled { cursor: default; opacity: 0.5; }
+.xp-board-name-form + .xp-board-bar { display: none; } /* the box takes the bar's column */

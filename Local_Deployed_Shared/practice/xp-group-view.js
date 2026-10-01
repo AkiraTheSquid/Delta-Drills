@@ -8,19 +8,23 @@
    week … the person that's done the most … has a filled-up bar all the way,
    and then everyone else is scaled against that … the number one person is
    in first place". Seth, 2026-09-30: "the leaderboard is across the board
-   for everyone, rather than being scoped to groups". So:
+   for everyone, rather than being scoped to groups". Seth, 2026-10-01:
+   "display everyone, including their names as well as their total XP for
+   Monday through Sunday … by default [they] are displayed … but they can
+   choose to change their username". So:
 
      your bars           always `ctx.solo()` (./xp-panel.js, with the
                          draggable target of ./xp-target.js)
-     This week · Everyone  one row per learner with XP this week (and
-                         you, even at 0), most XP first: rank, name, a bar
-                         scaled to the leader's XP, the number. Ties share
-                         a rank (1, 1, 3).
+     This week · Everyone  one row per learner who has ever practised
+                         (and you), 0 included, most XP first: rank, name,
+                         a bar scaled to the leader's XP, the number. Ties
+                         share a rank (1, 1, 3).
 
-   The week is the calendar week, Monday through today, cut at the VIEWER's
-   midnight (app/global_xp.py). A name shows only where you share a study
-   group with that learner, else "Learner"; the server never sends an
-   email or id.
+   The week is the calendar week, Monday through Sunday, cut at the VIEWER's
+   midnight (app/global_xp.py). Everyone's name shows: the one they chose,
+   else their study group name, else their email's local part; the server
+   never sends an email or id. ✎ on your own row renames you
+   (PUT /api/practice/leaderboard/name; blank = back to the default).
 
    The board (GET /api/practice/leaderboard/xp) is read on boot and again
    each time the Learner Home is shown. Your own row reads the live summary,
@@ -31,7 +35,12 @@
   "use strict";
 
   const { el, fmt, addDays, shortDate, dateOf } = window.DDXpCharts.util;
-  let roster; // undefined = not read yet, null = none (signed out / failed first read), else {week_start, rows}
+  const weekday = (iso) => dateOf(iso).toLocaleDateString(undefined, { weekday: "short" });
+  let roster; // undefined = not read yet, null = none (signed out / failed first read), else {week_start, week_end, rows}
+  let draft = null; // your name while ✎ is open, else null
+  let saying = ""; // why the last rename was refused
+  let opening = false; // ✎ was just clicked: focus the box
+  let saving = false; // a rename is in flight: one at a time
 
   const fetcher = () => (typeof apiFetch === "function" ? apiFetch : window.apiFetch);
   const signedIn = () => window.DDIdentity?.isSignedIn?.() === true;
@@ -67,10 +76,93 @@
   const weekXp = (xp, from) =>
     xp && Array.isArray(xp.days) ? xp.days.reduce((a, d) => a + (d.date >= from ? d.xp || 0 : 0), 0) : null;
 
+  async function rename(name) {
+    if (saving) return;
+    saving = true;
+    repaint();
+    const _fetch = fetcher();
+    try {
+      if (typeof _fetch !== "function") throw new Error("Not connected.");
+      const res = await _fetch("/api/practice/leaderboard/name", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.detail || "That name could not be saved.");
+      const mine = roster?.rows?.find((r) => r.is_you);
+      if (mine) mine.display_name = data.display_name;
+      draft = null;
+      saying = "";
+      seq += 1; // a read already in flight carries the old name
+      load();
+    } catch (err) {
+      saying = String(err?.message || err);
+    }
+    saving = false;
+    repaint();
+  }
+
+  /** Your name, or the box that renames you while ✎ is open. */
+  function yourName(r) {
+    if (draft === null) {
+      // The name ellipsizes alone, so a long one never clips "you" or ✎.
+      const name = el("span", "xp-board-name is-mine");
+      name.appendChild(el("span", "xp-board-name-text", r.display_name));
+      name.appendChild(el("span", "xp-you-tag", "you"));
+      const edit = el("button", "xp-board-rename", "✎");
+      edit.type = "button";
+      edit.title = "Change the name the leaderboard shows";
+      edit.setAttribute("aria-label", edit.title);
+      edit.addEventListener("click", () => {
+        draft = r.display_name;
+        opening = true;
+        saying = "";
+        repaint();
+      });
+      name.appendChild(edit);
+      return name;
+    }
+    const form = el("form", "xp-board-name xp-board-name-form");
+    const input = el("input", "xp-board-name-input");
+    input.value = draft;
+    input.maxLength = 24;
+    input.placeholder = "Blank = default";
+    input.setAttribute("aria-label", "Your leaderboard name");
+    input.addEventListener("input", () => { draft = input.value; });
+    input.disabled = saving;
+    const cancel = () => {
+      draft = null;
+      saying = "";
+      repaint();
+    };
+    input.addEventListener("keydown", (e) => { if (e.key === "Escape") cancel(); });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      rename(input.value);
+    });
+    const save = el("button", "xp-board-name-btn is-save", saving ? "Saving…" : "Save");
+    save.type = "submit";
+    save.disabled = saving;
+    const back = el("button", "xp-board-name-btn", "Cancel");
+    back.type = "button";
+    back.disabled = saving;
+    back.addEventListener("click", cancel);
+    const line = el("span", "xp-board-name-line");
+    line.append(input, save, back);
+    form.appendChild(line);
+    if (saying) form.appendChild(el("span", "xp-board-name-error", saying));
+    // Focus when just opened, and keep it through a repaint (a new summary)
+    // that replaces the box the learner was typing in — never steal it back.
+    const typing = document.activeElement?.classList?.contains("xp-board-name-input");
+    if (opening || typing) requestAnimationFrame(() => { if (input.isConnected) input.focus(); });
+    opening = false;
+    return form;
+  }
+
   /** Everyone's week, most XP first. `you` is the live summary. */
   function board(you) {
-    const today = you.today.date;
-    const from = monday(today);
+    const from = monday(you.today.date);
     // A board read last week (the page left open over Monday) shows nobody's
     // old numbers as this week's: only your live row until the next read.
     const fresh = roster.week_start === from;
@@ -85,7 +177,7 @@
     const head = el("div", "xp-board-head");
     head.append(
       el("h3", "xp-board-title", "This week · Everyone"),
-      el("p", "xp-board-note", from === today ? shortDate(today) : `${shortDate(from)} – today`),
+      el("p", "xp-board-note", `${weekday(from)} ${shortDate(from)} – ${weekday(addDays(from, 6))} ${shortDate(addDays(from, 6))}`),
     );
     const list = el("ol", "xp-board-list");
     let rank = 0;
@@ -95,8 +187,7 @@
       if (r.week !== prev) rank = i + 1;
       prev = r.week;
       const li = el("li", `xp-board-row${r.is_you ? " is-you" : ""}${rank === 1 && r.week > 0 ? " is-first" : ""}`);
-      const name = el("span", "xp-board-name", r.display_name);
-      if (r.is_you) name.appendChild(el("span", "xp-you-tag", "you"));
+      const name = r.is_you ? yourName(r) : el("span", "xp-board-name", r.display_name);
       const bar = el("span", "xp-board-bar");
       const fill = el("span", "xp-board-fill");
       fill.style.width = `${lead > 0 && r.week > 0 ? Math.max(1.5, (r.week / lead) * 100).toFixed(1) : 0}%`;
@@ -140,6 +231,8 @@
   window.addEventListener("delta:auth-state-changed", () => {
     const had = !!roster;
     roster = undefined;
+    draft = null;
+    saying = "";
     if (had) repaint();
     load();
   });
