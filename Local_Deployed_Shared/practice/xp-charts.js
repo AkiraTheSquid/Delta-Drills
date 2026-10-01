@@ -3,7 +3,10 @@
    home shares).
 
    DAILY XP — one bar per day of the range, today's hatched (provisional:
-     later answers can still move credit to the day it happened), today's
+     later answers can still move credit to the day it happened). `start`
+     fixes the range's first day instead of ending it today: the home draws
+     Monday through Sunday (Seth, 2026-10-01), and days still to come get a
+     label and no bar. Today's
      target as a line unless `target: false` (a number draws the line
      there instead). `drag: true` leaves headroom above the line, draws its
      knob at the right end and hands ./xp-target.js the pieces it moves
@@ -79,19 +82,22 @@
   };
 
   // ── daily XP bars ──────────────────────────────────────────────
-  /** `count` days ending today; a short history is padded with empty days
-      so a week always reads as seven. */
-  function bars(s, { count, width, peak: floor = 0, measure = "xp", bare = false, target: withTarget = true, drag = false }) {
+  /** `count` days ending today, or from `start`; a short history is padded
+      with empty days so a week always reads as seven. */
+  function bars(s, { count, start, width, peak: floor = 0, measure = "xp", bare = false, target: withTarget = true, drag = false }) {
     const solved = measure === "solved";
     const val = (d) => (solved ? d.solved : d.xp) || 0;
     const unit = solved ? "solved" : "XP";
     const byDate = new Map(s.days.map((d) => [d.date, d]));
     const last = s.today.date;
+    const first = start || addDays(last, -(count - 1));
     const days = [];
-    for (let i = count - 1; i >= 0; i -= 1) {
-      const iso = addDays(last, -i);
+    for (let i = 0; i < count; i += 1) {
+      const iso = addDays(first, i);
       days.push(byDate.get(iso) || { date: iso, xp: 0, answers: 0, solved: 0, knowledge: null });
     }
+    const todayAt = Math.max(0, days.findIndex((d) => d.date === last));
+    const ahead = (d) => d.date > last;
     const sum = days.reduce((a, d) => a + val(d), 0);
 
     const box = el("section", "xp-chart");
@@ -117,7 +123,7 @@
 
     const svg = svgEl("svg", {
       viewBox: `0 0 ${W} ${H}`, class: "xp-bars", role: "img",
-      "aria-label": `${solved ? "Problems solved" : "Daily XP"}, ${shortDate(days[0].date)} to ${shortDate(last)}: ${fmt(sum)} ${unit}` +
+      "aria-label": `${solved ? "Problems solved" : "Daily XP"}, ${shortDate(days[0].date)} to ${shortDate(days[days.length - 1].date)}: ${fmt(sum)} ${unit}` +
         (target ? `; today's target ${fmt(target)}` : ""),
     });
     const defs = svgEl("defs");
@@ -137,24 +143,25 @@
     const describe = (d) =>
       `${longDate(d.date)} · ${solved ? `${d.solved || 0} solved of` : `${fmt(d.xp)} XP ·`} ${d.answers || 0} answer${d.answers === 1 ? "" : "s"}` +
       (d.date === last ? " · today, still settling" : "");
-    readout.textContent = describe(days[days.length - 1]);
+    const describeAny = (d) => (ahead(d) ? `${longDate(d.date)} · still to come` : describe(d));
+    readout.textContent = describe(days[todayAt]);
 
     const every = Math.ceil(days.length / 7);
     days.forEach((d, i) => {
       const cx = L + slot * (i + 0.5);
       const h = Math.max(val(d) > 0 ? 2 : 0, B - y(val(d)));
       const isToday = d.date === last;
-      const g = svgEl("g", { class: `xp-bar${isToday ? " is-today" : ""}`, style: `--i:${i}` });
+      const g = svgEl("g", { class: `xp-bar${isToday ? " is-today" : ""}${ahead(d) ? " is-ahead" : ""}`, style: `--i:${i}` });
       g.appendChild(svgEl("rect", { x: cx - slot / 2, y: T, width: slot, height: B - T, class: "xp-bar-hit" }));
       g.appendChild(svgEl("rect", {
         x: cx - bw / 2, y: B - h, width: bw, height: h, rx: Math.min(2, bw / 3),
         class: "xp-bar-fill",
       }));
-      g.appendChild(svgEl("title", {}, describe(d)));
-      g.addEventListener("pointerenter", () => { readout.textContent = describe(d); });
+      g.appendChild(svgEl("title", {}, describeAny(d)));
+      g.addEventListener("pointerenter", () => { readout.textContent = describeAny(d); });
       svg.appendChild(g);
       if ((days.length - 1 - i) % every === 0) {
-        svg.appendChild(svgEl("text", { x: cx, y: B + 18, "text-anchor": "middle", class: `xp-axis${isToday ? " is-now" : ""}` },
+        svg.appendChild(svgEl("text", { x: cx, y: B + 18, "text-anchor": "middle", class: `xp-axis${isToday ? " is-now" : ""}${ahead(d) ? " is-ahead" : ""}` },
           isToday ? "Today" : days.length <= 7 ? weekday(d.date) : shortDate(d.date)));
       }
     });
@@ -178,7 +185,7 @@
         box.xpTarget = { svg, line, label, knob, W, R, T, B, top, y, valueAt: (sy) => ((B - sy) / (B - T)) * top };
       }
     }
-    svg.addEventListener("pointerleave", () => { readout.textContent = describe(days[days.length - 1]); });
+    svg.addEventListener("pointerleave", () => { readout.textContent = describe(days[todayAt]); });
 
     box.append(frame(svg), readout);
     return box;

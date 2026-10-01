@@ -170,3 +170,15 @@ class StudyGroupDay(Base):
     # without a migration.
     payload = Column(Text, nullable=False, default="")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+# The name a learner is listed under on the Learner Home's everyone-leader-
+# board (app/global_xp.py). A row exists only once they have chosen one;
+# without it the board names them from their study group or their email's
+# local part. 🔴 Never an email address (cleaned by global_xp.set_name).
+class LeaderboardName(Base):
+    __tablename__ = "leaderboard_names"
+
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    name = Column(String(40), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)

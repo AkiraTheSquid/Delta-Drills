@@ -27,9 +27,12 @@
    its drag-to-set date (xp-target-drag.js), the problems-solved measure
    (xp-solved-chart.js), and the Today / Level / Course / Finish card.
 
-   THE BARS (#learner-xp-graphs) are drawn by ./xp-group-view.js: always
-   yours, and in a study group the week's leaderboard under them. This
-   file hands it `solo`.
+   THE BARS (#learner-xp-graphs) are drawn by ./xp-group-view.js: yours,
+   and everyone's week leaderboard under them. This file hands it `solo`.
+
+   Seth, 2026-10-01: "the bar graph displays Monday through Sunday instead
+   of the past seven days". The week here — bars and "gained this week" —
+   is the calendar week the server's board counts (app/global_xp.py).
 
    It draws from `delta:xp-summary`, which ../xp.js broadcasts after every
    read. `.is-empty` hides both halves when there is no summary (no
@@ -46,7 +49,9 @@
 
   const host = () => document.getElementById("learner-xp");
   const graphs = () => document.getElementById("learner-xp-graphs");
-  const { el, fmt, addDays } = window.DDXpCharts.util;
+  const { el, fmt, addDays, dateOf } = window.DDXpCharts.util;
+  /** Monday of the week `iso` falls in. */
+  const monday = (iso) => addDays(iso, -((dateOf(iso).getDay() + 6) % 7));
   const coursePct = (s) => {
     const pct = s.course.total_xp ? (s.knowledge / s.course.total_xp) * 100 : 0;
     return `${pct < 10 ? pct.toFixed(1) : Math.round(pct)}%`;
@@ -80,7 +85,7 @@
 
   // ── the week's XP, over its bars ───────────────────────────────
   function gained(s) {
-    const from = addDays(s.today.date, -(WEEK - 1));
+    const from = monday(s.today.date);
     const week = s.days.reduce((a, d) => a + (d.date >= from ? d.xp || 0 : 0), 0);
     const p = el("p", "xp-gained");
     p.append(el("span", "xp-gained-num", fmt(week)), el("span", "xp-gained-unit", " XP gained this week"));
@@ -97,7 +102,7 @@
     const T = window.DDXpTarget;
     const solo = () => {
       const target = T ? T.current(summary).daily : false;
-      const box = window.DDXpCharts.bars(summary, { width: drawnWidth, count: WEEK, bare: true, target, drag: !!T });
+      const box = window.DDXpCharts.bars(summary, { width: drawnWidth, count: WEEK, start: monday(summary.today.date), bare: true, target, drag: !!T });
       return [T ? T.wire(box, summary) : box];
     };
     const ctx = { width: drawnWidth, days: WEEK, solo };
