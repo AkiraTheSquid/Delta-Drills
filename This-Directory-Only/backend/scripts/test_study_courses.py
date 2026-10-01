@@ -154,20 +154,26 @@ questions.get_all_questions()
 def served_courses(st, n=30):
     """Serve-and-answer n drills (a wrong answer each, so the course mix's
     turn keeps moving); the set of courses they belonged to."""
-    seen = set()
+    return set().union(*served_sequence(st, n))
+
+
+def served_sequence(st, n=30):
+    """The same replay, one set of courses per served drill, in order."""
+    seq = []
     for i in range(n):
         picked, _ = question_pick.run_queue("", st, None, None, record=False)
         if not picked:
             break
         q = picked[1]
-        seen |= {course_registry.course_of(k) for k in kc_graph.question_kcs(q.id)}
+        seq.append({course_registry.course_of(k) for k in kc_graph.question_kcs(q.id)})
         sub = st.get_subtopic_state(q.subtopic)
         sub.served_question_ids.append(q.id)
         sub.history.append(AttemptRecord(
             question_id=q.id, subtopic=q.subtopic, difficulty_score=q.difficulty_score or 20,
             grade=0.0, correct=False,
             timestamp=(datetime.datetime(2026, 9, 29) + datetime.timedelta(minutes=i)).isoformat()))
-    return seen
+        st.last_served_question_id = q.id
+    return seq
 
 
 st = UserPracticeState(user_id="her-replay")
@@ -192,6 +198,39 @@ check("ARENA alone ticked: only ARENA served", got == {"arena"}, str(got))
 st = UserPracticeState(user_id="default-replay")
 got = served_courses(st)
 check("nothing ticked: ARENA served (the default)", got == {"arena"}, str(got))
+
+print("\n--- two courses ticked = an even split (Seth, 2026-10-01) ---")
+# 🔴 Before: ARENA + LeetCode both ticked served a fresh learner 30 of 30
+# LeetCode, and a learner on the 0.1 target 30 of 30 ARENA.
+for label, shares, study in (
+    ("both ticked, never asked", {"arena": 0.4, "leetcode": 0.4}, None),
+    ("both studied, ARENA exercise mix off", {"arena": 0.0, "leetcode": 0.4}, ["arena", "leetcode"]),
+):
+    st = UserPracticeState(user_id="split-" + label.replace(" ", "-"))
+    st.course_shares = dict(shares)
+    st.study_courses = study
+    seq = served_sequence(st, 20)
+    flat = ["+".join(sorted(c)) for c in seq]
+    check(f"{label}: 10 ARENA / 10 LeetCode",
+          flat.count("arena") == 10 and flat.count("leetcode") == 10, " ".join(flat))
+    check(f"{label}: they alternate", all(a != b for a, b in zip(flat, flat[1:])), " ".join(flat))
+st = UserPracticeState(user_id="split-three")
+st.course_shares = {"arena": 0.4, "leetcode": 0.4, "delta-drills": 0.4}
+flat = ["+".join(sorted(c)) for c in served_sequence(st, 9)]
+check("three ticked: each takes a turn in three",
+      all(len(set(flat[i:i + 3])) == 3 for i in range(0, 9, 3)), " ".join(flat))
+check("one course: no split", course_mix.course_turns(UserPracticeState(user_id="one")) == ["arena"])
+# 🔴 The 0.1 target narrows ARENA only: on it, every LeetCode drill used to
+# fail practice_targets.allows_question, so the split served ARENA alone.
+from app import practice_targets  # noqa: E402
+st = UserPracticeState(user_id="split-ray")
+st.practice_target = practice_targets.RAY
+check("0.1 target leaves LeetCode concepts in scope", practice_targets.includes(st, LC_KC))
+check("0.1 target still narrows ARENA",
+      not all(practice_targets.includes(st, k) for k in REG if course_registry.course_of(k) == "arena"))
+st.course_shares = {"arena": 0.4, "leetcode": 0.4}
+flat = ["+".join(sorted(c)) for c in served_sequence(st, 10)]
+check("0.1 target + LeetCode ticked: LeetCode is served too", flat.count("leetcode") == 5, " ".join(flat))
 
 print("\n--- save / load ---")
 adaptive.write_state_file(state)
