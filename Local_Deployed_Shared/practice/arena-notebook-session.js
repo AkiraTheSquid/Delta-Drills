@@ -1,5 +1,8 @@
 /* Setup orchestration only. No grading, rung selection, or answer replay.
-   One queue across notebooks prevents late setup from changing a new context. */
+   One queue across notebooks prevents late setup from changing a new context.
+   `context` may be a function (sync or async): an ARENA GPU section changes
+   its context mid-notebook (practice/arena-compute.js), and every request
+   must carry the one in force when it is sent. */
 window.ArenaNotebookSession = (() => {
   let queue = Promise.resolve();
   const fingerprint = (text) => {
@@ -10,9 +13,16 @@ window.ArenaNotebookSession = (() => {
   const create = ({ context, setup, run, onSetup, onFresh, isCurrent }) => {
     const checked = async (source, options = {}) => {
       if (!isCurrent()) throw new Error("Notebook changed; run cancelled.");
-      const result = await run(source, { context, skipOnFresh: true, ...options });
+      const ctx = typeof context === "function" ? await context() : context;
+      const result = await run(source, { skipOnFresh: true, ...options, context: ctx });
       if (!result) throw new Error("Python unavailable. Retry setup when connected.");
-      if (result.busy) throw new Error(result.text);
+      if (result.busy) {
+        // A 409: the server refused before touching the kernel (a cell mid-run,
+        // no GPU free, GPU hours used). The caller may undo what it asked for.
+        const err = new Error(result.text);
+        err.busy = true;
+        throw err;
+      }
       return result;
     };
     const ensure = async () => {

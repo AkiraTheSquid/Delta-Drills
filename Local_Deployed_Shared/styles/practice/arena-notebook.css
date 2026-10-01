@@ -130,6 +130,26 @@
   word-break: break-all;
 }
 
+/* What machine this section needs (practice/arena-compute.js): a GPU part,
+   an API key, or a model too big for any GPU here. Said once, under the
+   provenance line, and again at the cell where the GPU part starts. */
+.arena-nb-compute {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent, #6b8afd);
+  background: color-mix(in srgb, var(--accent, #6b8afd) 8%, transparent);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.arena-nb-gpu-mark {
+  margin: 14px 0 4px;
+  padding: 4px 10px;
+  border-top: 1px dashed var(--accent, #6b8afd);
+  color: var(--muted);
+  font-size: 12px;
+}
+
 /* ---- disclosures --------------------------------------------------------- */
 
 /* ARENA writes both its hints and its solutions as <details>, and the summary

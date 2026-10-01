@@ -30,6 +30,12 @@ this process dies holding the only handle. A sandbox whose handle this process
 lost (redeploy) is unreachable by design — its stdin belonged to the old
 process — so startup sweeps and terminates every sandbox under the app.
 
+GPU sections (`modal_gpu`): a context ending in `#gpu` for a section that has
+a GPU part gets an L4 sandbox on the CUDA image, the prefetched weights, and a
+shorter idle close. Its own admission (GPUs free, the learner's monthly GPU
+hours) is checked BEFORE the learner's CPU sandbox is closed, so a refused GPU
+cell leaves the kernel they had.
+
 The registry is module-level for the same reason `kernel_runner`'s is: Fly
 runs one machine and one uvicorn worker. Two workers would each think they
 own the learner's sandbox, and each would restart the other's.
@@ -43,9 +49,8 @@ import os
 import threading
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
 
-from app import modal_spend
+from app import modal_gpu, modal_image, modal_spend
 from app.code_runner import ExecutionResult
 from app.kernel_runner import KernelRunResult
 
@@ -53,19 +58,6 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT_SECONDS = 30
 APP_NAME = os.environ.get("DD_MODAL_APP", "delta-drills-kernels")
-
-# The ARENA edition the notebooks under lessons/notebooks/ were compiled from.
-# Bump both together (scripts/compile_arena_notebooks.py reads the checkout at
-# content/ARENA_5.0-main, so `git -C … rev-parse HEAD` is the value to paste).
-ARENA_REPO = "https://github.com/callummcdougall/ARENA_3.0.git"
-ARENA_SHA = "527f9376b40ad9a12ecd80490884b0009b54dd55"
-ARENA_CHAPTERS = (
-    "chapter0_fundamentals",
-    "chapter1_transformer_interp",
-    "chapter2_rl",
-    "chapter3_llm_evals",
-    "chapter4_alignment_science",
-)
 
 
 def _env_int(name: str, default: int) -> int:
@@ -103,35 +95,6 @@ BOOT_SECONDS = _env_int("DD_KERNEL_BOOT_SECONDS", 600)
 SPAWN_SECONDS = _env_int("DD_KERNEL_SPAWN_SECONDS", 120)
 _BUSY_WAIT_SECONDS = 1.0
 
-_CH1_PACKAGES = (
-    "transformer_lens==2.17.0", "sae-lens>=4.0.0,<5.0.0", "openai==1.56.1",
-    "tabulate", "umap-learn", "hdbscan", "frozendict",  # frozendict: sae_vis needs it, does not declare it
-    "git+https://github.com/callummcdougall/CircuitsVis.git#subdirectory=python",
-    "git+https://github.com/callummcdougall/sae_vis.git@callum/v3",
-    "git+https://github.com/neelnanda-io/neel-plotly",
-)
-# Chapter 2's setup line, adapted to Python 3.12. The `atari` extra pins
-# ale-py 0.8, which has no 3.12 wheel; ale-py 0.9.1 bundles the ROMs and
-# registers `ALE/*` with gymnasium 0.29. `mujoco-py` (2.3 bonus only) needs the
-# old MuJoCo binaries; the modern `mujoco` wheel covers 2.3's own env. numpy
-# stays on chapter 1's pin: the `other` extra's opencv/moviepy pull numpy 2,
-# which transformer_lens 2.17 and circuitsvis refuse.
-_CH2_PACKAGES = (
-    "gymnasium[other]==0.29.0", "ale-py==0.9.1", "pygame", "wandb==0.18.7", "mujoco",
-    "numpy==1.26.4", "opencv-python<4.11",
-)
-# Weights the gpt2-small sections load (1.1, 1.2, 1.3.3, 1.4.x, 2.4), into the
-# image's HF cache so a fresh sandbox reads them from disk instead of the Hub.
-_CH1_WEIGHTS = (
-    "from transformer_lens import HookedTransformer; "
-    "HookedTransformer.from_pretrained('gpt2-small'); "
-    "from huggingface_hub import hf_hub_download; "
-    "hf_hub_download('callummcdougall/attn_only_2L_half', 'attn_only_2L_half.pth')"
-)
-
-_SHIM_PATH = Path(__file__).with_name("modal_kernel_shim.py")
-_SHIM_REMOTE = "/opt/delta/kernel_shim.py"
-
 
 def _import_modal():
     import modal  # noqa: WPS433 — optional dependency, imported on first use
@@ -153,57 +116,7 @@ def _ensure_app():
             return _app, _image
         modal = _import_modal()
         _app = modal.App.lookup(APP_NAME, create_if_missing=True)
-        sparse = " ".join(f"{c}/exercises" for c in ARENA_CHAPTERS)
-        _image = (
-            modal.Image.debian_slim(python_version="3.12")
-            .apt_install("wget", "unzip", "sudo", "git")
-            .pip_install("torch", "torchvision",
-                         extra_index_url="https://download.pytorch.org/whl/cpu")
-            .pip_install(
-                "ipykernel", "jupyter_client", "ipython", "jupyter",
-                "einops", "jaxtyping", "numpy", "plotly", "pandas", "tqdm", "rich",
-                "torchinfo", "datasets", "pillow", "matplotlib", "wandb", "eindex-callum",
-            )
-            # Colab-shaped: /root/<chapter>/exercises exists, so ARENA's own
-            # setup cell skips its download branch. Sparse + blobless keeps
-            # the 100 MB repo down to the ~15 MB the exercises need.
-            .run_commands(
-                "cd /tmp && git clone --filter=blob:none --no-checkout --depth 1 "
-                f"{ARENA_REPO} arena || git clone --filter=blob:none --no-checkout {ARENA_REPO} arena",
-                f"cd /tmp/arena && git fetch --depth 1 origin {ARENA_SHA} && "
-                f"git sparse-checkout init --cone && git sparse-checkout set {sparse} && "
-                f"git checkout {ARENA_SHA}",
-                *(f"mv /tmp/arena/{c} /root/{c}" for c in ARENA_CHAPTERS),
-                "rm -rf /tmp/arena",
-            )
-            # Chapter 1 preloaded. Its setup cells guard the WHOLE %pip line on
-            # `import transformer_lens`, so baking transformer_lens means baking
-            # everything those lines install too — or 1.3.x / 1.4.2 / 1.5.x / 4.x
-            # skip the install and lose sae-lens and openai. The CPU index keeps
-            # any torch re-resolve off the 2 GB CUDA wheel.
-            .pip_install(*_CH1_PACKAGES,
-                         extra_index_url="https://download.pytorch.org/whl/cpu")
-            .run_commands(f"python -c \"{_CH1_WEIGHTS}\"")
-            # Chapter 2's setup cells guard their %pip line on `import
-            # jaxtyping`, which is above — so without this layer gymnasium was
-            # never installed. libgl/glib are for the opencv the `other` extra
-            # pulls in.
-            .apt_install("libgl1", "libglib2.0-0")
-            .pip_install(*_CH2_PACKAGES,
-                         extra_index_url="https://download.pytorch.org/whl/cpu")
-            # ale-py 0.9 registers `ALE/*` only when imported (0.8 did it via
-            # shimmy's plugin), and ARENA never imports it — so gymnasium
-            # imports it, at the END of its own __init__ (ale_py calls
-            # gymnasium.register, so any earlier is a circular import). The
-            # make() fails the build if that ever stops working.
-            .run_commands(
-                "printf '\\ntry:\\n    import ale_py  # delta-drills: registers ALE/*\\n"
-                "except ImportError:\\n    pass\\n' >> "
-                "$(python -c 'import gymnasium as g; print(g.__file__)')",
-                "python -c \"import gymnasium as g; g.make('ALE/Breakout-v5')\"",
-            )
-            .add_local_file(_SHIM_PATH, remote_path=_SHIM_REMOTE, copy=True)
-        )
+        _image = modal_image.build(modal)
         return _app, _image
 
 
@@ -217,6 +130,7 @@ class ModalSession:
     created_at: float
     last_used: float
     context: str = ""
+    gpu: bool = False
     exec_count: int = 0
     dead: bool = False
     lock: threading.Lock = field(default_factory=threading.Lock)
@@ -327,7 +241,7 @@ class ModalSession:
     def shutdown(self) -> None:
         self.dead = True
         modal_spend.record(getattr(self.sandbox, "object_id", None), self.session_id,
-                           self.context, _wall(self.created_at))
+                           self.context, _wall(self.created_at), gpu=self.gpu)
         try:
             self.proc.stdin.write(json.dumps({"op": "shutdown"}) + "\n")
             self.proc.stdin.drain()
@@ -345,22 +259,30 @@ INTERRUPT_GRACE = 5
 def _spawn(session_id: str, context: str = "") -> ModalSession:
     modal = _import_modal()
     app, image = _ensure_app()
+    gpu = modal_gpu.wants_gpu(context)
+    options = {"cpu": SANDBOX_CPU, "memory": SANDBOX_MEMORY_MB}
+    env = {"OMP_NUM_THREADS": SANDBOX_THREADS, "MKL_NUM_THREADS": SANDBOX_THREADS}
+    if gpu:
+        image = modal_gpu.image(modal)
+        options = modal_gpu.sandbox_options(modal)
+        env.update(modal_gpu.SANDBOX_ENV)
     sandbox = modal.Sandbox.create(
         "sleep", "infinity",
         app=app, image=image, workdir="/root",
-        cpu=SANDBOX_CPU, memory=SANDBOX_MEMORY_MB,
-        timeout=SANDBOX_LIFETIME_SECONDS, idle_timeout=IDLE_SECONDS,
-        env={"OMP_NUM_THREADS": SANDBOX_THREADS, "MKL_NUM_THREADS": SANDBOX_THREADS},
-        tags={"session": session_id, "context": context[:60]},
+        timeout=SANDBOX_LIFETIME_SECONDS, idle_timeout=_idle_for(gpu),
+        env=env, tags={"session": session_id, "context": context[:60]},
+        **options,
     )
     now = time.monotonic()
     # From here on the sandbox bills. Every failure path below must terminate
     # it, or a bad exec / torn stream leaves a container running until its
     # lifetime cap.
     try:
-        proc = sandbox.exec("python", "-u", _SHIM_REMOTE)
+        if gpu:
+            modal_gpu.link_weights(sandbox)
+        proc = sandbox.exec("python", "-u", modal_image.SHIM_REMOTE)
         session = ModalSession(session_id=session_id, sandbox=sandbox, proc=proc,
-                               created_at=now, last_used=now, context=context)
+                               created_at=now, last_used=now, context=context, gpu=gpu)
         ready = session._readline(BOOT_SECONDS)
         try:
             is_ready = bool(ready) and bool(json.loads(ready).get("ready"))
@@ -369,13 +291,17 @@ def _spawn(session_id: str, context: str = "") -> ModalSession:
         if not is_ready:
             raise RuntimeError("The Python session could not start — try again in a moment.")
     except BaseException:
+        # It billed from create to here; a GPU start that keeps failing must
+        # still count against the month and the learner's GPU hours.
+        modal_spend.record(getattr(sandbox, "object_id", None), session_id, context,
+                           _wall(now), gpu=gpu)
         try:
             sandbox.terminate()
         except Exception as exc:
             logger.warning("modal kernel: terminate after failed start: %s", exc)
         raise
-    logger.info("modal kernel: %s up as %s (%.1fs)", session_id, sandbox.object_id,
-                time.monotonic() - now)
+    logger.info("modal kernel: %s up as %s%s (%.1fs)", session_id, sandbox.object_id,
+                " on " + modal_gpu.GPU_TYPE if gpu else "", time.monotonic() - now)
     return session
 
 
@@ -429,10 +355,34 @@ def _wall(monotonic_ts: float) -> float:
     return time.time() - (time.monotonic() - monotonic_ts)
 
 
+def _idle_for(gpu: bool) -> int:
+    return modal_gpu.GPU_IDLE_SECONDS if gpu else IDLE_SECONDS
+
+
 def _spend_locked() -> dict:
     """The month's spend, counting the sandboxes open right now."""
-    live = [_wall(s.created_at) for s in _kernels.values() if s.sandbox is not None]
-    return modal_spend.summary(live, modal_spend.request_rate(SANDBOX_CPU, SANDBOX_MEMORY_MB))
+    live = [(_wall(s.created_at), s.gpu) for s in _kernels.values() if s.sandbox is not None]
+    return modal_spend.summary(live, modal_spend.request_rate(SANDBOX_CPU, SANDBOX_MEMORY_MB),
+                               modal_gpu.usd_per_hour())
+
+
+def _gpu_starts_locked(session_id: str | None) -> list[float]:
+    """Wall-clock starts of this learner's open GPU sandboxes."""
+    return [_wall(s.created_at) for s in _kernels.values()
+            if s.gpu and s.sandbox is not None and s.session_id == session_id]
+
+
+def _admit_locked(session_id: str | None, context: str, replacing: ModalSession | None) -> None:
+    """Raise with the learner-facing reason when a new sandbox for `context`
+    may not start. Runs BEFORE `replacing` is closed, so a refusal costs the
+    learner nothing: the kernel they had is still there."""
+    if _spend_locked()["capped"]:
+        raise RuntimeError(modal_spend.CAP_MESSAGE)
+    if not modal_gpu.wants_gpu(context):
+        return
+    # The sandbox being replaced frees its GPU, but its hours this month count.
+    live_gpu = sum(1 for s in _kernels.values() if s.gpu and s is not replacing)
+    modal_gpu.admit(session_id or "", live_gpu, _gpu_starts_locked(session_id))
 
 
 def _pop_stale_locked() -> list[ModalSession]:
@@ -441,7 +391,7 @@ def _pop_stale_locked() -> list[ModalSession]:
     for sid, session in list(_kernels.items()):
         if session.lock.locked():
             continue
-        if session.dead or now - session.last_used > IDLE_SECONDS:
+        if session.dead or now - session.last_used > _idle_for(session.gpu):
             _kernels.pop(sid, None)
             stale.append(session)
     return stale
@@ -522,26 +472,29 @@ def _reserve_and_run(session_id, code, bootstrap, filename, context, timeout,
         if session is not None and session.context != context:
             if session.lock.locked():
                 raise RuntimeError("This kernel is already running a cell.")
+            _admit_locked(session_id, context, session)
             _kernels.pop(session.session_id, None)
             session.shutdown()
             session = None
+        elif session is None:
+            _admit_locked(session_id, context, None)
         if session is None:
-            if _spend_locked()["capped"]:
-                raise RuntimeError(modal_spend.CAP_MESSAGE)
             _evict_lru_locked()
             session_id = session_id or os.urandom(8).hex()
             # Spawning can take a minute on a cold image; the registry lock
             # is not held across it. A placeholder keeps a second click from
             # spawning a twin.
+            # It carries `gpu` so a second learner's admission counts it.
             placeholder = ModalSession(session_id=session_id, sandbox=None, proc=None,
                                        created_at=time.monotonic(), last_used=time.monotonic(),
-                                       context=context)
+                                       context=context, gpu=modal_gpu.wants_gpu(context))
             placeholder.lock.acquire()
             _kernels[session_id] = placeholder
             fresh = True
     if fresh:
         try:
-            session = _spawn_with_deadline(session_id, context, SPAWN_SECONDS)
+            deadline = modal_gpu.SPAWN_SECONDS if placeholder.gpu else SPAWN_SECONDS
+            session = _spawn_with_deadline(session_id, context, deadline)
         except Exception as exc:
             with _registry_lock:
                 _kernels.pop(session_id, None)
@@ -609,6 +562,7 @@ def kernel_status(session_id: str | None = None) -> dict:
             {
                 "session_id": s.session_id,
                 "context": s.context,
+                "gpu": s.gpu,
                 "alive": s.alive,
                 "exec_count": s.exec_count,
                 "idle_seconds": round(now - s.last_used, 1),
@@ -627,7 +581,17 @@ def kernel_status(session_id: str | None = None) -> dict:
         "max_rss_mb": SANDBOX_MEMORY_MB,
         "sessions": sessions,
         "spend": spend,
+        "gpu": {"type": modal_gpu.GPU_TYPE, "max": modal_gpu.GPU_MAX,
+                "idle_seconds": modal_gpu.GPU_IDLE_SECONDS,
+                "live": sum(1 for s in _kernels.values() if s.gpu)},
     }
+
+
+def compute_view(session_id: str | None) -> dict:
+    """What a notebook needs to place its compute banner and GPU switch."""
+    with _registry_lock:
+        starts = _gpu_starts_locked(session_id)
+    return modal_gpu.learner_view(session_id, starts, enabled=True)
 
 
 def shutdown_all() -> None:

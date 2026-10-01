@@ -274,7 +274,10 @@ def check_the_notebook_remembers_what_you_ran_and_where_you_were():
     # question could not be asked at all (signed out, older backend, one bad
     # request); warning on that is a warning nobody can act on, and marking
     # every cell stale on it throws away the rail's completion for no reason.
-    assert re.search(r"context:\s*CONTEXT\(state\.id\)", view), (
+    # A GPU section's context gains `#gpu` mid-notebook (arena-compute.js), so
+    # the reconcile takes the compute controller's context when there is one.
+    assert re.search(r"context:\s*(?:state\.compute \? state\.compute\.context\(\) : )?"
+                     r"CONTEXT\(state\.id\),\s*restored", view), (
         "arena-notebook.js no longer hands the reconcile this notebook's kernel "
         "context — restored outputs would claim a live session"
     )

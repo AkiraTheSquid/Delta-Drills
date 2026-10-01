@@ -6,6 +6,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 ## Owns
 - `init_db.py`: bootstrap a fresh Postgres schema (creates pgcrypto extension, runs `Base.metadata.create_all`). Run once after a clean DB.
 - `recompute_p_ewma.py`: recompute the per-subtopic EWMA correctness rate (`p`) from each user's attempt history in `../user_data/*.json`. Use after changing the EWMA alpha or fixing data corruption.
+- `prefetch_gpu_weights.py`: fills the `dd-kernel-weights` Modal Volume with the models the ARENA GPU sections load (`app/modal_gpu.py`), downloading ON Modal. Gated repos need the Modal secret `dd-hf-token`; without it they are skipped and the exit is 1. `--list` prints the plan. Rerun is cheap (complete repos cost one listing).
 - `test_placement.py`: the validation suite for the graph-wide placement diagnostic (`app/diagnostic.py`) — legacy-run migration, probe resume, the server-side clock and per-problem cap, and a full 6-hour run's concept + ARENA coverage. 29 checks, no pytest, no network. Run `.venv/bin/python scripts/test_placement.py`.
 
 ## Does NOT own
@@ -47,6 +48,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
   - Status: ACTIVE.
 
 ## Recent Changes
+- 2026-10-01: `prefetch_gpu_weights.py` added (Modal pass 2). First run: 5 ungated repos, 75 GB, ~4 min; 5 gated repos waiting on `dd-hf-token`.
 - 2026-09-25: every `test_*.py` here passes again. `test_diagnostic_history.py` deleted (tested the deleted topic-θ model). Stale expectations updated to the current behaviour: `test_placement` (shortest clock is 180 s since the math MC lane; its free-time probe ages 150 s so it stays under every cap), `test_timeout_submit` (a timeout is a scored miss since 2026-09-20; it asserted the 09-11 "scored nowhere" contract, and read a live list after mutating it), `test_kc_prefs` (whole-graph explore made the frontier ~80 nodes, so max weight is checked as "moves up", not "beats a 70-descendant root"). `test_ray_placement` uses the new public `adaptive.write_state_file` / `read_state_file` instead of the private helpers.
 - 2026-09-07: `test_placement.py` added — 29 checks over the graph-wide placement diagnostic, written alongside the fix for the unreachable 6-hour plan. `test_diagnostic_history.py` recorded as ACTIVE-broken above; it has been failing at import since the model it tests was deleted.
 - 2026-04-28: Doc filled in.

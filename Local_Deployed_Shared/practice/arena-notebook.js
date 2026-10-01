@@ -494,8 +494,9 @@ const ArenaNotebookView = (() => {
        un-stale would put the green checks back over names that are gone. */
     window.ArenaNotebookOutputs?.markStale(state.id);
     _banner(
-      "Python restarted. Restoring setup; previous answers and outputs remain above. " +
-        "Re-run earlier answers when you need their definitions.",
+      state.compute?.freshText() ||
+        "Python restarted. Restoring setup; previous answers and outputs remain above. " +
+          "Re-run earlier answers when you need their definitions.",
       "warn",
       state,
     );
@@ -538,10 +539,16 @@ const ArenaNotebookView = (() => {
        the stored record on every reload of the same cell. */
     let shown = "";
     let rich = [];
+    let movedToGpu = false;
     const source = _sourceOf(node);
     try {
+      // Running at or below a GPU section's marked cell moves the context to
+      // `#gpu` (practice/arena-compute.js); the session sends it. Awaited so
+      // a click before the section's compute read lands is not sent to a CPU
+      // kernel that cannot hold the model.
+      if (state.compute) await state.compute.ready;
+      movedToGpu = !!state.compute?.enter(node);
       let result = await state.session.execute(source, {
-        context: CONTEXT(state.id),
         name: `<${node.dataset.cellId || node.id.replace(/^arena-/, "")}>`,
       });
       if (!result) {
@@ -560,6 +567,8 @@ const ArenaNotebookView = (() => {
       window.DeltaCellOutputs?.render(out, rich);
     } catch (err) {
       failed = true;
+      // Refused before the kernel was touched: earlier cells stay on the CPU.
+      if (movedToGpu && err.busy) state.compute.leave();
       /* 🔴 KEEP WHAT SETUP ALREADY PAINTED HERE. The clicked cell can BE the
          setup cell that failed: `execute` runs `ensure` first, `onSetup` writes
          its traceback into this same `.nbv-out`, then `ensure` throws "Setup
@@ -617,7 +626,7 @@ const ArenaNotebookView = (() => {
   const _reconcileKernel = (state, restored) =>
     window.ArenaNotebookOutputs?.reconcile({
       slug: state.id,
-      context: CONTEXT(state.id),
+      context: state.compute ? state.compute.context() : CONTEXT(state.id),
       restored,
       cellIdOf: _cellIdOf,
       // 🔴 Both guarded on `state === current`: this resolves after an await,
@@ -679,6 +688,7 @@ const ArenaNotebookView = (() => {
     '<button type="button" data-exercise-step="-1">← Previous</button>' +
     '<label>Exercise <select class="arena-exercise-select" aria-label="Current exercise"></select></label>' +
     '<button type="button" data-exercise-step="1">Next →</button></nav>' +
+    '<p class="arena-nb-compute" hidden></p>' +
     "</header>";
 
   const _render = (nb, host) => {
@@ -710,8 +720,23 @@ const ArenaNotebookView = (() => {
        a green section the rail never counted. */
     const restored = _restoreOutputs(state);
     const findCell = (id) => Array.from(body.children).find((node) => _cellIdOf(node) === id);
+    state.compute = window.ArenaCompute?.attach({
+      slug: state.id,
+      host,
+      body,
+      cellIdOf: _cellIdOf,
+      setupIds: nb.setup_cells || [],
+      baseContext: CONTEXT(state.id),
+      stillOpen: () => state === current,
+    });
     state.session = window.ArenaNotebookSession.create({
-      context: CONTEXT(state.id),
+      // Waits for the compute read so 1.3.1's setup starts on the GPU, not
+      // on a CPU kernel that would be closed one request later.
+      context: async () => {
+        if (!state.compute) return CONTEXT(state.id);
+        await state.compute.ready;
+        return state.compute.context();
+      },
       isCurrent: () => state === current,
       run: (...args) => window.LessonNotebook.runSource(...args),
       setup: () => (nb.setup_cells || []).map((id) => {
@@ -886,9 +911,11 @@ const ArenaNotebookView = (() => {
        one it is holding, and marks them stale if not. Deliberately NOT awaited:
        the notebook is already on screen and readable, and a status round-trip
        must not sit between the learner and their page. */
-    Promise.resolve(_reconcileKernel(state, restored)).then(() => {
-      if (state === current && window.DeltaKernel?.available()) state.prepare();
-    });
+    Promise.resolve(state.compute?.ready)
+      .then(() => _reconcileKernel(state, restored))
+      .then(() => {
+        if (state === current && window.DeltaKernel?.available()) state.prepare();
+      });
     /* Last, so every listener sees the finished page: practice/exercise-
        session.js puts a "Practice this exercise" button under each exercise
        heading it has drills for. Nothing in this file knows which those are. */
