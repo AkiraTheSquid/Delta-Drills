@@ -1,34 +1,37 @@
 /* ================================================================
-   XP GROUP VIEW — the Learner Home's bars, and in a study group the
-   week's leaderboard under them.
+   XP GROUP VIEW — the Learner Home's bars, and this week's leaderboard
+   under them.
 
    Seth, 2026-09-29: "instead of displaying multiple people, it just
    displays your graph only … instead there is a leaderboard … per week
    with the ranking of the different people and their progress for that
    week … the person that's done the most … has a filled-up bar all the way,
    and then everyone else is scaled against that … the number one person is
-   in first place". So:
+   in first place". Seth, 2026-09-30: "the leaderboard is across the board
+   for everyone, rather than being scoped to groups". So:
 
      your bars           always `ctx.solo()` (./xp-panel.js, with the
                          draggable target of ./xp-target.js)
-     This week · Group   one row per member, most XP first: rank, name,
-                         a bar scaled to the leader's XP, the number.
-                         Ties share a rank (1, 1, 3).
+     This week · Everyone  one row per learner with XP this week (and
+                         you, even at 0), most XP first: rank, name, a bar
+                         scaled to the leader's XP, the number. Ties share
+                         a rank (1, 1, 3).
 
    The week is the calendar week, Monday through today, cut at the VIEWER's
-   midnight (app/group_xp.py's one-zone rule). 🪦 The one-chart-per-member
-   rows (2026-09-27/28) are gone; the backend read is unchanged.
+   midnight (app/global_xp.py). A name shows only where you share a study
+   group with that learner, else "Learner"; the server never sends an
+   email or id.
 
-   The roster (GET /api/practice/groups/xp, app/group_xp.py) is read on
-   boot and again each time the Learner Home is shown: joining and leaving
-   happen on the Groups tab, so arriving back here is when it changes.
-   Your own row reads the live summary, never the roster's copy.
+   The board (GET /api/practice/leaderboard/xp) is read on boot and again
+   each time the Learner Home is shown. Your own row reads the live summary,
+   never the board's copy, so it moves the moment you answer.
+   🪦 The group-scoped board (GET /groups/xp, 2026-09-27..29) is unread here.
    ================================================================ */
 (function () {
   "use strict";
 
   const { el, fmt, addDays, shortDate, dateOf } = window.DDXpCharts.util;
-  let roster; // undefined = not read yet, null = in no group, else {group, members}
+  let roster; // undefined = not read yet, null = none (signed out / failed first read), else {week_start, rows}
 
   const fetcher = () => (typeof apiFetch === "function" ? apiFetch : window.apiFetch);
   const signedIn = () => window.DDIdentity?.isSignedIn?.() === true;
@@ -45,11 +48,11 @@
       return;
     }
     try {
-      const res = await _fetch(`/api/practice/groups/xp?${window.DeltaXP.tzQuery()}`);
-      if (!res?.ok) throw new Error(`groups/xp ${res?.status}`);
+      const res = await _fetch(`/api/practice/leaderboard/xp?${window.DeltaXP.tzQuery()}`);
+      if (!res?.ok) throw new Error(`leaderboard/xp ${res?.status}`);
       const data = await res.json();
       if (mine !== seq) return;
-      roster = data?.group ? data : null;
+      roster = Array.isArray(data?.rows) ? data : null;
     } catch (err) {
       // A failed read keeps whatever was drawn; the next arrival tries again.
       console.warn("[xp-group-view]", err);
@@ -64,19 +67,24 @@
   const weekXp = (xp, from) =>
     xp && Array.isArray(xp.days) ? xp.days.reduce((a, d) => a + (d.date >= from ? d.xp || 0 : 0), 0) : null;
 
-  /** The group's week, most XP first. `you` is the live summary. */
+  /** Everyone's week, most XP first. `you` is the live summary. */
   function board(you) {
     const today = you.today.date;
     const from = monday(today);
-    const rows = roster.members.map((m) => ({ ...m, week: weekXp(m.is_you ? you : m.xp, from) }));
+    // A board read last week (the page left open over Monday) shows nobody's
+    // old numbers as this week's: only your live row until the next read.
+    const fresh = roster.week_start === from;
+    const rows = roster.rows
+      .filter((r) => fresh || r.is_you)
+      .map((r) => ({ ...r, week: r.is_you ? weekXp(you, from) : r.xp }));
     rows.sort((a, b) => (b.week ?? -1) - (a.week ?? -1) || Number(b.is_you) - Number(a.is_you));
     const lead = Math.max(0, ...rows.map((r) => r.week || 0));
 
     const box = el("section", "xp-board");
-    box.setAttribute("aria-label", `${roster.group.name}: this week's leaderboard`);
+    box.setAttribute("aria-label", "This week's leaderboard, everyone");
     const head = el("div", "xp-board-head");
     head.append(
-      el("h3", "xp-board-title", `This week · ${roster.group.name}`),
+      el("h3", "xp-board-title", "This week · Everyone"),
       el("p", "xp-board-note", from === today ? shortDate(today) : `${shortDate(from)} – today`),
     );
     const list = el("ol", "xp-board-list");
@@ -106,8 +114,8 @@
     return box;
   }
 
-  /** Draw the column into `right`: your bars, and in a group the week's
-      leaderboard under them. */
+  /** Draw the column into `right`: your bars, and the week's leaderboard
+      under them once it has been read. */
   function paint(right, summary, ctx) {
     const mine = ctx.solo();
     if (!roster) right.replaceChildren(...mine);
@@ -126,8 +134,9 @@
       shown = now;
     }).observe(page, { attributes: true, attributeFilter: ["class"] });
   };
-  // A different account (or none) must not see the last one's group, even
-  // for the length of a request (codex, 2026-09-27): drop it and repaint first.
+  // A different account (or none) must not see the last one's board — its
+  // "you" row would be wrong — even for the length of a request (codex,
+  // 2026-09-27): drop it and repaint first.
   window.addEventListener("delta:auth-state-changed", () => {
     const had = !!roster;
     roster = undefined;

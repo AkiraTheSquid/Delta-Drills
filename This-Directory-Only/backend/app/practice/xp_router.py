@@ -3,7 +3,9 @@
 The numbers are `app/learning_xp.py`'s; this file only reads the learner's
 time zone and stores their target. The Learner Home XP panel and the topbar
 level pill both read GET /xp; the Learner Home's group view reads
-GET /groups/xp, every member's summary (app/group_xp.py). Its concept list
+GET /groups/xp, every member's summary (app/group_xp.py), and its week
+board GET /leaderboard/xp, every learner's XP this week (app/global_xp.py).
+Its concept list
 reads GET /concept-candidates, and a concept picked from it runs through
 POST /concept-route (app/concept_choice.py).
 """
@@ -16,7 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app import concept_choice, group_xp, learning_xp
+from app import concept_choice, global_xp, group_xp, learning_xp
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.db import get_db
@@ -81,6 +83,17 @@ def groups_xp(
     """Every member's `/xp` summary, for the Learner Home's group view
     (app/group_xp.py). `{group: null}` when the caller is in no group."""
     return group_xp.read_group_xp(db, user, _zone(tz_offset, tz_name))
+
+
+@router.get("/leaderboard/xp")
+def leaderboard_xp(
+    tz_offset: int = Query(0, ge=-960, le=960),
+    tz_name: Optional[str] = Query(None, max_length=64),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Every learner's XP this week, most first (app/global_xp.py)."""
+    return global_xp.read_board(db, user, _zone(tz_offset, tz_name))
 
 
 class ConceptRouteRequest(BaseModel):
