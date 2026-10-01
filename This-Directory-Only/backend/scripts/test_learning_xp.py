@@ -112,6 +112,20 @@ both.course_shares, both.study_courses = {"leetcode": 0.4, "arena": 0.4}, None
 check("ARENA studied: the course and its price are unchanged",
       run(both, now)["course"] == empty["course"] and X.scope_kcs(both) == SCOPE)
 
+# Seth, 2026-10-01: switching courses "reset my xp on the main leaderboard
+# page" — XP earned on ARENA vanished once ARENA was unticked.
+arena_xp = state({CODE_KC: seq(START, "0011111")})
+switched = state({CODE_KC: seq(START, "0011111")})
+switched.course_shares, switched.study_courses = {"leetcode": 0.4}, None
+a, s = run(arena_xp, now), run(switched, now)
+check("switching course keeps the XP already earned",
+      s["earned"] == a["earned"] > 0 and s["today"]["xp"] == a["today"]["xp"]
+      and [d["xp"] for d in s["days"]] == [d["xp"] for d in a["days"]],
+      f'{a["earned"]} → {s["earned"]}')
+check("…while the LeetCode course's knowledge leaves the ARENA concept out",
+      CODE_KC not in X.scope_kcs(switched) and s["knowledge"] < a["knowledge"],
+      f'{s["knowledge"]} vs {a["knowledge"]}')
+
 
 def logged_only(uid, rows, probe, sources=None):
     """Answers that survive ONLY in the attempt log: the 20-row ladder window

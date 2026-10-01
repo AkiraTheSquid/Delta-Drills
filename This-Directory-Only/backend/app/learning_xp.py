@@ -349,10 +349,19 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
     `also`: concepts outside the course whose K is wanted too (the Learner
     Home's concept list, app/concept_choice.py). They are modelled and
     returned in "also_now" (K) and "also_state" (what `solve_xp` needs); no
-    XP total counts them."""
+    XP total counts them.
+
+    🔴 XP is EARNED over every course; only the course's own numbers
+    ("knowledge", "open_knowledge", "today_open_knowledge", "per_kc_now",
+    "scope") follow the studied course. Seth, 2026-10-01: switching courses
+    "reset my xp on the main leaderboard page" — `scope_kcs` narrowed to
+    the studied course, so unticking ARENA dropped every XP point earned on
+    it (his state: 175.2 → 0.0). XP is what the learner learned, whichever
+    course they study today."""
     now = now or datetime.now(timezone.utc)
     scope = scope_kcs(user_state)
-    in_scope = set(scope) | set(also)
+    earn = scope_kcs(None)  # every course: XP never depends on the studied course
+    in_scope = set(earn) | set(scope) | set(also)
     prior = _prior(user_state)
     cfg = memory_model.DEFAULT_CONFIG
     meta = _answer_meta(user_state)
@@ -450,12 +459,18 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
     def knowledge(b: int, kc: str) -> float:
         return belief(b, kc) * snap_R[b].get(kc, 1.0)
 
-    # XP per unit of capped K: a concept pays its worth at READY.
-    rate = [worth(kc) / READY for kc in scope]
-    capped = [[min(knowledge(b, kc), READY) for kc in scope] for b in range(len(bounds))]
+    # XP per unit of capped K: a concept pays its worth at READY. XP over
+    # `earn` (every course), course knowledge over `scope` (studied course).
+    def priced(kcs):
+        return ([worth(kc) / READY for kc in kcs],
+                [[min(knowledge(b, kc), READY) for kc in kcs] for b in range(len(bounds))])
+
+    earn_rate, earn_capped = priced(earn)
+    rate, capped = (earn_rate, earn_capped) if scope == earn else priced(scope)
     xp, closing = [], []
     for i in range(n_days):
-        xp.append(sum(w * max(0.0, c1 - c0) for w, c0, c1 in zip(rate, capped[i], capped[i + 1])))
+        xp.append(sum(w * max(0.0, c1 - c0)
+                      for w, c0, c1 in zip(earn_rate, earn_capped[i], earn_capped[i + 1])))
         closing.append(sum(w * c for w, c in zip(rate, capped[i + 1])))
     last = len(bounds) - 1
     per_kc_now = {kc: knowledge(last, kc) for kc in scope}
