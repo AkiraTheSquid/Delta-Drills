@@ -27,7 +27,7 @@
    (PUT /api/practice/leaderboard/name; blank = back to the default).
 
    The board (GET /api/practice/leaderboard/xp) is read on boot and again
-   each time the Learner Home is shown. Your own row reads the live summary,
+   each time the Learner Home is shown; a failed read retries with backoff. Your own row reads the live summary,
    never the board's copy, so it moves the moment you answer.
    🪦 The group-scoped board (GET /groups/xp, 2026-09-27..29) is unread here.
    ================================================================ */
@@ -46,9 +46,25 @@
   const signedIn = () => window.DDIdentity?.isSignedIn?.() === true;
   const repaint = () => window.DDXpPanel?.paintGraphs?.();
 
+  /* A failed read tries again on its own: a read during a backend restart
+     (every Fly deploy) used to leave this blank until the page was left and
+     re-entered (Seth, 2026-10-01). 2 s, 5 s, 10 s, 20 s, 40 s, then a
+     minute apart, eight tries in all; any fresh read resets it. */
+  const RETRY_S = [2, 5, 10, 20, 40, 60, 60, 60];
+  const AGAIN = {}; // load(AGAIN) = a retry; any other call is a fresh read
+  let retryTimer = null;
+  let tries = 0;
+  const retryLater = () => {
+    if (tries >= RETRY_S.length) return;
+    retryTimer = setTimeout(() => load(AGAIN), RETRY_S[tries] * 1000);
+    tries += 1;
+  };
+
   let seq = 0;
-  async function load() {
+  async function load(why) {
     const mine = ++seq;
+    clearTimeout(retryTimer);
+    if (why !== AGAIN) tries = 0;
     const _fetch = fetcher();
     if (!signedIn() || typeof _fetch !== "function") {
       const had = !!roster;
@@ -62,9 +78,11 @@
       const data = await res.json();
       if (mine !== seq) return;
       roster = Array.isArray(data?.rows) ? data : null;
+      tries = 0;
     } catch (err) {
-      // A failed read keeps whatever was drawn; the next arrival tries again.
+      // A failed read keeps whatever was drawn, and tries again shortly.
       console.warn("[xp-group-view]", err);
+      if (mine === seq) retryLater();
       return;
     }
     repaint();

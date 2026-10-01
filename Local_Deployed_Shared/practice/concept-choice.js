@@ -61,9 +61,24 @@
   let data = null; // {items, ready_at}
   let busy = false;
   let seq = 0;
+  /* A failed read tries again on its own: a read during a backend restart
+     (every Fly deploy) used to leave this blank until the page was left and
+     re-entered (Seth, 2026-10-01). 2 s, 5 s, 10 s, 20 s, 40 s, then a
+     minute apart, eight tries in all; any fresh read resets it. */
+  const RETRY_S = [2, 5, 10, 20, 40, 60, 60, 60];
+  const AGAIN = {}; // load(AGAIN) = a retry; any other call is a fresh read
+  let retryTimer = null;
+  let tries = 0;
+  const retryLater = () => {
+    if (tries >= RETRY_S.length) return;
+    retryTimer = setTimeout(() => load(AGAIN), RETRY_S[tries] * 1000);
+    tries += 1;
+  };
 
-  async function load() {
+  async function load(why) {
     const mine = ++seq;
+    clearTimeout(retryTimer);
+    if (why !== AGAIN) tries = 0;
     const f = _fetch();
     if (!_signedIn() || !_backend() || typeof f !== "function") {
       data = null;
@@ -78,9 +93,11 @@
       const got = await res.json();
       if (mine !== seq) return;
       data = got && Array.isArray(got.items) ? got : null;
+      tries = 0;
     } catch (err) {
-      // A failed read keeps what was drawn; the next arrival tries again.
+      // A failed read keeps what was drawn, and tries again shortly.
       console.warn("[concept-choice]", err);
+      if (mine === seq) retryLater();
       return;
     }
     paint();
