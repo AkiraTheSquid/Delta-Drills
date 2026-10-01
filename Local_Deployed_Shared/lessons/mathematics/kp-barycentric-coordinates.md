@@ -82,7 +82,7 @@ Expanding P = A + 0.2(B − A) + 0.3(C − A) and grouping by vertex gives P = c
 For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B − A) + v(C − A)?
 
 ### q50118
-P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle ABC?
+ABC is a nondegenerate triangle and P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle?
 
 ## Concept: Match a ray point to a triangle point
 

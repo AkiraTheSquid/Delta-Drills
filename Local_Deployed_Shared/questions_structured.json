@@ -84344,7 +84344,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle ABC?",
+      "question_text": "ABC is a nondegenerate triangle and P = A + 0.6(B − A) + 0.5(C − A). Is P inside the filled triangle?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",

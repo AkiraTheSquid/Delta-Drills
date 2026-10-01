@@ -380,7 +380,7 @@ window.DD_GLOSSARY = {
       kc: "math.linear-combinations",
       // Seth, 2026-10-01 (lesson feedback, q50019): say it plainly (no area,
       // corners on one line), show a picture, and tie it to independence.
-      def: "A triangle with real area. A degenerate triangle has been squashed flat: its three corners sit on one line (or on one point), so its area is zero. In vector terms, a triangle is nondegenerate exactly when its edges B − A and C − A are linearly independent, meaning neither is a multiple of the other.",
+      def: "A triangle with some area (more than zero). A degenerate triangle has been squashed flat: its three corners sit on one line (or on one point), so its area is zero. In vector terms, a triangle is nondegenerate exactly when its edges B − A and C − A are linearly independent, meaning neither is a multiple of the other.",
       pic: "flat-triangle",
     },
     {

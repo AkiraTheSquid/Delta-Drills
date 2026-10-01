@@ -42,7 +42,7 @@
     const area = Math.abs(c) / 2;
     if (Math.hypot(e2[0], e2[1]) < EPS) return { kind: "zero", cross: c, area, k: 0 };
     // B − A itself zero: B sits on A, flat with no multiple to name.
-    if (Math.hypot(e1[0], e1[1]) < EPS) return { kind: "zero", cross: c, area, k: 0 };
+    if (Math.hypot(e1[0], e1[1]) < EPS) return { kind: "zero-b", cross: c, area, k: 0 };
     if (Math.abs(c) < EPS) {
       const k = (e1[0] * e2[0] + e1[1] * e2[1]) / (e1[0] * e1[0] + e1[1] * e1[1]);
       return { kind: "dependent", cross: c, area: 0, k };
@@ -54,6 +54,10 @@
     if (r.kind === "zero") {
       return "Degenerate: C − A is the zero vector, so C sits on A and the " +
         "triangle is just the segment AB. A zero vector is always dependent. Area 0.";
+    }
+    if (r.kind === "zero-b") {
+      return "Degenerate: B − A is the zero vector, so B sits on A and the " +
+        "triangle is just the segment AC. A zero vector is always dependent. Area 0.";
     }
     if (r.kind === "dependent") {
       return `Degenerate: C − A = ${fmt(r.k)}·(B − A), so A, B and C sit on one line. ` +
@@ -158,7 +162,7 @@
     const controls = document.createElement("label");
     controls.className = "dd-indep-angle";
     controls.innerHTML =
-      '<span>Angle between the edges</span>' +
+      '<span>Turn C − A from B − A</span>' +
       '<input type="range" min="0" max="359" step="1" />' +
       '<b class="dd-indep-deg"></b>';
     fig.appendChild(controls);

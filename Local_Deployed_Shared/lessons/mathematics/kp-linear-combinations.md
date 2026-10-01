@@ -24,7 +24,7 @@ For geometry based at a point $A$, use
 $$P=A+uE_1+vE_2.$$
 The vector $P-A$ is in the span of the edge directions. Adding $A$ translates that plane. Triangle bounds on the weights come later; span alone imposes no bounds.
 
-**Triangles: nondegenerate means independent edges.** Take a triangle with corners $A$, $B$, $C$ and treat its two edges from $A$ as vectors, $B-A$ and $C-A$. The triangle is nondegenerate, meaning it has real area, exactly when those two edges are linearly independent: neither is a multiple of the other. If $C-A=k(B-A)$ for some number $k$, then $C$ sits on the line through $A$ and $B$. The triangle is squashed flat, its area is zero, and it is called degenerate.
+**Triangles: nondegenerate means independent edges.** Take a triangle with corners $A$, $B$, $C$ and treat its two edges from $A$ as vectors, $B-A$ and $C-A$. The triangle is nondegenerate, meaning its area is greater than zero, exactly when those two edges are linearly independent: neither is a multiple of the other. If $C-A=k(B-A)$ for some number $k$, then $C$ sits on the line through $A$ and $B$. The triangle is squashed flat, its area is zero, and it is called degenerate.
 
 For 2D edges $(a,b)$ and $(c,d)$, one number separates the two cases: the 2D cross product $ad-bc$. Its size is the area of the parallelogram the two edges make, so the triangle's area is half of it. It is zero exactly when the edges are dependent. For example, $(3,1)$ and $(1,2)$ give $3\cdot2-1\cdot1=5$, a triangle of area $2.5$; $(3,1)$ and $(6,2)$ give $3\cdot2-1\cdot6=0$, a flat one.
 
