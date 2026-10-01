@@ -20,7 +20,11 @@ credentials are present. What changes underneath:
   * Rich output. The shim forwards display_data mimebundles, so a plotly
     figure reaches the page instead of vanishing into a headless `fig.show()`.
 
-Lifetimes: Modal's `idle_timeout` reaps a sandbox nobody has spoken to; its
+Lifetimes: Modal's `idle_timeout` never fires here — the shim is a live
+`sandbox.exec` for the sandbox's whole life, and Modal counts a running exec
+as activity. So idle sandboxes are closed by `start_reaper`'s thread, which
+checks every minute; without it a learner who ran two cells and left billed
+until the lifetime cap (Sept 2026: every sandbox ran the full 4 h, $56). The
 `timeout` is a hard ceiling that stops a forgotten sandbox billing forever if
 this process dies holding the only handle. A sandbox whose handle this process
 lost (redeploy) is unreachable by design — its stdin belonged to the old
@@ -73,10 +77,19 @@ def _env_int(name: str, default: int) -> int:
 # Caps are per learner-session now, not per box. MAX_KERNELS is a spend guard:
 # every live sandbox bills by the second.
 MAX_KERNELS = _env_int("DD_KERNEL_MAX", 20)
-IDLE_SECONDS = _env_int("DD_KERNEL_IDLE_SECONDS", 1800)
-SANDBOX_LIFETIME_SECONDS = _env_int("DD_KERNEL_LIFETIME_SECONDS", 4 * 3600)
-SANDBOX_CPU = float(os.environ.get("DD_KERNEL_CPU", "2"))
-SANDBOX_MEMORY_MB = _env_int("DD_KERNEL_MEMORY_MB", 4096)
+IDLE_SECONDS = _env_int("DD_KERNEL_IDLE_SECONDS", 900)
+REAP_INTERVAL_SECONDS = max(5, _env_int("DD_KERNEL_REAP_SECONDS", 60))
+SANDBOX_LIFETIME_SECONDS = _env_int("DD_KERNEL_LIFETIME_SECONDS", 2 * 3600)
+# Requests, not caps. Modal bills max(request, usage) at sandbox rates
+# ($0.142/core/h, $0.024/GiB/h), and a sandbox bursts above its CPU request,
+# so a small request costs little while a learner reads and still gets the
+# cores when a cell trains. The old 2 cores + 4 GiB billed $0.38/h idle.
+SANDBOX_CPU = float(os.environ.get("DD_KERNEL_CPU", "0.25"))
+SANDBOX_MEMORY_MB = _env_int("DD_KERNEL_MEMORY_MB", 1024)
+# Modal sets OMP_NUM_THREADS to ceil(cpu request) — 1 at 0.25 — and torch
+# sizes its pool from it, which made a matmul 2.4x slower than on the old
+# 2-core sandbox. Pinning the threads gets the burst back; it bills as used.
+SANDBOX_THREADS = str(_env_int("DD_KERNEL_THREADS", 2))
 # Seconds to wait for the shim's `{"ready": true}` — image build on a cold
 # cache included, which is why it is generous.
 BOOT_SECONDS = _env_int("DD_KERNEL_BOOT_SECONDS", 600)
@@ -282,6 +295,7 @@ def _spawn(session_id: str, context: str = "") -> ModalSession:
         app=app, image=image, workdir="/root",
         cpu=SANDBOX_CPU, memory=SANDBOX_MEMORY_MB,
         timeout=SANDBOX_LIFETIME_SECONDS, idle_timeout=IDLE_SECONDS,
+        env={"OMP_NUM_THREADS": SANDBOX_THREADS, "MKL_NUM_THREADS": SANDBOX_THREADS},
         tags={"session": session_id, "context": context[:60]},
     )
     now = time.monotonic()
@@ -356,14 +370,55 @@ _kernels: dict[str, ModalSession] = {}
 _registry_lock = threading.Lock()
 
 
-def _reap_locked() -> None:
+def _pop_stale_locked() -> list[ModalSession]:
     now = time.monotonic()
+    stale = []
     for sid, session in list(_kernels.items()):
         if session.lock.locked():
             continue
         if session.dead or now - session.last_used > IDLE_SECONDS:
             _kernels.pop(sid, None)
-            session.shutdown()
+            stale.append(session)
+    return stale
+
+
+def _reap_locked() -> None:
+    for session in _pop_stale_locked():
+        session.shutdown()
+
+
+_reaper_started = False
+
+
+def start_reaper() -> None:
+    """Close idle sandboxes on a timer. The request path reaps too, but only
+    when the NEXT request arrives — after the last learner leaves there is no
+    next request, and Modal's own idle_timeout cannot see the idleness (see
+    the module docstring). Terminating happens outside the registry lock: it
+    is a network call, and requests must not queue behind it."""
+    global _reaper_started
+    with _registry_lock:
+        if _reaper_started:
+            return
+        _reaper_started = True
+
+    def _loop() -> None:
+        while True:
+            time.sleep(REAP_INTERVAL_SECONDS)
+            try:
+                with _registry_lock:
+                    stale = _pop_stale_locked()
+            except Exception:
+                logger.exception("modal kernel: reaper pass failed")
+                continue
+            for session in stale:
+                try:
+                    logger.info("modal kernel: reaping idle %s", session.session_id)
+                    session.shutdown()
+                except Exception:
+                    logger.exception("modal kernel: reaping %s failed", session.session_id)
+
+    threading.Thread(target=_loop, daemon=True, name="modal-reaper").start()
 
 
 def _evict_lru_locked() -> None:
