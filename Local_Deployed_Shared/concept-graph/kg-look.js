@@ -215,25 +215,15 @@
   };
   // The optimizer's answer is on the canvas (routes installed).
   const announce = (cy) => window.dispatchEvent(new CustomEvent("delta:kg-layout-done", { detail: { cy } }));
-  // `o.groupBy(id)` → a group key (or null): dagre lays each group out as one
-  // compound cluster, so a section's concepts sit together and kg-sections.js
-  // can hang one header over them (2026-09-29). Without it the sections
-  // interleave across the rows and a header's leader lines become a web.
   const routeLayout = (cy, o) => {
     const eles = layoutEles(cy);
-    const grouped = typeof o.groupBy === "function";
-    const g = new window.dagre.graphlib.Graph({ multigraph: true, compound: grouped });
+    const g = new window.dagre.graphlib.Graph({ multigraph: true });
     g.setGraph({ rankdir: o.rankDir || "BT", nodesep: o.nodeSep || 26, ranksep: o.rankSep || 150,
                  edgesep: o.edgeSep || 12, ranker: o.ranker || "network-simplex" });
     g.setDefaultEdgeLabel(() => ({}));
     eles.nodes().forEach((n) => {
       const bb = n.boundingBox({ includeLabels: true, includeOverlays: false });
       g.setNode(n.id(), { width: Math.max(1, bb.w), height: Math.max(1, bb.h) });
-      const key = grouped ? o.groupBy(n.id()) : null;
-      if (key == null) return;
-      const cid = "__kgGroup:" + key;
-      if (!g.hasNode(cid)) g.setNode(cid, {});
-      g.setParent(n.id(), cid);
     });
     eles.edges().forEach((e) => {
       g.setEdge(e.source().id(), e.target().id(), { weight: 1, minlen: 1 }, e.id());

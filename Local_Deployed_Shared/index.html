@@ -60,7 +60,7 @@
   <!-- The Knowledge Graph's view switch (complete / condensed), its area
        headers and the Courses tab's graph previews. AFTER how-it-works.css,
        which owns the .kg2-* rules it overrides on source order. -->
-  <link rel="stylesheet" href="styles/graph-views.css?v=3" />
+  <link rel="stylesheet" href="styles/graph-views.css?v=4" />
   <!-- The Knowledge Graph's one toolbar + area Filter + edge ink
        (concept-graph/kg-toolbar.js, kg-look.js). AFTER graph-views.css,
        whose card pieces it re-seats in the bar. -->
@@ -2413,7 +2413,7 @@ t.manual_seed(0)
   <!-- Node placement + edge routing that cut crossings; runs itself as a
        Worker. BEFORE kg-look.js, which calls it. -->
   <script src="concept-graph/kg-layout.js?v=1" defer></script>
-  <script src="concept-graph/kg-look.js?v=3" defer></script>
+  <script src="concept-graph/kg-look.js?v=4" defer></script>
   <!-- LeetCode (lesson-less) bubbles' concept pages. BEFORE lesson-graph.js,
        which loads them while it builds the graph. -->
   <script src="concept-graph/lessonless-concepts.js?v=1"></script>
@@ -2421,15 +2421,15 @@ t.manual_seed(0)
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=10" defer></script>
+  <script src="concept-graph/graph-views.js?v=11" defer></script>
   <!-- Gathers the controls lesson-graph.js and graph-views.js built into
        one bar across the top. AFTER both; optional. -->
-  <script src="concept-graph/kg-toolbar.js?v=2" defer></script>
-  <!-- The side panel (concept / area / cog settings) and the area headers on
-       the map. AFTER lesson-graph.js (DeltaKgCore, deltaSelectKgSection) and
+  <script src="concept-graph/kg-toolbar.js?v=3" defer></script>
+  <!-- The side panel (concept / area / cog settings) and the optional area
+       boxes on the map (toolbar "Area boxes"). AFTER lesson-graph.js (DeltaKgCore, deltaSelectKgSection) and
        graph-views.js (deltaKgView.sections). -->
-  <script src="concept-graph/kg-panel.js?v=1" defer></script>
-  <script src="concept-graph/kg-sections.js?v=1" defer></script>
+  <script src="concept-graph/kg-panel.js?v=2" defer></script>
+  <script src="concept-graph/kg-sections.js?v=2" defer></script>
   <!-- Each Courses card's graph preview + Maximize. AFTER cytoscape and
        lesson-graph.js (area colours); course-registry.js is a plain script
        and has run by then. -->
