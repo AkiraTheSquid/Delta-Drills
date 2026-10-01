@@ -110,6 +110,16 @@ _CH1_PACKAGES = (
     "git+https://github.com/callummcdougall/sae_vis.git@callum/v3",
     "git+https://github.com/neelnanda-io/neel-plotly",
 )
+# Chapter 2's setup line, adapted to Python 3.12. The `atari` extra pins
+# ale-py 0.8, which has no 3.12 wheel; ale-py 0.9.1 bundles the ROMs and
+# registers `ALE/*` with gymnasium 0.29. `mujoco-py` (2.3 bonus only) needs the
+# old MuJoCo binaries; the modern `mujoco` wheel covers 2.3's own env. numpy
+# stays on chapter 1's pin: the `other` extra's opencv/moviepy pull numpy 2,
+# which transformer_lens 2.17 and circuitsvis refuse.
+_CH2_PACKAGES = (
+    "gymnasium[other]==0.29.0", "ale-py==0.9.1", "pygame", "wandb==0.18.7", "mujoco",
+    "numpy==1.26.4", "opencv-python<4.11",
+)
 # Weights the gpt2-small sections load (1.1, 1.2, 1.3.3, 1.4.x, 2.4), into the
 # image's HF cache so a fresh sandbox reads them from disk instead of the Hub.
 _CH1_WEIGHTS = (
@@ -174,6 +184,24 @@ def _ensure_app():
             .pip_install(*_CH1_PACKAGES,
                          extra_index_url="https://download.pytorch.org/whl/cpu")
             .run_commands(f"python -c \"{_CH1_WEIGHTS}\"")
+            # Chapter 2's setup cells guard their %pip line on `import
+            # jaxtyping`, which is above — so without this layer gymnasium was
+            # never installed. libgl/glib are for the opencv the `other` extra
+            # pulls in.
+            .apt_install("libgl1", "libglib2.0-0")
+            .pip_install(*_CH2_PACKAGES,
+                         extra_index_url="https://download.pytorch.org/whl/cpu")
+            # ale-py 0.9 registers `ALE/*` only when imported (0.8 did it via
+            # shimmy's plugin), and ARENA never imports it — so gymnasium
+            # imports it, at the END of its own __init__ (ale_py calls
+            # gymnasium.register, so any earlier is a circular import). The
+            # make() fails the build if that ever stops working.
+            .run_commands(
+                "printf '\\ntry:\\n    import ale_py  # delta-drills: registers ALE/*\\n"
+                "except ImportError:\\n    pass\\n' >> "
+                "$(python -c 'import gymnasium as g; print(g.__file__)')",
+                "python -c \"import gymnasium as g; g.make('ALE/Breakout-v5')\"",
+            )
             .add_local_file(_SHIM_PATH, remote_path=_SHIM_REMOTE, copy=True)
         )
         return _app, _image
@@ -438,22 +466,13 @@ def start_reaper() -> None:
         if _reaper_started:
             return
         _reaper_started = True
-    # Read the bill BEFORE serving (startup awaits this): until it is in, the
-    # cap can only estimate from this process's own usage log, which misses
-    # everything spent before the deploy.
-    try:
-        modal_spend.refresh()
-    except Exception:
-        logger.exception("modal kernel: initial spend refresh failed")
+    # The month's bill is read on its own thread: a stalled billing call here
+    # would stop the reaping, and idle sandboxes would bill on. Startup waits a
+    # bounded time for the first read so the cap starts from the real bill.
+    modal_spend.start_refresher()
 
     def _loop() -> None:
         while True:
-            # The month's bill rides this thread too: it is a network call,
-            # and the spawn path must only ever read the cached number.
-            try:
-                modal_spend.refresh()
-            except Exception:
-                logger.exception("modal kernel: spend refresh failed")
             time.sleep(REAP_INTERVAL_SECONDS)
             try:
                 with _registry_lock:

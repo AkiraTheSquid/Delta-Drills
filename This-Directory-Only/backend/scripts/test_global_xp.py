@@ -131,6 +131,13 @@ class BoardTests(unittest.TestCase):
         self.assertEqual([r["rank"] for r in rows], [1, 2, 2, 2])
         self.assertEqual(global_xp.set_name(self.db, g, "Named Guest"), "Named Guest")
 
+    def test_test_accounts_left_off_unless_you(self):
+        me = self.user("me@x.com", {MONDAY: 1.0})
+        t = self.user("test-bob-f1aeba72@test.delta-drills.app", {MONDAY: 50.0})
+        self.assertEqual([r["display_name"] for r in self.board(me)["rows"]], ["me"])
+        rows = self.board(t)["rows"]  # signed in as the test account: still your own row
+        self.assertEqual([(r["is_you"], r["xp"]) for r in rows], [(True, 50.0), (False, 1.0)])
+
     def test_no_identity_leaves(self):
         me = self.user("me@x.com", {MONDAY: 5.0})
         self.user("secret@x.com", {MONDAY: 7.0})
