@@ -1,26 +1,31 @@
-/* concept-graph/kg-sections.js — a HEADER over each area of the Knowledge
- * Graph, joined to its concepts by light dotted lines (Seth, 2026-09-29:
- * "certain areas that have a larger header … straight dotted lines that are
- * kind of light to the nodes themselves … ch 0.1 raytracing"). It replaced
- * the legend: the map now labels itself.
+/* concept-graph/kg-sections.js — optional AREA BOXES on the Knowledge Graph:
+ * a rectangle around each area's concepts with the area's title on its top
+ * edge (Seth, 2026-09-30: "an optional thing that you can enable and disable
+ * for the sections where it shows a rectangle with a title around the
+ * different nodes … but it shouldn't reposition the nodes of the graph").
+ * Off by default; the toolbar's "Area boxes" button (kg-toolbar.js) flips it
+ * and the choice stays in this browser (dd_kg_area_boxes).
+ *
+ * It replaced the 2026-09-29 headers with dotted leader lines, which needed
+ * the layout grouped by area — that moved every concept, and was reverted.
+ * The layout is the graph's own again, so areas interleave and their boxes
+ * may overlap; that is the honest picture, not a bug.
  *
  *   Colour  — Sections mode: the area's own colour (the one its bubbles
  *             wear). Mastery mode: the mastery ramp at the area's AVERAGE
- *             reading, so a header says how strong you are there.
- *   Click   — `window.deltaSelectKgSection(sid)` (lesson-graph.js): every
- *             concept in the area lights up and the side panel shows the
- *             area's diagnostics (kg-panel.js).
+ *             reading, so a box says how strong you are there.
+ *   Click   — a title calls `window.deltaSelectKgSection(sid)`
+ *             (lesson-graph.js): every concept in the area lights up and the
+ *             side panel shows the area's diagnostics (kg-panel.js).
  *
- * Two layers over the main canvas, both in the same box as #kg-cy:
- *   an SVG of leader lines BEHIND the canvas (its background is the pane's,
- *   so the lines show through between bubbles and never cross over one), and
- *   the headers themselves ABOVE it, as buttons.
- * Positions are recomputed from the nodes once per frame while the viewport
- * or any node moves. Hidden in the condensed view (it has its own canvas).
+ * Two layers in the same box as #kg-cy: an SVG of rectangles BEHIND the
+ * canvas (its background is the pane's, so a box shows between bubbles and
+ * never covers one), and the titles ABOVE it, as buttons. Positions are
+ * recomputed from the nodes once per frame while the viewport or any node
+ * moves. Hidden in the condensed view (it has its own canvas).
  *
- * 🔴 Reads the graph, never writes it: no elements, no styles, no classes on
- * lesson-graph.js's instance. The layout keeps each area together only because
- * graph-views.js lays it out grouped (kg-look.js `groupBy`). */
+ * 🔴 Reads the graph, never writes it: no elements, no styles, no classes and
+ * no positions on lesson-graph.js's instance. */
 (function () {
   "use strict";
 
@@ -42,9 +47,21 @@
   const label = (s) => (s && SHORT[s.id]) || (s && s.label) || "";
   const UNLOCK_T = 0.85, MASTERY_T = 0.95;
 
-  let cy = null, host = null, lines = null, heads = null;
-  let active = null;             // sid whose header is selected
+  let cy = null, host = null, boxes = null, heads = null;
+  let active = null;             // sid whose title is selected
   let queued = false;
+
+  const BOX_KEY = "dd_kg_area_boxes";
+  let shown = false;
+  try { shown = localStorage.getItem(BOX_KEY) === "1"; } catch (_) {}
+  const setShown = (v) => {
+    v = !!v;
+    if (v === shown) return;
+    shown = v;
+    try { localStorage.setItem(BOX_KEY, v ? "1" : "0"); } catch (_) {}
+    window.dispatchEvent(new CustomEvent("delta:kg-area-boxes-changed", { detail: { shown } }));
+    if (init()) kick();
+  };
 
   const view = () => window.deltaKgView || null;
   const colorMode = () => (typeof window.deltaKgColorMode === "function" ? window.deltaKgColorMode() : "mastery");
@@ -102,11 +119,11 @@
     const main = document.getElementById("kg-cy");
     if (!main || !main.parentNode) return false;
     host = main.parentNode;
-    if (!lines) {
-      lines = document.createElementNS(SVGNS, "svg");
-      lines.setAttribute("class", "kgs-lines");
-      lines.setAttribute("aria-hidden", "true");
-      host.insertBefore(lines, main);
+    if (!boxes) {
+      boxes = document.createElementNS(SVGNS, "svg");
+      boxes.setAttribute("class", "kgs-boxes");
+      boxes.setAttribute("aria-hidden", "true");
+      host.insertBefore(boxes, main);
     }
     if (!heads) {
       heads = document.createElement("div");
@@ -137,21 +154,23 @@
     queued = false;
     if (!cy || cy.destroyed() || !ensureLayers()) return;
     const main = document.getElementById("kg-cy");
-    const off = hidden() || !main.offsetWidth;
-    lines.style.display = heads.style.display = off ? "none" : "";
+    const off = !shown || hidden() || !main.offsetWidth;
+    boxes.style.display = heads.style.display = off ? "none" : "";
     if (off) return;
-    matchBox(lines, main);
+    matchBox(boxes, main);
     matchBox(heads, main);
     const W = main.offsetWidth;
-    const zoom = cy.zoom();
+    // Padding round the bubbles, in screen px: roomy when zoomed in, never
+    // so wide that a zoomed-out map is all frame.
+    const PAD = Math.max(6, Math.min(18, 16 * cy.zoom()));
 
-    // One header per area on the canvas: centred over the area's box, a
-    // little above it. Measured after insertion (width depends on the text).
+    // One box per area on the canvas, round the concepts actually drawn.
     const secs = sections().map((s) => {
       const ids = new Set(s.kcs);
-      const nodes = cy.nodes().filter((n) => ids.has(n.id()));
+      const nodes = cy.nodes().filter((n) => ids.has(n.id()) && n.visible());
       if (!nodes.length) return null;
-      return { s, nodes, bb: nodes.renderedBoundingBox({ includeLabels: false }) };
+      const bb = nodes.renderedBoundingBox({ includeLabels: true, includeOverlays: false });
+      return { s, x: bb.x1 - PAD, y: bb.y1 - PAD, w: bb.w + 2 * PAD, h: bb.h + 2 * PAD };
     }).filter(Boolean);
 
     const seen = new Set();
@@ -170,67 +189,57 @@
       b.title = `${s.label} — ${s.kcs.length} concept${s.kcs.length === 1 ? "" : "s"}. Click for how you're doing here.`;
       b.style.setProperty("--kgs-c", headColor(s));
       b.classList.toggle("is-active", active === s.id);
+      b.classList.toggle("is-dim", !!active && active !== s.id);
     });
     heads.querySelectorAll("[data-sid]").forEach((b) => { if (!seen.has(b.dataset.sid)) b.remove(); });
 
-    // Place, then push apart: a header that overlaps one already placed moves
-    // up above it. Bounded passes; the graph clusters rarely stack deeper.
+    // Titles sit on the box's top edge, at its left (a fieldset's legend).
+    // Areas overlap, so a title that would cover one already placed steps
+    // down inside its own box, then sideways. Bounded passes.
     const placed = [];
-    const GAP = 6, LIFT = 26 + 10 * Math.min(1, zoom);
-    secs.sort((a, b) => a.bb.y1 - b.bb.y1).forEach((it) => {
+    const GAP = 4;
+    secs.slice().sort((a, b) => a.y - b.y || a.x - b.x).forEach((it) => {
       const b = heads.querySelector(`[data-sid="${CSS.escape(it.s.id)}"]`);
       const w = b.offsetWidth, h = b.offsetHeight;
-      let x = (it.bb.x1 + it.bb.x2) / 2 - w / 2;
-      x = Math.max(4, Math.min(W - w - 4, x));
-      // Never above the canvas: the topmost area's header would sit under the
-      // toolbar. Pinned to the top edge it may overlap its own first row,
-      // which beats not being there; a collision there goes below instead.
-      const TOP = 4;
-      let y = Math.max(TOP, it.bb.y1 - LIFT - h);
+      let x = Math.max(4, Math.min(W - w - 4, it.x + 10));
+      let y = Math.max(4, it.y - h / 2);
       for (let pass = 0; pass < 12; pass++) {
         const hit = placed.find((p) => x < p.x + p.w + GAP && x + w + GAP > p.x && y < p.y + p.h + GAP && y + h + GAP > p.y);
         if (!hit) break;
-        y = hit.y - h - GAP >= TOP ? hit.y - h - GAP : hit.y + hit.h + GAP;
+        if (pass % 2 === 0) y = hit.y + hit.h + GAP;
+        else x = Math.max(4, Math.min(W - w - 4, hit.x + hit.w + GAP));
       }
       placed.push({ x, y, w, h });
       b.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-      it.anchor = { x: x + w / 2, y: y + h };
     });
 
-    // Leader lines: header's foot → each concept's top edge. Behind the
-    // canvas, so they read as a light fan between bubbles.
+    // Big boxes first, so a small area inside a big one is drawn on top.
     let svg = "";
-    secs.forEach((it) => {
-      if (!it.anchor) return;
+    secs.slice().sort((a, b) => b.w * b.h - a.w * a.h).forEach((it) => {
       const c = headColor(it.s);
-      const dim = active && active !== it.s.id;
-      let d = "";
-      it.nodes.forEach((n) => {
-        const p = n.renderedPosition();
-        const top = p.y - n.renderedOuterHeight() / 2;
-        d += `M${it.anchor.x.toFixed(1)} ${it.anchor.y.toFixed(1)}L${p.x.toFixed(1)} ${top.toFixed(1)}`;
-      });
-      svg += `<path d="${d}" stroke="${esc(c)}" class="kgs-line${active === it.s.id ? " is-active" : ""}${dim ? " is-dim" : ""}"/>`;
+      const cls = "kgs-box" + (active === it.s.id ? " is-active" : active ? " is-dim" : "");
+      svg += `<rect x="${it.x.toFixed(1)}" y="${it.y.toFixed(1)}" width="${it.w.toFixed(1)}" height="${it.h.toFixed(1)}"` +
+        ` rx="12" stroke="${esc(c)}" fill="${esc(c)}" class="${cls}"/>`;
     });
-    lines.innerHTML = svg;
+    boxes.innerHTML = svg;
   };
   const kick = () => { if (!queued) { queued = true; requestAnimationFrame(draw); } };
 
   /* ---------------- wiring --------------------------------------------- */
-  const init = () => {
+  function init() {
     const c = typeof window.deltaConceptGraphCy === "function" ? window.deltaConceptGraphCy() : null;
     if (!c) return false;
     if (cy === c) return true;
     cy = c;
-    cy.on("viewport resize position add remove layoutstop", kick);
+    cy.on("viewport resize position add remove style layoutstop", kick);
     kick();
     return true;
-  };
+  }
   [
     "delta:kg-view-changed", "delta:kg-course-changed", "delta:kg-colormode-changed",
     "delta:kc-readiness-changed", "delta:kc-prefs-changed", "delta:kg-layout-done", "resize",
   ].forEach((ev) => window.addEventListener(ev, () => { colors = {}; if (init()) kick(); }));
-  // lesson-graph.js says what is selected: an area lights its header; a
+  // lesson-graph.js says what is selected: an area lights its box; a
   // concept or nothing clears it.
   window.addEventListener("delta:kg-selection-changed", (e) => {
     const d = (e && e.detail) || {};
@@ -244,5 +253,8 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 
-  window.DeltaKgSections = { label, stats, redraw: kick };
+  window.DeltaKgSections = { label, stats, redraw: kick, shown: () => shown, setShown };
+  // kg-toolbar.js loads first and may have painted its button before this
+  // existed: tell it the remembered state.
+  window.dispatchEvent(new CustomEvent("delta:kg-area-boxes-changed", { detail: { shown } }));
 })();

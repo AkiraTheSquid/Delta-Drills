@@ -3,9 +3,10 @@
  * lesson-graph.js draws every concept, every time. This file layers TWO views
  * over that one graph (a segment in kg-toolbar.js's bar switches them):
  *
- *   complete  — the whole graph, laid out with each SECTION as one cluster
- *               (kg-look.js `routeLayout`'s `groupBy`), so kg-sections.js can
- *               hang one header over each area.
+ *   complete  — the whole graph, in the graph's own layout. (Grouping it by
+ *               area, 2026-09-29, moved every concept; reverted 2026-09-30.
+ *               kg-sections.js's optional area boxes draw round the nodes
+ *               where they are.)
  *   condensed — one bubble per ARENA section (−1.0 Python, −1.1 arrays,
  *               0.0, 0.1, …) with the number of prerequisite links between
  *               sections on the edges. Tapping a section opens it into its
@@ -263,15 +264,12 @@
     // cut crossings, and a hidden edge it still counts only costs it moves.
     // kg-look.js runs dagre itself so the edges can follow the routes it
     // computes (see routeLayout there); cytoscape-dagre is the fallback.
-    // Grouped by section: each area is one cluster, so its header
-    // (kg-sections.js) sits over one block instead of a scatter.
     const look = window.DeltaKgLook;
     const dagreOpts = {
       name: window.cytoscapeDagre ? "dagre" : "cose",
       rankDir: "BT", nodeSep: 26, rankSep: o.rankSep || 150, edgeSep: 12,
       animate: o.animate !== false, animationDuration: 320, animationEasing: "ease-out",
       fit: false, padding: 40, nodeDimensionsIncludeLabels: true,
-      groupBy: (kc) => sectionOf(kc).id,
       // kg-look.js refines the layout off-thread and calls this when the
       // nodes have glided to their final places (not if the learner has
       // panned or zoomed since).

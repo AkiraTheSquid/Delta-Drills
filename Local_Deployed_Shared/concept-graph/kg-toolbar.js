@@ -4,13 +4,14 @@
  * there's too much information"), cut to four controls on 2026-09-29 ("keep
  * condensed view. remove adaptive view. remove everything else"):
  *
- *   [Complete|Condensed]  [Mastery|Sections]  [Filter ▾]  ……  [Fit]
+ *   [Complete|Condensed]  [Mastery|Sections]  [Filter ▾]  [Area boxes]  ……  [Fit]
  *   hint line · cold-start notice
  *
  *   View segment, hint — graph-views.js
  *   Colour segment (#kg-colormode), .kg2-controls (Fit, Colab links),
  *   #kg-nodata — lesson-graph.js
- *   Filter — this file
+ *   Filter, Area boxes button — this file (the boxes are kg-sections.js's,
+ *   2026-09-30: a rectangle and title round each area, off by default)
  *
  * Moving an element keeps its listeners, and every owner looks its elements
  * up by id (graph-views.js marks the view segment by `#kg-view-seg`, not
@@ -200,6 +201,28 @@
     return wrap;
   };
 
+  /* ---------------- area boxes: on / off ------------------------------- */
+  const buildBoxes = () => {
+    const btn = el("button", "kgt-btn kgt-boxes",
+      '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.5" width="12" height="10" rx="2"/><path d="M4.5 3.5h4"/></svg>' +
+      "<span>Area boxes</span>");
+    btn.type = "button";
+    btn.id = "kg-area-boxes";
+    btn.title = "Draw a box with a title round each area of the graph";
+    const paint = () => {
+      const on = !!(window.DeltaKgSections && window.DeltaKgSections.shown());
+      btn.classList.toggle("is-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    };
+    btn.addEventListener("click", () => {
+      const api = window.DeltaKgSections;
+      if (api) api.setShown(!api.shown());
+    });
+    window.addEventListener("delta:kg-area-boxes-changed", paint);
+    paint();
+    return btn;
+  };
+
   /* ---------------- assemble ------------------------------------------- */
   // #kg-nodata is created lazily by lesson-graph.js; adopt it when it shows up.
   const adoptNoData = () => {
@@ -223,7 +246,7 @@
     colour.classList.add("kgt-seg");
     colour.setAttribute("role", "group");
     colour.setAttribute("aria-label", "Colour by");
-    bar.append(viewSeg, colour, buildFilter(), el("span", "kgt-spacer"));
+    bar.append(viewSeg, colour, buildFilter(), buildBoxes(), el("span", "kgt-spacer"));
     // Fit as an icon, its words kept for screen readers and the tooltip.
     const iconize = (btn, svg, label) => {
       btn.classList.add("kgt-btn", "kgt-icon");

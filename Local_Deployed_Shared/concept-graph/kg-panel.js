@@ -12,7 +12,7 @@
  *              bar, one progress line (rung of the ladder + graded record).
  *              "Read lesson" unfolds the lesson itself underneath, with its
  *              prerequisites and what it unlocks.
- *   section  — an AREA (a header on the graph was clicked, kg-sections.js):
+ *   section  — an AREA (its title on the graph was clicked, kg-sections.js):
  *              the average reading and bar, how its concepts spread over the
  *              bands, and every concept weakest-first as a clickable row.
  *   settings — the cog: this concept's practice switch and priority weight,
@@ -99,7 +99,7 @@
   /* ---------------- views ---------------------------------------------- */
   const emptyHtml = () =>
     `<div class="kg2-placeholder"><strong>Click a concept</strong> to see how strong you are in it, ` +
-    `or an <strong>area's header</strong> to see the whole area.` +
+    `or, with <strong>Area boxes</strong> on, an area's title to see the whole area.` +
     `<span class="kg2-placeholder-more">Use <strong>Practice ⤢</strong> on a concept to jump into practising it.</span></div>`;
 
   // One line: where the ladder has this learner, and their record on it.
