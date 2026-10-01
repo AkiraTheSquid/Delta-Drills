@@ -80,13 +80,19 @@
   // The standalone courses (course-registry.js) are not ARENA and not prep for
   // it: `leetcode.*` used to fall through to −1.1 and read as array prep. Each
   // gets its own tier, in a hue no ARENA or prep tier uses (Seth, 2026-09-25).
+  // LeetCode is split into its own areas (leetcode-areas.js, Seth 2026-10-01:
+  // one lime for the whole course showed no differences). This object is only
+  // the fallback when that file did not load.
   const COURSE_LEETCODE = { id: "clc", label: "LeetCode Patterns — standalone course", color: "#b8dc6e" };
+  const LC_AREAS = window.DeltaLeetcodeAreas || null;
   const COURSE_DELTA = { id: "cdd", label: "Delta Drills — how the app works (standalone course)", color: "#c4a8f0" };
   // Area order (headers, Filter rows): the prep tiers, ARENA's sections in
   // notebook order, then the standalone courses.
   const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS, PREP_MATH]
     .concat(Object.keys(ARENA_SECTIONS).sort().map((k) => ARENA_SECTIONS[k]))
-    .concat([ARENA_LATER, COURSE_LEETCODE, COURSE_DELTA]);
+    .concat([ARENA_LATER])
+    .concat(LC_AREAS ? LC_AREAS.list : [COURSE_LEETCODE])
+    .concat([COURSE_DELTA]);
 
   // kc id -> section, built from the exercise map once it has loaded. Empty
   // until then, and empty forever if the fetch failed — which is why
@@ -145,7 +151,7 @@
     if (arena) return arena;
     const id = typeof kc === "string" ? kc : "";
     const lid = (kcById[kc] || {}).lesson || "";
-    if (id.startsWith("leetcode.") || /^lc-/.test(lid)) return COURSE_LEETCODE;
+    if (id.startsWith("leetcode.") || /^lc-/.test(lid)) return (LC_AREAS && LC_AREAS.of(id, lid)) || COURSE_LEETCODE;
     if (id.startsWith("deltadrills.") || /^dd-/.test(lid)) return COURSE_DELTA;
     if (id.startsWith("python.") || /^py-/.test(lid)) return PREP_PYTHON;
     if (id.startsWith("math.") || /^ma-/.test(lid)) return PREP_MATH;

@@ -99,7 +99,7 @@
   /* ---------------- views ---------------------------------------------- */
   const emptyHtml = () =>
     `<div class="kg2-placeholder"><strong>Click a concept</strong> to see how strong you are in it, ` +
-    `or, with <strong>Area boxes</strong> on, an area's title to see the whole area.` +
+    `or an area's name on the graph to see the whole area.` +
     `<span class="kg2-placeholder-more">Use <strong>Practice ⤢</strong> on a concept to jump into practising it.</span></div>`;
 
   // One line: where the ladder has this learner, and their record on it.
