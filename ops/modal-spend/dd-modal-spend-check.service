@@ -1,0 +1,8 @@
+[Unit]
+Description=Delta Drills Modal spend check (reads Modal billing, alerts over budget)
+
+[Service]
+Type=oneshot
+ExecStart=/home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/backend/.venv/bin/python /home/stellar-thread/Applications/Delta-Drills-Local/ops/modal-spend/dd_modal_spend_check.py
+# Exit 2 = an alert was raised; that is the check working, not failing.
+SuccessExitStatus=0 2

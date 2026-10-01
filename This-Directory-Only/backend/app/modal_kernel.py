@@ -45,6 +45,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from app import modal_spend
 from app.code_runner import ExecutionResult
 from app.kernel_runner import KernelRunResult
 
@@ -102,6 +103,22 @@ BOOT_SECONDS = _env_int("DD_KERNEL_BOOT_SECONDS", 600)
 SPAWN_SECONDS = _env_int("DD_KERNEL_SPAWN_SECONDS", 120)
 _BUSY_WAIT_SECONDS = 1.0
 
+_CH1_PACKAGES = (
+    "transformer_lens==2.17.0", "sae-lens>=4.0.0,<5.0.0", "openai==1.56.1",
+    "tabulate", "umap-learn", "hdbscan", "frozendict",  # frozendict: sae_vis needs it, does not declare it
+    "git+https://github.com/callummcdougall/CircuitsVis.git#subdirectory=python",
+    "git+https://github.com/callummcdougall/sae_vis.git@callum/v3",
+    "git+https://github.com/neelnanda-io/neel-plotly",
+)
+# Weights the gpt2-small sections load (1.1, 1.2, 1.3.3, 1.4.x, 2.4), into the
+# image's HF cache so a fresh sandbox reads them from disk instead of the Hub.
+_CH1_WEIGHTS = (
+    "from transformer_lens import HookedTransformer; "
+    "HookedTransformer.from_pretrained('gpt2-small'); "
+    "from huggingface_hub import hf_hub_download; "
+    "hf_hub_download('callummcdougall/attn_only_2L_half', 'attn_only_2L_half.pth')"
+)
+
 _SHIM_PATH = Path(__file__).with_name("modal_kernel_shim.py")
 _SHIM_REMOTE = "/opt/delta/kernel_shim.py"
 
@@ -149,6 +166,14 @@ def _ensure_app():
                 *(f"mv /tmp/arena/{c} /root/{c}" for c in ARENA_CHAPTERS),
                 "rm -rf /tmp/arena",
             )
+            # Chapter 1 preloaded. Its setup cells guard the WHOLE %pip line on
+            # `import transformer_lens`, so baking transformer_lens means baking
+            # everything those lines install too — or 1.3.x / 1.4.2 / 1.5.x / 4.x
+            # skip the install and lose sae-lens and openai. The CPU index keeps
+            # any torch re-resolve off the 2 GB CUDA wheel.
+            .pip_install(*_CH1_PACKAGES,
+                         extra_index_url="https://download.pytorch.org/whl/cpu")
+            .run_commands(f"python -c \"{_CH1_WEIGHTS}\"")
             .add_local_file(_SHIM_PATH, remote_path=_SHIM_REMOTE, copy=True)
         )
         return _app, _image
@@ -273,6 +298,8 @@ class ModalSession:
 
     def shutdown(self) -> None:
         self.dead = True
+        modal_spend.record(getattr(self.sandbox, "object_id", None), self.session_id,
+                           self.context, _wall(self.created_at))
         try:
             self.proc.stdin.write(json.dumps({"op": "shutdown"}) + "\n")
             self.proc.stdin.drain()
@@ -370,6 +397,16 @@ _kernels: dict[str, ModalSession] = {}
 _registry_lock = threading.Lock()
 
 
+def _wall(monotonic_ts: float) -> float:
+    return time.time() - (time.monotonic() - monotonic_ts)
+
+
+def _spend_locked() -> dict:
+    """The month's spend, counting the sandboxes open right now."""
+    live = [_wall(s.created_at) for s in _kernels.values() if s.sandbox is not None]
+    return modal_spend.summary(live, modal_spend.request_rate(SANDBOX_CPU, SANDBOX_MEMORY_MB))
+
+
 def _pop_stale_locked() -> list[ModalSession]:
     now = time.monotonic()
     stale = []
@@ -401,9 +438,22 @@ def start_reaper() -> None:
         if _reaper_started:
             return
         _reaper_started = True
+    # Read the bill BEFORE serving (startup awaits this): until it is in, the
+    # cap can only estimate from this process's own usage log, which misses
+    # everything spent before the deploy.
+    try:
+        modal_spend.refresh()
+    except Exception:
+        logger.exception("modal kernel: initial spend refresh failed")
 
     def _loop() -> None:
         while True:
+            # The month's bill rides this thread too: it is a network call,
+            # and the spawn path must only ever read the cached number.
+            try:
+                modal_spend.refresh()
+            except Exception:
+                logger.exception("modal kernel: spend refresh failed")
             time.sleep(REAP_INTERVAL_SECONDS)
             try:
                 with _registry_lock:
@@ -457,6 +507,8 @@ def _reserve_and_run(session_id, code, bootstrap, filename, context, timeout,
             session.shutdown()
             session = None
         if session is None:
+            if _spend_locked()["capped"]:
+                raise RuntimeError(modal_spend.CAP_MESSAGE)
             _evict_lru_locked()
             session_id = session_id or os.urandom(8).hex()
             # Spawning can take a minute on a cold image; the registry lock
@@ -547,6 +599,7 @@ def kernel_status(session_id: str | None = None) -> dict:
             }
             for s in shown
         ]
+        spend = _spend_locked()
     return {
         "backend": "modal",
         "count": total,
@@ -554,6 +607,7 @@ def kernel_status(session_id: str | None = None) -> dict:
         "idle_seconds": IDLE_SECONDS,
         "max_rss_mb": SANDBOX_MEMORY_MB,
         "sessions": sessions,
+        "spend": spend,
     }
 
 

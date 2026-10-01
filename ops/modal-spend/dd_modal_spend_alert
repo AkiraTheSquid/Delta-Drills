@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Claude Code SessionStart hook: surface the Delta Drills Modal spend check in
+# every session. Two conditions print, everything else stays silent:
+#
+#   1. modal-spend-alert.md exists -> the last check found spend over a limit.
+#   2. modal-spend-last-run stale  -> the daily check itself is dead, and its
+#      silence would read as a quiet month.
+#
+# Always exit 0 - a broken hook must not block sessions.
+set -u
+STATE_DIR="${DD_STATE_DIR:-$HOME/.local/state/delta-drills}"
+ALERT="$STATE_DIR/modal-spend-alert.md"
+LAST_RUN="$STATE_DIR/modal-spend-last-run"
+# Daily timer at 09:30 with 5 min jitter: one missed run plus margin.
+STALE_HOURS=26
+
+if [ -f "$ALERT" ]; then
+  echo "================================================================"
+  cat "$ALERT"
+  echo "================================================================"
+fi
+
+if [ -f "$LAST_RUN" ]; then
+  now=$(date +%s)
+  then=$(date -d "$(cat "$LAST_RUN")" +%s 2>/dev/null || echo 0)
+  if [ $(( now - then )) -gt $(( STALE_HOURS * 3600 )) ]; then
+    echo "🔴 DELTA DRILLS MODAL SPEND CHECK IS STALE: last good run $(( (now - then) / 3600 ))h ago."
+    echo "   check: systemctl --user status dd-modal-spend-check.timer"
+  fi
+else
+  echo "🔴 DELTA DRILLS MODAL SPEND CHECK HAS NEVER RUN. Run: systemctl --user start dd-modal-spend-check.service"
+fi
+exit 0

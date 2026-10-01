@@ -17,6 +17,7 @@
 - `question_repair/`: the local Claude Code runner that repairs questions learners have flagged. See its own README.
 - `gap-watch/`: session-started watcher that wakes the live session when a learner runs out of drills on a rung.
 - `feedback-watch/`: session-started watcher that wakes the live session on every new learner feedback entry (drill or lesson).
+- `modal-spend/`: daily systemd-timer check of the Modal bill for notebook kernels; alert file + Telegram push when a day or the month's pace runs over budget.
 
 ## Data & External Dependencies
 - The backend package (`This-Directory-Only/backend/app`), imported directly — these scripts run against the same code the server runs.
@@ -51,3 +52,4 @@
 ## Recent Changes
 - 2026-08-18: Folder created for `question_repair/`, the local question-repair runner. The rule worth carrying forward is the one-way dependency: `ops/` may import the backend, the backend may never import `ops/`, because this tree is not in the deployed image.
 - 2026-09-20: `feedback-watch/` added — the sibling of `gap-watch/` for the two feedback logs. Same rules: session-started via Monitor, one line per event, a failed fetch is not an empty log, no model process.
+- 2026-09-30: `modal-spend/` added — the first timer-run (not session-started) tool here. Units live in the folder and are symlinked into `~/.config/systemd/user/`; a failed billing read never clears the alert.
