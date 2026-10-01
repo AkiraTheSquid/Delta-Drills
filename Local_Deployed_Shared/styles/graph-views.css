@@ -36,46 +36,30 @@
 .kgv-condensed[hidden] { display: none; }
 #kg-cy.kgv-behind { visibility: hidden; }
 
-/* ---- area boxes (kg-sections.js) -------------------------------------- */
-/* Optional (toolbar "Area boxes"). Two layers in #kg-cy's box: the
-   rectangles UNDER the canvas (the canvas is transparent between bubbles, so
-   a box shows there and never across a bubble), the titles OVER it. The
-   title layer lets clicks through everywhere but on a title. */
-.kgs-boxes, .kgs-heads { position: absolute; pointer-events: none; overflow: hidden; }
-.kgs-boxes { z-index: 0; }
-.kgs-heads { z-index: 3; }
+/* ---- area names (kg-sections.js) -------------------------------------- */
+/* Each area's name, large and in the area's colour, in a free spot among its
+   concepts (toolbar "Area names", on by default). One layer over #kg-cy that
+   lets clicks through everywhere but on a name. A halo in the pane's own
+   background keeps a name legible where it crosses an edge. */
+.kgs-heads { position: absolute; pointer-events: none; overflow: hidden; z-index: 3; }
 #kg-cy { z-index: 1; }
-.kgs-box {
-  fill-opacity: .05; stroke-opacity: .55; stroke-width: 1.4;
-  transition: fill-opacity 160ms, stroke-opacity 160ms;
-}
-.kgs-box.is-active { fill-opacity: .13; stroke-opacity: .95; stroke-width: 2; }
-.kgs-box.is-dim { fill-opacity: .02; stroke-opacity: .18; }
 .kgs-head {
   --kgs-c: var(--muted);
+  --kgs-halo: var(--bg);
   position: absolute; left: 0; top: 0; pointer-events: auto;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 3px 10px 3px 8px; border-radius: 8px;
-  background: color-mix(in srgb, var(--surface) 90%, transparent);
-  border: 1px solid color-mix(in srgb, var(--kgs-c) 55%, transparent);
-  color: var(--text); font: inherit; font-size: 13px; font-weight: 700; letter-spacing: .01em;
-  white-space: nowrap; cursor: pointer; backdrop-filter: blur(6px);
-  box-shadow: 0 1px 2px rgb(0 0 0 / .14), 0 6px 18px -10px rgb(0 0 0 / .45);
-  transition: border-color 140ms, background 140ms, opacity 140ms;
+  padding: 0 4px; margin: 0; border: 0; border-radius: 6px; background: none;
+  color: var(--kgs-c); font: inherit; font-size: var(--kgs-fs, 22px); font-weight: 800;
+  line-height: 1.1; letter-spacing: -.01em; white-space: nowrap; cursor: pointer;
+  text-shadow: 0 0 2px var(--kgs-halo), 0 0 4px var(--kgs-halo), 0 0 8px var(--kgs-halo);
+  opacity: .92;
+  transition: opacity 140ms;
 }
-/* The area's colour as a bar down the left edge: the one thing that ties the
-   header to its bubbles at a glance. */
-.kgs-head::before { content: ""; width: 4px; align-self: stretch; border-radius: 2px; background: var(--kgs-c); }
-.kgs-head:hover { border-color: var(--kgs-c); }
-.kgs-head.is-active {
-  border-color: var(--kgs-c);
-  background: color-mix(in srgb, var(--kgs-c) 22%, var(--surface));
-}
-.kgs-head.is-dim { opacity: .45; }
+.kgs-head:hover, .kgs-head.is-active { opacity: 1; text-decoration: underline; text-underline-offset: .18em; text-decoration-thickness: 2px; }
+.kgs-head.is-dim { opacity: .35; }
 .kgs-head:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
-/* The toolbar's on/off for the boxes (kg-toolbar.js). */
-.kgt-boxes svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
-.kgt-boxes.is-on { color: var(--accent-text); }
+/* The toolbar's on/off for the names (kg-toolbar.js). */
+.kgt-names svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.kgt-names.is-on { color: var(--accent-text); }
 
 /* ---- course graph previews (course-graph.js) --------------------------- */
 .ccg-preview {
@@ -133,7 +117,6 @@ html.dd-solo[data-solo-page="knowledge-graph"] .kg-course-bar { display: none; }
 
 @media (max-width: 820px) {
   .kgv-hint { display: none; }
-  .kgs-head { font-size: 12px; padding: 3px 8px 3px 7px; }
-  .kgt-boxes span { display: none; }
+  .kgt-names span { display: none; }
   .ccg-preview { height: 120px; }
 }

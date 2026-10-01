@@ -88,7 +88,10 @@
   const _sectionFallback = (kc, lessonId) => {
     const slug = arenaSlugByKc[kc];
     if (slug) return _slugSection(slug);
-    if (String(kc).startsWith("leetcode.") || /^lc-/.test(lessonId || "")) return COURSE_LEETCODE;
+    if (String(kc).startsWith("leetcode.") || /^lc-/.test(lessonId || "")) {
+      const lc = window.DeltaLeetcodeAreas && window.DeltaLeetcodeAreas.of(String(kc), lessonId);
+      return lc || COURSE_LEETCODE;
+    }
     if (String(kc).startsWith("deltadrills.") || /^dd-/.test(lessonId || "")) return COURSE_DELTA;
     if (String(kc).startsWith("python.") || /^py-/.test(lessonId || "")) return PREP_PYTHON;
     if (String(kc).startsWith("math.") || /^ma-/.test(lessonId || "")) return PREP_MATH;
