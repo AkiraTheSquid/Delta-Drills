@@ -24,18 +24,21 @@
 (function () {
   "use strict";
 
+  // Broad on purpose — about ARENA's granularity (a handful of areas), since
+  // these exist to be read off the map. Seth, 2026-10-01: twelve was too fine;
+  // the first-tier families (hashing, stacks, bits, sorting…) were 1–3 nodes
+  // each scattered along the bottom row, so their names labelled nothing.
+  // Those are one "Foundations" area now, and intervals/greedy (two nodes off
+  // two-pointers) joined the pointer area.
   const AREAS = [
-    ["lca", "Arrays & hashing", "#6fd08c", ["arrays-strings", "hash-maps", "prefix-sums"]],
-    ["lcp", "Pointers & windows", "#b8dc6e", ["two-pointers", "sliding-window", "cyclic-sort"]],
+    ["lca", "Foundations", "#6fd08c", ["arrays-strings", "hash-maps", "prefix-sums", "stack", "monotonic-stack",
+      "sorting-algorithms", "binary-search", "bit-manipulation", "math"]],
+    ["lcp", "Pointers & intervals", "#f2a65a", ["two-pointers", "sliding-window", "cyclic-sort", "merge-intervals", "greedy"]],
     ["lcl", "Linked lists", "#4fd1c5", ["linked-lists", "fast-slow-pointers", "in-place-reversal"]],
-    ["lcs", "Stacks", "#f2a65a", ["stack", "monotonic-stack"]],
-    ["lcb", "Sorting & searching", "#5cc8f0", ["sorting-algorithms", "binary-search"]],
-    ["lci", "Intervals & greedy", "#c9a27e", ["merge-intervals", "greedy"]],
-    ["lcm", "Bits & maths", "#f0a3a3", ["bit-manipulation", "math"]],
     ["lct", "Trees & tries", "#a78bfa", ["binary-trees", "tree-bfs", "tree-dfs", "bst", "trie"]],
     ["lch", "Heaps", "#f07cc8", ["top-k-elements", "two-heaps", "k-way-merge"]],
     ["lcg", "Graphs", "#6f9cf0", ["graphs", "islands", "topological-sort", "union-find", "shortest-paths", "mst"]],
-    ["lcr", "Recursion & backtracking", "#d9a0f5", ["recursion", "subsets", "backtracking"]],
+    ["lcr", "Recursion & backtracking", "#c9a27e", ["recursion", "subsets", "backtracking"]],
     ["lcd", "Dynamic programming", "#ef6f6f", ["dp-1d", "knapsack-dp", "dp-grid", "dp-strings", "dp-lis", "dp-intervals"]],
   ];
   const OTHER = { id: "lcz", label: "Other LeetCode", color: "#b0b4c0", order: 200.99 };
