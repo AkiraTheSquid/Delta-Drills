@@ -17,7 +17,8 @@ the knowledge frontier in its serving order (`kc_graph.frontier`) — every
 entry is unlocked, so no choice skips a prerequisite. N_CANDIDATES of them.
 
 ABILITY = K, the XP model's knowledge of the concept (app/learning_xp.py):
-P(learned) from the per-concept HMM × FSRS retrievability. Seth chose it over
+P(solving a novel problem on it) from the ability model (app/ability_model.py)
+× FSRS retrievability. Seth chose it over
 the topbar pill ("it seemed not to really display the actual ability") and
 over FSRS alone (memory freshness, not whether it was ever learned). It is
 drawn as the meter's fill toward READY. A concept already at the READY line
@@ -28,7 +29,8 @@ which is shown as it is.
 XP PER PROBLEM (Seth, 2026-09-29: "not all concepts give the same amount of
 exp ... on the far right, make it such that it displays the amount of exp you
 would get from solving that sort of problem"): `learning_xp.solve_xp` — what
-the model expects one solved problem to add, priced at the concept's worth —
+the model expects one solved problem AT THE LEARNER'S LEVEL to add, priced at
+the concept's worth (the ability it demands; 2026-10-02: computed, not set) —
 shown to the nearest XP_STEP, never below it while there is anything left to
 learn ("on the order of magnitude of like 10XP or 15 xp or 5xp").
 
@@ -39,6 +41,11 @@ app/ready_route.py so the client's Route drives both:
     session — the model decides, no count of misses (Seth picked this);
   * else a drill on the concept itself, never a prerequisite: the learner
     chose this concept, and "not ready" is the answer when it is out of reach.
+    AT THE LEARNER'S LEVEL (2026-10-02): the unserved problem whose difficulty
+    is nearest the model's expected ability (`ability_model.at_level`), least
+    recently answered on a tie. A problem far above or below the learner says
+    almost nothing either way, so a session of them could never reach either
+    end; at level, a miss is evidence and a solve is learning.
 Stateless like the ready route: every call re-reads the learner's record.
 """
 
@@ -47,7 +54,7 @@ from __future__ import annotations
 from datetime import timezone
 from typing import Dict, Iterable, List, Optional
 
-from app import kc_evidence, kc_graph, learning_xp, ready_route
+from app import ability_model, kc_evidence, kc_graph, learning_xp, ready_route
 
 N_CANDIDATES = 5
 READY = learning_xp.READY
@@ -139,6 +146,19 @@ def candidates(user_state, n: int = N_CANDIDATES, keep: Optional[str] = None) ->
     return {"items": items, "ready_at": READY}
 
 
+def _at_level(user_state, kc: str, post, skip: set) -> Optional[tuple]:
+    """(rung, qid): the unserved, servable problem nearest the learner's
+    expected ability, least recently answered first on a tie."""
+    aim = float(post @ ability_model.GRID)
+    seen = ready_route._last_seen(user_state, kc)
+    fresh = [(rung, q) for rung, qs in _pool(kc).items() for q in qs
+             if q not in skip and ready_route._servable(q)]
+    if not fresh:
+        return None
+    return min(fresh, key=lambda rq: (abs(ability_model.difficulty(rq[1], kc) - aim),
+                                      seen.get(rq[1], ""), rq[1]))
+
+
 def plan(user_state, kc: str, served: Iterable[int] = (), skip: Iterable[int] = ()) -> dict:
     """The next question of a chosen-concept session, or done (see header)."""
     reg = kc_graph._registry()
@@ -146,7 +166,8 @@ def plan(user_state, kc: str, served: Iterable[int] = (), skip: Iterable[int] = 
         return {"done": True, "reason": "unknown", "target": kc}
     served = [int(q) for q in served or ()]
     skip_set = set(served) | {int(q) for q in skip or ()}
-    k = knowledge(user_state, [kc])[kc]
+    r = _read(user_state, [kc])
+    k = float(r["also_now"].get(kc, 0.0))
     rows = kc_graph.ladder_view(user_state, kc).get("attempts") or []
     answered = len({q for q in served if any(a.get("question_id") == q for a in rows)})
 
@@ -162,7 +183,7 @@ def plan(user_state, kc: str, served: Iterable[int] = (), skip: Iterable[int] = 
         return out(done=True, reason="not_ready")
     if len(served) >= MAX_ITEMS:
         return out(done=True, reason="fuse")
-    got = ready_route._pick(user_state, kc, ready_route._drill_order(k, False), _pool(kc), skip_set)
+    got = _at_level(user_state, kc, r["also_state"][kc]["post"], skip_set)
     if not got:
         return out(done=True, reason="exhausted")
     rung, qid = got

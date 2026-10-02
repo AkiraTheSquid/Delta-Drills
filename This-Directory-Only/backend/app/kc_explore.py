@@ -162,6 +162,14 @@ AREA_PRIOR_PSEUDO = 2.0
 # (spotty 62 -> 47.5, first-problem timeout 39). A survey answer of "never"
 # for the area skips it: that is the learner telling us, not a guess.
 ASSESS_PROBES = 2
+# EARLY STOP, tried and OFF (2026-10-02): end the whole assessment once
+# ASSESS_STOP_MISSES probes have been answered with no hit in any area — the
+# fix proposed for the no-level novice's +3-4 h. Sim (ARENA, no level, 32
+# seeds, vs off): novice 70.8 -> 69.8 h at 3, 70.6 at 5; third-known 57.0 at
+# both, unchanged. The novice's extra hours are not the assessment's misses
+# (it trims 2 of 23 probes), so it stays a sim knob: --set
+# kc_explore.ASSESS_STOP_MISSES=3.
+ASSESS_STOP_MISSES = None
 
 # RETURN WINDOW. After a break of RETURN_GAP_DAYS with no answers, concepts
 # already taught may be probed again (unaided, ranked by information) for
@@ -213,6 +221,10 @@ def in_assessment(kc: str, counts: Dict[str, Tuple[int, int]],
     center = (centers or {}).get(area_of(kc))
     if center is not None and center < 0.5:
         return False
+    if ASSESS_STOP_MISSES is not None:
+        n = sum(c[0] for c in counts.values())
+        if n >= ASSESS_STOP_MISSES and not any(c[1] for c in counts.values()):
+            return False
     return counts.get(area_of(kc), (0, 0))[0] < ASSESS_PROBES
 
 

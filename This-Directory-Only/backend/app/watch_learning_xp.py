@@ -39,34 +39,27 @@ def check_the_finish_pace_is_net_and_counts_today():
         "an hour-old history must be priced over a whole day"
 
 
-def check_a_concept_is_priced_by_what_builds_on_it():
-    """Concepts are worth different XP, foundations most (Seth, 2026-09-29:
-    "not all concepts are equally important"), and one solved problem reads
-    on the order of 5-15 XP, not a concept's whole 80. No levels."""
+def check_a_concept_is_priced_by_the_ability_it_demands():
+    """A concept's worth is computed, not chosen (Seth, 2026-10-02: "it needs
+    to be computed rather than hardcoded"): the ability at which the model
+    expects 80% of its pool solved. Harder pool, more worth; a solved problem
+    pays by the learner's state, most mid-way, nothing past READY."""
+    from app import ability_model as am
     from app import concept_choice as cc
     from app import learning_xp as lx
-    worths = [lx.worth_of(n) for n in range(0, 200)]
-    assert worths[0] == lx.WORTH_LEAF and worths[-1] == 40, worths[:3]
-    assert all(a <= b for a, b in zip(worths, worths[1:])), "more descendants must never be worth less"
-    assert all(w % lx.WORTH_STEP == 0 for w in worths)
-    assert lx.worth("no.such-concept") == lx.WORTH_LEAF, "an unknown concept is priced as a leaf"
-    # Hardness (a LeetCode learner, 2026-10-01: recursion is much harder than
-    # linked lists, same XP?): harder pays more, inside the bounds, and the
-    # same concept count of descendants can no longer tie them.
-    assert lx.worth_of(0, lx.HARD_MIN) == lx.WORTH_MIN and lx.worth_of(199, lx.HARD_MAX) == lx.WORTH_MAX
-    assert all(lx.worth_of(n, 0.8) <= lx.worth_of(n, 1.3) for n in range(0, 200))
-    assert lx.hardness("no.such-concept") == 1.0
-    assert lx.rates("no.such-concept") == (lx.T_LESSON, lx.T_ANSWER, lx.T_AIDED)
-    # A novice's first solved problem, lesson included, on a leaf and on a
-    # foundation: a handful of XP, the foundation more.
-    novice = {"p": 0.02, "R": 1.0, "lesson_seen": False}
-    kc = "no.such-concept"
-    leaf = lx.solve_xp(kc, novice)
-    assert 0 < leaf <= lx.WORTH_LEAF * 0.75, f"a leaf's first problem paid {leaf}"
-    worn = {"p": 0.9, "R": 0.5, "lesson_seen": True}
-    assert lx.solve_xp(kc, worn) > 0, "relearning after forgetting must still pay"
-    done = {"p": 0.99, "R": 1.0, "lesson_seen": True}
-    assert lx.solve_xp(kc, done) == 0.0, "past READY a problem pays nothing"
+    assert am._ready_theta((40.0,)) < am._ready_theta((40.0, 90.0)) < am._ready_theta((90.0,))
+    assert lx.worth("no.such-concept") == round(am._ready_theta((am.DIFFICULTY_MID,)))
+    novice = {"post": am.prior(0.02), "R": 1.0, "lesson_seen": False}
+    first = lx.solve_xp("no.such-concept", novice)
+    assert 0 < first < lx.worth("no.such-concept") / 2, f"a novice's first problem paid {first}"
+    worn = {"post": am._prior(am._ready_theta((am.DIFFICULTY_MID,)) + 15), "R": 0.5, "lesson_seen": True}
+    assert lx.solve_xp("no.such-concept", worn) > 0, "relearning after forgetting must still pay"
+    done = {"post": am._prior(130.0), "R": 1.0, "lesson_seen": True}
+    assert lx.solve_xp("no.such-concept", done) == 0.0, "past READY a problem pays nothing"
+    # Learning is fastest at the learner's level and ~0 far from it.
+    z = am.zpd(60.0)
+    i60, i10, i120 = (int(abs(am.GRID - x).argmin()) for x in (60.0, 10.0, 120.0))
+    assert z[i60] > 0.99 and z[i10] < 0.03 and z[i120] < 0.03
     assert cc.per_problem(0.0) == 0 and cc.per_problem(0.2) == 5 and cc.per_problem(12.4) == 10
     assert cc.per_problem(12.6) == 15, "per-problem XP shows to the nearest 5"
 
@@ -74,26 +67,37 @@ def check_a_concept_is_priced_by_what_builds_on_it():
 def check_the_planner_counts_problems_by_the_same_model():
     """XP a day is not problems a day (a LeetCode learner, 2026-10-01, read a
     one-month target of 20 XP/day beside "+15 XP / problem" as two problems a
-    day). app/learning_pace counts the problems with the model that pays the
-    XP: none past READY, more on a harder concept, deterministic."""
+    day). app/learning_pace counts each concept's problems with the model that
+    pays the XP: none past READY, one for a faded concept, more on a harder
+    pool, more for a beginner, deterministic, minutes by course."""
+    from app import ability_model as am
     from app import learning_pace as lp
-    from app import learning_xp as lx
-    novice = {"p": 0.02, "R": 1.0, "lesson_seen": False}
-    assert lp.problems_to_ready("no.such-concept", {"p": 0.99, "R": 1.0}) == 0.0
-    orig = lx.hardness
-    try:  # uncached, so the stand-in hardness is what is counted
-        lx.hardness = lambda kc: {"x.easy": lx.HARD_MIN, "x.hard": lx.HARD_MAX}.get(kc, 1.0)
-        easy = lp._count.__wrapped__("x.easy", 0.02, 1.0, False)
-        hard = lp._count.__wrapped__("x.hard", 0.02, 1.0, False)
+    novice = {"post": am.prior(0.02), "R": 1.0, "lesson_seen": False}
+    strong = {"post": am.prior(0.45), "R": 1.0, "lesson_seen": False}
+    pools = {"x.mid": tuple(float(d) for d in range(15, 101, 5)),
+             "x.easy": tuple(float(d) for d in range(15, 61, 5)),
+             "x.lone": (50.0,)}
+    orig = am.pool
+    try:
+        am.pool = lambda kc: pools.get(kc, (50.0,))
+        ready = am.ready_theta("x.mid")
+        assert lp.problems_to_ready("x.mid", {"post": am._prior(135.0), "R": 1.0}) == 0.0
+        assert lp.problems_to_ready("x.mid", {"post": am._prior(ready + 20), "R": 0.3}) == 1.0
+        n = lp.problems_to_ready("x.mid", novice)
+        assert 3 <= n < am.CAP and n == lp.problems_to_ready("x.mid", novice), n
+        assert lp.problems_to_ready("x.mid", strong) < n
+        assert lp.problems_to_ready("x.easy", novice) < n, "a harder pool must take more problems"
+        # One lone problem far above a novice teaches nothing: out of reach,
+        # counted apart rather than as the fuse's CAP problems.
+        assert lp.course("x.lone", novice)[2] is False
+        left = lp.remaining({"x.mid": novice, "x.lone": novice, "x.done": {"post": am._prior(135.0), "R": 1.0}})
+        assert left[0] == n and left[2] == ["x.lone"], left
     finally:
-        lx.hardness = orig
-    assert easy < hard, f"a harder concept must take more problems ({easy} vs {hard})"
-    n = lp.problems_to_ready("no.such-concept", novice)
-    assert n >= 3 and n == lp.problems_to_ready("no.such-concept", novice), n
-    assert lp.problems_remaining({"no.such-concept": novice, "x.done": {"p": 0.99, "R": 1.0}}) == n
+        am.pool = orig
+    assert lp.minutes("leetcode.recursion", 90) > lp.minutes("leetcode.recursion", 20) > lp.minutes("torch.x", 20)
 
 
 if __name__ == "__main__":
     check_the_finish_pace_is_net_and_counts_today()
-    check_a_concept_is_priced_by_what_builds_on_it()
+    check_a_concept_is_priced_by_the_ability_it_demands()
     check_the_planner_counts_problems_by_the_same_model()

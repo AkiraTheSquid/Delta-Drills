@@ -11,7 +11,9 @@ ready for it. Covers:
     earn on the order of 5-15, a multiple of 5 (2026-09-29);
   * the route serves the chosen concept itself, never a prerequisite, and never
     asks a question twice in one session;
-  * three right answers → done, "ready" (K crossed the 80% line);
+  * right answers → done, "ready" (K crossed the 80% line). Since the
+    2026-10-02 ability model that takes climbing the pool — about 6 solves for
+    a learner with no level, served at their level — so the run allows 10;
   * three misses → done, "not_ready" (K at or under 20% after 3 answers) —
     and NOT after two: the model needs MIN_ANSWERS first;
   * an unknown concept ends at once;
@@ -79,7 +81,7 @@ check("keep of a listed concept adds nothing", len(concept_choice.candidates(st,
 
 print("the route")
 st = state()
-steps = run(st, KC, [True, True, True, True, True])
+steps = run(st, KC, [True] * 10)
 asked = [s["question_id"] for s in steps if not s["done"]]
 check("every question is on the chosen concept",
       all(KC in kc_graph.question_kcs(q) for q in asked), str(asked))
@@ -87,6 +89,9 @@ check("no question twice in a session", len(asked) == len(set(asked)), str(asked
 check("right answers end it as learned", steps[-1]["done"] and steps[-1]["reason"] == "ready",
       f'{len(asked)} answers, K {steps[-1]["p_target"]}')
 check("learned means K at the 80% line", steps[-1]["p_target"] >= concept_choice.READY)
+ds = [concept_choice.ability_model.difficulty(q, KC) for q in asked]
+check("served at level: each solve is met with a problem no easier",
+      all(a <= b for a, b in zip(ds, ds[1:])), str(ds))
 
 st = state()
 steps = run(st, KC, [False, False])
