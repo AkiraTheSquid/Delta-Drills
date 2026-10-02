@@ -119,6 +119,14 @@
   display: none;
 }
 
+/* The next question failed to load (practice/events.js `_handleNoNextQuestion`)
+   and the dock is up only to offer Next as the retry. The last grade's badge
+   and its override would read as a verdict on a question no longer there. */
+body.dd-next-failed #practice-feedback-area .result-row,
+body.dd-next-failed #override-row {
+  display: none;
+}
+
 /* Room to scroll clear of a bar that floats over the page. Paired with
    `dd-dock-open` on <body> so the measurement lives in one place. */
 body.dd-dock-open {

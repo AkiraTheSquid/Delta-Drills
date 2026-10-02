@@ -454,10 +454,27 @@ const _handleNoNextQuestion = (err) => {
   const liveBlock =
     typeof PracticeSession !== "undefined" && PracticeSession.isActive?.() === true;
   if (!exhausted && liveBlock && !document.body.classList.contains("lesson-mode")) {
-    // Next is the RETRY here, not the way on — and on a graded question the
-    // dock is the only part of this the learner is looking at, so the reason
-    // has to reach it too (`outputArea` above is in the rail).
-    showNextProblemButton("Could not load the next problem. Press Next to try again.");
+    /* Next is the RETRY here, not the way on — and on a graded question the
+       dock is the only part of this the learner is looking at, so the reason
+       has to reach it too (`outputArea` above is in the rail).
+
+       🔴 THE DOCK HAS TO BE OPENED, NOT JUST HANDED A BUTTON. Sindhu,
+       2026-10-01: "wont let me go to the next page or stop the clock". The
+       loader above has already hidden `#practice-feedback-area` (the signal
+       that opens the dock, practice/difficulty-dock.js), so un-hiding Next
+       inside it changed nothing on screen: old question, cleared editor,
+       `--:--`, a greyed square, no Next. Submit/Skip go too — there is no
+       question behind them — and `dd-next-failed` hides the last grade's
+       badge and override so the dock says only this. The loader clears it.
+
+       `stall()` is what makes the square live again: `loading` greys Pause
+       for a step that is supposed to take a moment, and this one may not. */
+    PracticeSession.stall?.();
+    practiceSubmitArea.classList.add("hidden");
+    document.body.classList.add("dd-next-failed");
+    practiceFeedbackArea.classList.remove("hidden");
+    feedbackPrompt.textContent = "Could not load the next problem. Press Next to try again.";
+    showNextProblemButton();
     return;
   }
   PracticeSession.deadEnd(message);
@@ -484,6 +501,7 @@ const _loadNextPracticeQuestion = async () => {
   practiceProgress.lastResultCorrect = null;
 
   // Reset to pre-submit state (ready for next question)
+  document.body.classList.remove("dd-next-failed");
   practiceSubmitArea.classList.remove("hidden");
   practiceFeedbackArea.classList.add("hidden");
   showFeedbackButtons();
