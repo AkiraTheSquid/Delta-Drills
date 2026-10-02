@@ -89,7 +89,7 @@ def solve(x,ids):
 
 ## Concept: Gather picks one entry per row from an index with as many axes as the input
 
-`x.gather(dim, index)` does the same job as the paired-index trick above: pick one entry from each row. The difference is how you hand over the column numbers. Instead of a flat list, `index` is a tensor with the same number of axes as `x`, and the answer comes back in the shape of `index`.
+`x.gather(dim, index)` picks one entry from each row: for every row of `x`, you name the one column to read. The column numbers go in `index`, a tensor with the same number of axes as `x` (for a 2D `x`, one column number per row, written as a column), and the answer comes back in the shape of `index`.
 
 Start with the smallest case. Two rows, one column number per row, written as a `(2, 1)` column:
 
@@ -105,7 +105,7 @@ assert picked.tolist()==[[-7.],[-9.]]
 
 Row 0 read its column 1, row 1 read its column 2. The `1` in `gather(1, cols)` says the numbers inside `cols` are column positions; the row each number applies to is simply the row of `cols` it sits in. That is why `index` needs a full set of axes: gather fills the output one cell at a time, and every cell of `index` has to say where on each axis of `x` to look.
 
-Notice the result is `(2, 1)`, not `(2,)`. Gather always returns the shape of `index`. When a contract asks for `(b,)`, either squeeze that last axis or use the paired-index form from the previous segment.
+Notice the result is `(2, 1)`, not `(2,)`. Gather always returns the shape of `index`. When a contract asks for `(b,)`, squeeze that last axis:
 
 ```python
 print(picked.shape, picked.squeeze(1).shape)
@@ -123,7 +123,7 @@ print(x.gather(1,ids[:,None]))
 assert ids[:,None].shape==(2,1) and x.gather(1,ids[:,None]).tolist()==[[-7.],[-9.]]
 ```
 
-So when is gather worth reaching for instead of `x[t.arange(b), ids]`? When the picked value has to go back against its own row. A `(b, 1)` result lines up with a `(b, c)` matrix, so one subtraction removes each row's chosen entry from the whole row:
+Why keep the extra axis instead of squeezing it away? Because the picked value often has to go back against its own row. A `(b, 1)` result lines up with a `(b, c)` matrix, so one subtraction removes each row's chosen entry from the whole row:
 
 ```python
 print(x-x.gather(1,ids[:,None]))
