@@ -88,7 +88,12 @@ check("…but the model now thinks the learner knows more",
       probe_day["knowledge"] > empty["knowledge"] + 30 * F,
       f'{probe_day["knowledge"]} vs {empty["knowledge"]}')
 learn_day = run(state({CODE_KC: seq(START, "0011111")}), now)
-check("lesson + 5 of 7 after two misses: real XP", learn_day["today"]["xp"] > 40 * F, f'{learn_day["today"]["xp"]} XP')
+# Real XP: a quarter of the concept or more, an order of magnitude over the
+# probes'. (2026-10-02: a miss teaches nothing, so the two leading misses no
+# longer count as practice; 100× the probes was too tight a ratio for that.)
+check("lesson + 5 of 7 after two misses: real XP",
+      learn_day["today"]["xp"] > max(X.worth(CODE_KC) / 4, 10 * probe_day["today"]["xp"]),
+      f'{learn_day["today"]["xp"]} XP')
 one_of_six = run(state({CODE_KC: seq(START, "000001")}), now)
 five_of_seven = run(state({CODE_KC: seq(START, "1101101")}), now)
 check("1 of 6 earns less than 5 of 7", one_of_six["today"]["xp"] < five_of_seven["today"]["xp"],
@@ -96,6 +101,61 @@ check("1 of 6 earns less than 5 of 7", one_of_six["today"]["xp"] < five_of_seven
 single = run(state({CODE_KC: seq(START, "1")}), now)
 check("one correct answer is not a whole concept", single["today"]["xp"] < 60 * F, f'{single["today"]["xp"]} XP')
 check("…a concept caps at its worth", learn_day["today"]["xp"] <= X.worth(CODE_KC) + 1e-6)
+
+print("learning is moving up the difficulty (Seth, 2026-10-02)")
+# "if you solve 10 problems correctly and they are super easy for you, you are
+# not learning anything. if you solve 10 problems incorrectly and they were
+# super hard ... also not learning anything. if you solve 50% ... at a
+# difficulty that's medium, then later get up to 80% or 90%, THEN that counts
+# as xp". Questions are picked from the bank by difficulty; the concept only
+# reads their difficulty_score.
+from app import ability_model as AM, questions as _q  # noqa: E402
+_q.ensure_questions_loaded()
+_by_d = {}
+for _qq in _q.get_all_questions():
+    _by_d.setdefault(_qq.difficulty_score, []).append(_qq.id)
+
+
+def at(d, n):
+    ids = _by_d.get(d) or []
+    assert len(ids) >= n, f"bank has {len(ids)} questions at difficulty {d}"
+    return ids[:n]
+
+
+def graded(day, pairs, gap_min=6):
+    """Answers as (question id, right?) on one day."""
+    return [{"ts": (day + timedelta(minutes=gap_min * i)).isoformat(), "correct": ok,
+             "stage": "partial", "question_id": qid} for i, (qid, ok) in enumerate(pairs)]
+
+
+def by_qid(rows, level=None):
+    st = state(level=level)
+    st.kc_ladder = {CODE_KC: {"attempts": rows}}
+    return st
+
+
+later = START + timedelta(hours=8)
+easy = run(by_qid(graded(START, [(q, True) for q in at(15, 10)]), "strong"), later)["today"]["xp"]
+hard = run(by_qid(graded(START, [(q, False) for q in at(100, 10)])), later)["today"]["xp"]
+climb_rows = graded(START, list(zip(at(50, 8), [1, 0, 1, 0, 1, 1, 0, 1]))
+                    + list(zip(at(70, 8), [1, 1, 0, 1, 1, 1, 1, 1]))
+                    + list(zip(at(85, 4), [1, 1, 1, 1])))
+climb = run(by_qid(climb_rows, "strong"), later)["today"]["xp"]
+check("10 easy solves by a strong learner teach little", easy < X.worth(CODE_KC) / 4, f"{easy} XP")
+check("10 hard misses earn nothing", hard == 0.0, f"{hard} XP")
+check("half right at medium, then most right at harder: real XP", climb > 2 * easy and climb > X.worth(CODE_KC) / 3,
+      f"{climb} vs easy {easy}")
+miss_day = by_qid(graded(START, [(q, True) for q in at(50, 3)])
+                  + graded(START + timedelta(days=1), [(q, False) for q in at(60, 4)]))
+missed = run(miss_day, START + timedelta(days=1, hours=8))["days"][-1]["xp"]
+check("a day of only wrong answers pays no XP", missed == 0.0, f"{missed} XP")
+mid = {"post": AM.prior(0.5), "R": 1.0, "lesson_seen": True}
+top = {"post": AM._prior(AM.ready_theta(CODE_KC) + 10), "R": 1.0, "lesson_seen": True}
+check("what a solved problem pays falls out of the learner's state",
+      X.solve_xp(CODE_KC, mid) > X.solve_xp(CODE_KC, top) >= 0.0,
+      f"{X.solve_xp(CODE_KC, mid):.1f} at 50% vs {X.solve_xp(CODE_KC, top):.1f} near the top")
+check("a harder concept is worth more", X.worth("leetcode.recursion") > X.worth("leetcode.linked-lists"),
+      f'{X.worth("leetcode.recursion")} vs {X.worth("leetcode.linked-lists")}')
 
 print("\n--- the course is the one the learner studies (Seth, 2026-10-01) ---")
 # A LeetCode-only learner's home read "ARENA · through 0.2 · 125 concepts".
@@ -197,7 +257,9 @@ check("a question tagged with two concepts is one problem solved",
 print("forgetting and relearning")
 back = START + timedelta(days=90)
 learned = {CODE_KC: seq(START, "1111")}
-before = run(state(learned), START + timedelta(hours=2))
+# Read once the day has CLOSED: today's own number is provisional and the
+# recall decaying until midnight is part of that day (2026-10-02).
+before = run(state(learned), START + timedelta(days=1, hours=2))
 idle = run(state(learned), back)
 check("a break lowers knowledge", idle["knowledge"] < before["knowledge"],
       f'{idle["knowledge"]} < {before["knowledge"]}')

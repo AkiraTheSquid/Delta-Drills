@@ -37,6 +37,12 @@
    app/learning_pace.py); a daily D is ≈ D × problems_remaining / remaining
    problems a day — both read NOW (not remaining_open), so today's learning
    shrinks them together.
+
+   And the time (2026-10-02): a LeetCode problem takes far longer than an
+   ARENA drill, so the same problems a day is a different day. The server's
+   `minutes_remaining` (assumed minutes per problem by course and difficulty)
+   prices it the same way. Both divide `remaining_in_reach`: concepts whose
+   bank has no problem near the learner are in neither count.
    ================================================================ */
 (function () {
   "use strict";
@@ -51,13 +57,22 @@
     if (!(daily > 0) || rem <= 0) return null;
     return addDays(s.today.date, Math.ceil(rem / daily) - 1);
   };
-  /** Problems a day that `daily` XP a day stands for, or null. */
+  /** Problems and minutes a day that `daily` XP a day stands for, or null. */
   const problemsFor = (s, daily) => {
-    const rem = Math.max(0, s.remaining ?? 0);
+    const rem = Math.max(0, s.remaining_in_reach ?? s.remaining ?? 0);
     if (!(daily > 0) || rem <= 0 || !(s.problems_remaining > 0)) return null;
-    return Math.max(1, Math.round((daily * s.problems_remaining) / rem));
+    const n = Math.max(1, Math.round(Math.min(1, daily / rem) * s.problems_remaining));
+    // Time = the shown count × the remainder's mean minutes a problem, so the
+    // two never disagree (codex: "≈ 1 problem (~5 min)" on a 25-minute course).
+    return { n, min: s.minutes_remaining > 0 ? (n * s.minutes_remaining) / s.problems_remaining : null };
   };
-  const problemsText = (n) => (n ? ` · ≈ ${n} problem${n === 1 ? "" : "s"} a day` : "");
+  const timeText = (m) => (m == null ? "" : m < 60 ? `${Math.max(5, Math.round(m / 5) * 5)} min`
+    : `${Math.round(m / 30) / 2} h`);
+  const problemsText = (p) => {
+    if (!p) return "";
+    const t = timeText(p.min);
+    return ` · ≈ ${p.n} problem${p.n === 1 ? "" : "s"}${t ? ` (~${t})` : ""} a day`;
+  };
   /** XP a day to finish by `date` (learning_xp.daily_target). */
   const dailyFor = (s, date) => Math.ceil(remaining(s) / Math.max(1, daysBetween(s.today.date, date) + 1));
 
@@ -204,7 +219,7 @@
       const f = finishFor(s, value);
       const n = problemsFor(s, value);
       knob.setAttribute("aria-valuetext",
-        `${value} XP a day${n ? `, about ${n} problems` : ""}${f ? `, finish ${longDate(f)}` : ""}`);
+        `${value} XP a day${n ? `, about ${n.n} problems${n.min ? `, about ${timeText(n.min)}` : ""}` : ""}${f ? `, finish ${longDate(f)}` : ""}`);
       p.svg.classList.remove("is-target-unset");
       paintGoal(s, { daily: value, finish: f, set: true });
     };

@@ -16,6 +16,8 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 
 ## Key Files
 - `sim_explore_period.py`: simulated learners (hidden true knowledge, guess/slip answers) through the app's REAL explore/exploit — `kc_graph.frontier`, `kc_explore.probing`, `kc_stage`, `record_kc_outcome` — per course (`--course leetcode|arena`), level and learner type; reports probes served, wasted lessons, false settles, hours to finish. `--set kc_explore.X=…` / `--set kc_evidence.X=…` sweeps a constant. Chose `kc_explore.ASSESS_PROBES` (3, then 2 the same day: 3 cost ARENA slow learners 2–4 h and a false settle) and `kc_evidence.W_LEETCODE` (2026-10-02).
+- `calibrate_ability.py`: where `ability_model.RATE_ANSWER` comes from — for each candidate rate, the median (p10/p90) problems to READY over every LeetCode + ARENA concept for a no-level learner; the anchor is the ladder floors (6 Solo + 3 Integrated ≈ 9). 2026-10-02: 0.525.
+- `course_pace_report.py`: LeetCode vs ARENA by the ability model, per concept (`--detail`) and per level: worth, problems to READY, assumed minutes, XP per problem / hour, concepts OUT OF REACH (pool with no problem near the learner). `--user ID --by DATE` adds that learner's remaining problems / hours and the per-day ask (point `USER_DATA_DIR` at a prod copy).
 - `init_db.py`: `main()` runs the schema creation. Imports `app.db.Base, engine` and `app.models` so SQLAlchemy registers all tables before `create_all`.
 - `recompute_p_ewma.py`: standalone script (no `main()`); top-level execution iterates `user_data/*.json`, recomputes `p` per subtopic with `P_ALPHA = 0.3`, writes back in place.
 
@@ -49,6 +51,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
   - Status: ACTIVE.
 
 ## Recent Changes
+- 2026-10-02: `calibrate_ability.py` and `course_pace_report.py` added (the ability-model XP rewrite, `app/ability_model.py`). `sim_explore_period.py` swept `kc_explore.ASSESS_STOP_MISSES` 3/5: ARENA no-level novice 70.8 → 69.8 / 70.6 h, third-known unchanged → left off.
 - 2026-10-01: `prefetch_gpu_weights.py` added (Modal pass 2). First run: 5 ungated repos, 75 GB, ~4 min; 5 gated repos waiting on `dd-hf-token`.
 - 2026-09-25: every `test_*.py` here passes again. `test_diagnostic_history.py` deleted (tested the deleted topic-θ model). Stale expectations updated to the current behaviour: `test_placement` (shortest clock is 180 s since the math MC lane; its free-time probe ages 150 s so it stays under every cap), `test_timeout_submit` (a timeout is a scored miss since 2026-09-20; it asserted the 09-11 "scored nowhere" contract, and read a live list after mutating it), `test_kc_prefs` (whole-graph explore made the frontier ~80 nodes, so max weight is checked as "moves up", not "beats a 70-descendant root"). `test_ray_placement` uses the new public `adaptive.write_state_file` / `read_state_file` instead of the private helpers.
 - 2026-09-07: `test_placement.py` added — 29 checks over the graph-wide placement diagnostic, written alongside the fix for the unreachable 6-hour plan. `test_diagnostic_history.py` recorded as ACTIVE-broken above; it has been failing at import since the model it tests was deleted.
