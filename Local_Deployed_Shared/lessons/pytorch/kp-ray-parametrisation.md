@@ -189,9 +189,12 @@ assert points.tolist() == [[1.5, 2.0, 2.5], [4.5, 4.0, 3.5]]
 ### q827
 One u, many rays.
 
-A stack of rays is `(n, 2, 3)`. The first index picks a ray; the second
-picks a row inside it. Leave the first as `:` and you get the same row of
-every ray at once — all the origins, or all the directions:
+A stack of rays is `(n, 2, 3)`, stored ray by ray: `[[O_0, D_0], [O_1, D_1], …]`.
+Each ray keeps its own origin and direction together in one `(2, 3)` block;
+the rows of different rays never interleave. The first index picks a ray; the
+second picks a row inside it (0 = origin, 1 = direction). Leave the first as
+`:` and you get the same row of every ray at once — all the origins, or all
+the directions:
 
 ```python worked
 import torch as t

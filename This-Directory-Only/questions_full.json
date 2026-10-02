@@ -27033,7 +27033,7 @@
     "topic": "PyTorch",
     "subtopic": "Rays as tensors",
     "subtopic_key": "PyTorch: Rays as tensors",
-    "question_text": "Given a stack of rays as a nested list of shape (n, 2, 3) and one scalar `u`, return the n points `O_i + u·D_i` as a nested list — index the origin rows and direction rows of every ray at once.",
+    "question_text": "`rays` is a nested list of n rays, shape (n, 2, 3). Each ray is its own 2×3 block holding two rows: `rays[i][0]` is ray i's origin O_i and `rays[i][1]` is its direction D_i. So the list goes ray by ray, [[O_0, D_0], [O_1, D_1], …], never one long list of alternating rows. Given one scalar `u`, return the n points O_i + u·D_i, one point per row, as a nested list, computed for every ray at once with no loop. Example: rays = [[[0, 0, 0], [1, 0.5, 0]], [[0, 0, 0], [1, -0.5, 0]]] and u = 2 give [[2, 1, 0], [2, -1, 0]].",
     "answer_code": "import torch as t\n\n\ndef solve(rays, u):\n    \"\"\"One u, many rays.\"\"\"\n    rays = t.tensor(rays)\n    return (rays[:, 0] + u * rays[:, 1]).tolist()\n\n\nexample = ([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)\nprint(solve(*example))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",

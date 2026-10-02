@@ -8656,7 +8656,7 @@
       },
       {
        "question_id": 827,
-       "prompt": "One u, many rays.\n\nA stack of rays is `(n, 2, 3)`. The first index picks a ray; the second\npicks a row inside it. Leave the first as `:` and you get the same row of\nevery ray at once \u2014 all the origins, or all the directions:",
+       "prompt": "One u, many rays.\n\nA stack of rays is `(n, 2, 3)`, stored ray by ray: `[[O_0, D_0], [O_1, D_1], \u2026]`.\nEach ray keeps its own origin and direction together in one `(2, 3)` block;\nthe rows of different rays never interleave. The first index picks a ray; the\nsecond picks a row inside it (0 = origin, 1 = direction). Leave the first as\n`:` and you get the same row of every ray at once \u2014 all the origins, or all\nthe directions:",
        "worked_example_code": "import torch as t\n\nrays = t.tensor([[[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]],\n                 [[1.0, 1.0, 1.0], [0.0, 1.0, 0.0]]])\nprint(\"rays[0] is one whole ray:\",\n      tuple(rays[0].shape))\nprint(\"rays[:, 0] is every origin:\",\n      rays[:, 0].tolist())\nprint(\"rays[:, 1] is every direction:\",\n      rays[:, 1].tolist())\n# Hidden checks\nassert rays[:, 0].tolist() == [[0.0, 1.0, 2.0], [1.0, 1.0, 1.0]]\nassert tuple(rays[0].shape) == (2, 3)\n"
       },
       {
