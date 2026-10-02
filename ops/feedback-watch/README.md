@@ -93,6 +93,15 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-10-01: Every announced line is also appended to
+  `~/.local/state/delta-drills/feedback-announced.log` (`-<source>.log` for a
+  non-fly source), tab-separated with a UTC stamp. Seth's q827 note was
+  announced at 23:00 UTC (its key is in the announced set) yet the Monitor
+  delivered no event, and the note sat unread for two hours. stdout is not a
+  delivery guarantee, so on every re-arm the session tails this file and acts
+  on any line it has not handled. A failed append warns on stderr (which the
+  Monitor command merges). Not done (critic, major): an acknowledged spool
+  with a read cursor; the hand tail is the protocol until a second loss.
 - 2026-09-28: Reads `<user>.graph_feedback.json` too. Seth flagged
   `python.control-flow` as mislabeled on the map and the watcher stayed silent:
   the graph log's name (`graph_feedback`, underscore) matched neither glob.

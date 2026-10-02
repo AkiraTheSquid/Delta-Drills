@@ -91,8 +91,28 @@ def check_invariants():
     assert 'systemd' in job and 'Monitor' in job, "SESSION_JOB must say: session-started, never scheduled"
 
 
+def check_announced_log():
+    """Every announced line also lands in the announced log: stdout delivery
+    to the session was lost once (q827, 2026-10-01) and the file is the backstop."""
+    import contextlib
+    import io
+    import tempfile
+    mod = _load()
+    with tempfile.TemporaryDirectory() as tmp:
+        mod.ANNOUNCED_LOG = mod.Path(tmp) / 'announced.log'
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            mod.announce('[delta-drills FEEDBACK] q1 test')
+        assert out.getvalue() == '[delta-drills FEEDBACK] q1 test\n', "the stdout line itself must be unchanged"
+        stamp, _, text = mod.ANNOUNCED_LOG.read_text(encoding='utf-8').rstrip('\n').partition('\t')
+        assert text == '[delta-drills FEEDBACK] q1 test', "the log must hold the announced line verbatim"
+        assert mod.parse_iso(stamp) is not None, "each log line starts with an ISO timestamp"
+    assert mod.announced_log('fly').name == 'feedback-announced.log'
+    assert mod.announced_log('local').name == 'feedback-announced-local.log', "sources keep separate logs"
+
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants, check_announced_log]
     for fn in checks:
         try:
             fn()
