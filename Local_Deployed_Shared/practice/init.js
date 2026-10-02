@@ -151,7 +151,14 @@ const initPractice = async () => {
     return;
   }
   savePracticeProgress(practiceProgress);
-  renderQuestion(nextQ, practiceQuestionCount);
+  /* 🔴 BOOT ONLY PAINTS AN EMPTY SCREEN. If a block started or a lesson went
+     up while this fetch was out, that screen is theirs — painting over it is
+     how Sindhu (2026-10-01) got a LeetCode problem under a running lesson
+     clock with no way to submit or pause. timer.js now waits for boot before
+     either session entry point, so this is the backstop for anything else. */
+  const taken = document.body.classList.contains("lesson-mode")
+    || (typeof PracticeSession !== "undefined" && PracticeSession.isActive?.());
+  if (!taken) renderQuestion(nextQ, practiceQuestionCount);
 };
 
 async function refreshPracticeQuestionForPreferences() {

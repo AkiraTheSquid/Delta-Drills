@@ -35502,7 +35502,7 @@
     "subtopic": "ar-00",
     "subtopic_key": "PyTorch: ar-00",
     "question_text": "Return the gap from each requested value to its row’s maximum, shape (b,). x: float (b,c); ids: one valid column index per row (b,).",
-    "answer_code": "import torch as t\n\ndef solve(x,ids):\n    return x.max(dim=1)[0]-x[t.arange(len(ids)),ids]\n",
+    "answer_code": "import torch as t\n\ndef solve(x,ids):\n    # gather: ids[:,None] is (b,1), so gather returns (b,1); [:,0] takes it back to (b,)\n    picked=x.gather(1,ids[:,None])[:,0]\n    return x.max(dim=1)[0]-picked\n\n# Same answer with paired indexing (row i, column ids[i]), already (b,):\n#     picked=x[t.arange(len(ids)),ids]\n",
     "difficulty_score": 55,
     "difficulty_label": "medium",
     "expected_output": "",

@@ -65,8 +65,16 @@ const _clockPrefs = () => window.SessionClock || null;
    points below wait on this once, so answering, reviewing and the pause
    snapshot are guaranteed to be reading the same settled table rather than
    whichever one happened to have arrived. A failed fetch resolves too — the
-   ceiling then stands everywhere, consistently. Codex, 2026-09-09. */
-const _clockReady = () => Promise.resolve(_clockPrefs()?.ready);
+   ceiling then stands everywhere, consistently. Codex, 2026-09-09.
+
+   🔴 AND FOR THE BOOT FETCH (practice.js `__practiceBoot`). Boot loads the
+   whole question bank before it asks for a question, which is seconds on
+   prod, and Continue is live the whole time. Sindhu, 2026-10-01: she resumed
+   onto a lesson page, then boot's late answer painted a LeetCode problem over
+   it — lesson clock still running, ■ greyed, no Submit, and the question the
+   session would grade swapped out underneath. Boot settles first now. */
+const _clockReady = () =>
+  Promise.all([_clockPrefs()?.ready, Promise.resolve(window.__practiceBoot).catch(() => {})]);
 
 /* AN EXERCISE SESSION BRINGS ITS OWN NUMBERS (2026-09-06). "Practice
    make_rays_1d" on an ARENA notebook page asks for answer time, review time
