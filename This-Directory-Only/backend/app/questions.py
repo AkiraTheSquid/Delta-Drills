@@ -414,6 +414,17 @@ def compose_full_solution(starter_code: str | None, answer_code: str) -> str:
     # solution_code came back as a def-inside-def with broken indentation).
     if re.search(r"(?m)^def\s+solve\s*\(", text):
         return text
+    # A LeetCode answer is a whole program too — `class Solution:` or a
+    # top-level `def isHeap(...)`. The statement splitter below strips every
+    # indent, which showed learners `return return ans` (2026-10-01). Only
+    # when it compiles as a module: a `def helper` + bare `return` snippet is
+    # a function BODY and still needs the wrapper (codex, 2026-10-01).
+    if re.search(r"(?m)^(?:class|def)\s+\w+", text):
+        try:
+            compile(text, "<answer>", "exec")
+            return text
+        except SyntaxError:
+            pass
     answer_func = wrap_answer_as_function(answer_code)
     if not answer_func:
         return starter_code or ""

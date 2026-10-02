@@ -65,6 +65,14 @@ REPO = HERE.parent.parent
 STATE_DIR = Path(os.environ.get("DD_STATE_DIR", Path.home() / ".local/state/delta-drills"))
 STATE_PATH = STATE_DIR / "feedback-watch.json"   # rebound per --source in main()
 LOCK_PATH = STATE_DIR / "feedback-watch.lock"
+# Every announced line is also appended here. stdout reaching the session is
+# not guaranteed: on 2026-10-01 a q827 note was announced (its key saved) while
+# the Monitor delivered nothing. The session tails this file on each re-arm.
+ANNOUNCED_LOG = STATE_DIR / "feedback-announced.log"
+
+
+def announced_log(source: str) -> Path:
+    return STATE_DIR / ("feedback-announced.log" if source == "fly" else f"feedback-announced-{source}.log")
 
 
 def state_path(source: str) -> Path:
@@ -106,6 +114,12 @@ _bank: dict | None = None
 
 def announce(text: str) -> None:
     print(text, flush=True)
+    try:
+        with open(ANNOUNCED_LOG, "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now(timezone.utc).isoformat(timespec='seconds')}\t{text}\n")
+    except OSError as exc:
+        # The stdout line already went out; say the backstop copy did not.
+        print(f"[delta-drills] could not append to {ANNOUNCED_LOG}: {exc}", file=sys.stderr, flush=True)
 
 
 def parse_iso(stamp: str | None) -> datetime | None:
@@ -346,8 +360,9 @@ def main() -> int:
     ap.add_argument("--fresh", action="store_true", help="forget what was already announced")
     args = ap.parse_args()
 
-    global STATE_PATH
+    global STATE_PATH, ANNOUNCED_LOG
     STATE_PATH = state_path(args.source)
+    ANNOUNCED_LOG = announced_log(args.source)
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     lock = open(LOCK_PATH, "a+")
     try:

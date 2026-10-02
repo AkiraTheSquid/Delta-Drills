@@ -362,7 +362,7 @@ const PracticeSession = (() => {
     sessionStatusRow.classList.toggle("session-status--review", phase === "review");
     // "blocked" counts as stable: the question cannot be graded here, so
     // Pause & exit is the sane way out and must not be greyed with it.
-    const stable = phase === "answer" || phase === "review" || phase === "blocked";
+    const stable = ["answer", "review", "blocked", "stalled"].includes(phase);
     sessionPauseBtn.disabled = !stable;
     sessionPauseBtn.title = stable
       ? "Pause and save. You come back to this question, on this clock."
@@ -723,7 +723,17 @@ const PracticeSession = (() => {
     _tick(_forceAdvance);
   };
 
+  /* Next question failed to load (events.js `_handleNoNextQuestion`): leave
+     `loading`, which greys Pause, for a phase that does not. Not persisted —
+     the snapshot keeps naming the question before the failed load. */
+  const stall = () => isActive() && state.phase === "loading" && _setPhase("stalled", "Couldn't load the next problem");
+
   const pause = () => {
+    /* 🔴 A STALLED BLOCK ENDS ("ended"), IT DOES NOT PAUSE: no question is on
+       screen to come back to, and a block has no quota to lose. Sindhu,
+       2026-10-01: the square was the way out she reached for, and it was grey.
+       (`finish`'s note that "ended" is gone predates this one use.) */
+    if (isActive() && state.phase === "stalled") return finish("ended");
     if (!isActive() || !["answer", "review"].includes(state.phase)) return;
     window.AnswerHistory?.abandon();
     _stopTick();
@@ -1247,6 +1257,7 @@ const PracticeSession = (() => {
     blockOnUnrunnableQuestion,
     pauseForGrading,
     pauseForAdvance,
+    stall,
     recordReviewResult,
     resumeAnswerPhase,
     beginReviewPhase,
