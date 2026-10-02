@@ -31,6 +31,19 @@ problem earns roughly 5–15 XP (`solve_xp`). The course is every concept in the
 ARENA graph through 0.2, prerequisites included
 (`study_group_progress.sections()`), and costs Σ worth for everyone. No levels.
 
+HARDNESS. Coreness alone priced recursion and linked lists the same (30
+each) and learned both in the same three solves. A LeetCode learner,
+2026-10-01: recursion is much harder than linked lists, so why the same XP?
+Each concept now carries a HARDNESS h = the mean `difficulty_score` of its
+question pool / 50, clamped to 0.7..1.5 — a property of the problems, so
+still the same for every learner. The learning rates (T_LESSON, T_ANSWER,
+T_AIDED) are ÷ h, so a hard concept takes about h× the problems to reach
+READY; and the worth is (10 + 5·log2(1 + descendants), capped at 40) × h²,
+to the nearest 5, in 5..90, so each of those problems also pays about h×
+the XP. Worth × h alone left XP per problem flat — more XP spread over more
+problems — which is the very complaint. Recursion (h 1.29) is worth 55 and
+pays ~23 for a first solve; linked lists (h 0.91) 25 and ~14.
+
 KNOWLEDGE OF ONE CONCEPT
 ------------------------
 K_c(t) = P(learned_c at t | ALL evidence) × R_c(t)
@@ -95,7 +108,16 @@ from app import attempt_log, bkt_mastery, kc_explore, kc_renames, memory_model
 
 READY = 0.80
 READY_PCT = int(round(READY * 100))
-WORTH_MIN, WORTH_MAX, WORTH_STEP = 10, 40, 5
+WORTH_MIN, WORTH_MAX, WORTH_STEP = 5, 90, 5
+# A leaf of average hardness (see HARDNESS); also the price of a concept the
+# registry does not know.
+WORTH_LEAF = 10
+# Coreness alone tops out here (the 2026-09-29 price, 10..40); hardness then
+# scales it.
+CORE_MAX = 40
+# Hardness = mean pool difficulty_score / DIFFICULTY_MID, clamped.
+DIFFICULTY_MID = 50.0
+HARD_MIN, HARD_MAX = 0.7, 1.5
 # The course's name on the Learner Home (app/course_registry.py's label).
 COURSE_NAME = "ARENA"
 
@@ -179,18 +201,40 @@ def course_info(user_state=None) -> dict:
 def _worths() -> Dict[str, int]:
     from app import kc_graph  # the registry is heavy; only on use
     descendants, _depth = kc_graph._closure()
-    return {kc: worth_of(n) for kc, n in descendants.items()}
+    return {kc: worth_of(n, hardness(kc)) for kc, n in descendants.items()}
 
 
-def worth_of(descendants: int) -> int:
-    """XP a concept with this many descendants is worth at READY (see THE UNIT)."""
-    raw = WORTH_MIN + 5.0 * math.log2(1 + max(0, descendants))
+@lru_cache(maxsize=None)
+def hardness(kc: str) -> float:
+    """How hard a concept's problems are, 1.0 = average (see HARDNESS): the
+    mean `difficulty_score` of its question pool over DIFFICULTY_MID. A
+    concept with no questions is average."""
+    from app import kc_graph, questions  # heavy; only on use
+    questions.ensure_questions_loaded()
+    scores = [q.difficulty_score for qid in kc_graph.questions_for_kc(kc)
+              if (q := questions.get_question_by_id(qid)) is not None]
+    if not scores:
+        return 1.0
+    return min(HARD_MAX, max(HARD_MIN, sum(scores) / len(scores) / DIFFICULTY_MID))
+
+
+def worth_of(descendants: int, hard: float = 1.0) -> int:
+    """XP a concept with this many descendants and this hardness is worth at
+    READY (see THE UNIT and HARDNESS)."""
+    core = min(CORE_MAX, WORTH_LEAF + 5.0 * math.log2(1 + max(0, descendants)))
+    raw = core * hard * hard
     return int(min(WORTH_MAX, max(WORTH_MIN, WORTH_STEP * round(raw / WORTH_STEP))))
 
 
 def worth(kc: str) -> int:
-    """A concept outside the registry is priced as a leaf."""
-    return _worths().get(kc, WORTH_MIN)
+    """A concept outside the registry is priced as an average leaf."""
+    return _worths().get(kc, WORTH_LEAF)
+
+
+def rates(kc: str) -> Tuple[float, float, float]:
+    """(T_LESSON, T_ANSWER, T_AIDED) for this concept: slower on a hard one."""
+    h = hardness(kc)
+    return T_LESSON / h, T_ANSWER / h, T_AIDED / h
 
 
 def _prior(user_state) -> float:
@@ -406,11 +450,12 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
         if probe:
             obs[kc].append((0.0, correct, R, g, s, T_PROBE))
             return
+        t_lesson, t_answer, t_aided = rates(kc)
         pre = 0.0
         if kc not in seen_exploit:
             seen_exploit.add(kc)
-            pre = T_LESSON
-        obs[kc].append((pre, correct, R, g, s, T_AIDED if correct is None else T_ANSWER))
+            pre = t_lesson
+        obs[kc].append((pre, correct, R, g, s, t_aided if correct is None else t_answer))
 
     bi = 0
     for t, kind, payload in stream:
@@ -484,6 +529,8 @@ def replay(user_state, zone, now: Optional[datetime] = None, also: Tuple[str, ..
         "answers": answers,
         "solved": solved,
         "per_kc_now": per_kc_now,
+        "state_now": {kc: {"p": belief(last, kc), "R": snap_R[last].get(kc, 1.0),
+                           "lesson_seen": kc in seen_exploit} for kc in scope},
         "also_now": {kc: knowledge(last, kc) for kc in also},
         "also_state": {kc: {"p": belief(last, kc), "R": snap_R[last].get(kc, 1.0),
                             "lesson_seen": kc in seen_exploit} for kc in also},
@@ -500,10 +547,11 @@ def solve_xp(kc: str, state: dict) -> float:
     an earlier day, and the day's floor can hold some back."""
     p, R = float(state["p"]), float(state["R"])
     g, s = _likelihood(kc, None, False)
-    p1 = p if state.get("lesson_seen") else p + (1.0 - p) * T_LESSON
+    t_lesson, t_answer, _ = rates(kc)
+    p1 = p if state.get("lesson_seen") else p + (1.0 - p) * t_lesson
     right = (1.0 - s) * R + g * (1.0 - R)
     post = p1 * right / (p1 * right + (1.0 - p1) * g)
-    after = post + (1.0 - post) * T_ANSWER
+    after = post + (1.0 - post) * t_answer
     return worth(kc) / READY * max(0.0, min(after, READY) - min(p * R, READY))
 
 
@@ -567,6 +615,7 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
     pace = _pace(r, zone, now)
     finish = _finish(today, remaining, pace)
     ready = sum(1 for v in r["per_kc_now"].values() if v >= READY - 1e-9)
+    from app import learning_pace
     return {
         "course": {**course_info(user_state), "concepts": len(r["scope"]), "total_xp": total,
                    "ready_at": READY_PCT, "ready_concepts": ready},
@@ -577,6 +626,9 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
         # What a date target divides: the remainder at today's OPEN, so today's
         # own learning does not shrink today's number. The form's preview uses it.
         "remaining_open": round(remaining_open, 1),
+        # Problems the remainder takes by the same model (app/learning_pace):
+        # the home turns an XP target into "≈ N problems a day" with it.
+        "problems_remaining": round(learning_pace.problems_remaining(r["state_now"]), 1),
         "today": {"date": today.isoformat(), "xp": round(r["xp"][-1], 1),
                   "target": need_today, "provisional": True},
         "target": target,

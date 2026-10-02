@@ -585,6 +585,7 @@ if __name__ == '__main__':
         check_an_example_is_priced_into_the_model,
         watch_learning_xp.check_the_finish_pace_is_net_and_counts_today,
         watch_learning_xp.check_a_concept_is_priced_by_what_builds_on_it,
+        watch_learning_xp.check_the_planner_counts_problems_by_the_same_model,
     ]
     for fn in checks:
         try:
