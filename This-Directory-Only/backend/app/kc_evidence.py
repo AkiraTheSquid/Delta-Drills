@@ -46,6 +46,12 @@ from typing import Callable, Dict, Optional
 W_ARENA = 1.0        # the exercise itself, or one of its variants
 W_INTEGRATED = 0.75  # a whole-KP problem (`kp-integrated`)
 W_DRILL = 0.5        # a single-move drill (`kp-independent`, unranked)
+# A LeetCode problem is the thing a LeetCode concept is FOR: there is no
+# ARENA exercise behind it to be "close to", so it counts in full. Tempered
+# at W_DRILL (until 2026-10-01) an expert needed ~3.4 answers per concept to
+# settle — 136 fifteen-minute problems to confirm 40 known concepts in
+# scripts/sim_explore_period.py; at 1.0, ~65.
+W_LEETCODE = 1.0
 
 _INTEGRATED_RANK = 3
 
@@ -67,6 +73,8 @@ def similarity(kc: str, qid: Optional[int], arena: Optional[Dict[str, frozenset]
     """Tempering weight for an answer to `qid` as evidence on `kc`."""
     if kc.startswith("math."):
         return 1.0
+    if kc.startswith("leetcode."):
+        return W_LEETCODE
     if qid is None:
         return W_DRILL
     arena = arena if arena is not None else arena_ids()

@@ -10,7 +10,7 @@ gates practice (`kc_is_learned`, `kc_is_unlocked`, `kc_stage`, `frontier`,
 
 from __future__ import annotations
 
-from app import kc_graph, kc_prefs
+from app import kc_explore, kc_graph, kc_prefs
 
 
 def kc_report(user_state, eligible=None) -> dict:
@@ -29,6 +29,16 @@ def kc_report(user_state, eligible=None) -> dict:
     # along — a highlight that promises something the app then does not do.
     next_kc = kc_graph.select_next_kc(user_state, eligible=eligible)
 
+    # The explore model's P(known) per concept — what the queue serves from.
+    # The graph draws it for a concept with no evidence of its own, instead of
+    # the subtopic average every concept of a lesson shares
+    # (kc_lattice_read.js `kcLatticeReadiness`).
+    # Only in an area the learner has answered in: with no answers at all the
+    # belief is the bare prior, the same for every concept, and a fresh
+    # account must stay an honest grey map (concept-graph README, 2026-08-23).
+    beliefs = kc_explore.beliefs(user_state)
+    answered = kc_explore.answered_areas(user_state)
+    beliefs = {k: p for k, p in beliefs.items() if kc_explore.area_of(k) in answered}
     rows = {}
     for kc, node in reg.items():
         m, covered, tier = kc_graph.kc_mastery(user_state, kc)
@@ -58,6 +68,7 @@ def kc_report(user_state, eligible=None) -> dict:
             "topic": node["topic"],
             "prereqs": node["prereqs"],
             "mastery": round(m, 4),
+            "belief": round(beliefs[kc], 4) if kc in beliefs else None,
             "covered_w": round(covered, 3),
             "tier": tier,
             "evidenced": covered >= kc_graph.MIN_COVERED_W,
