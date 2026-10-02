@@ -15,7 +15,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 - Question-bank / AI-pipeline scripts — those live in `../../scripts/` (one level up).
 
 ## Key Files
-- `sim_explore_period.py`: simulated learners (hidden true knowledge, guess/slip answers) through the app's REAL explore/exploit — `kc_graph.frontier`, `kc_explore.probing`, `kc_stage`, `record_kc_outcome` — per course (`--course leetcode|arena`), level and learner type; reports probes served, wasted lessons, false settles, hours to finish. `--set kc_explore.X=…` / `--set kc_evidence.X=…` sweeps a constant. Chose `kc_explore.ASSESS_PROBES` and `kc_evidence.W_LEETCODE` (2026-10-02).
+- `sim_explore_period.py`: simulated learners (hidden true knowledge, guess/slip answers) through the app's REAL explore/exploit — `kc_graph.frontier`, `kc_explore.probing`, `kc_stage`, `record_kc_outcome` — per course (`--course leetcode|arena`), level and learner type; reports probes served, wasted lessons, false settles, hours to finish. `--set kc_explore.X=…` / `--set kc_evidence.X=…` sweeps a constant. Chose `kc_explore.ASSESS_PROBES` (3, then 2 the same day: 3 cost ARENA slow learners 2–4 h and a false settle) and `kc_evidence.W_LEETCODE` (2026-10-02).
 - `init_db.py`: `main()` runs the schema creation. Imports `app.db.Base, engine` and `app.models` so SQLAlchemy registers all tables before `create_all`.
 - `recompute_p_ewma.py`: standalone script (no `main()`); top-level execution iterates `user_data/*.json`, recomputes `p` per subtopic with `P_ALPHA = 0.3`, writes back in place.
 

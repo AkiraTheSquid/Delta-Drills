@@ -150,15 +150,18 @@ AREA_PRIOR_PSEUDO = 2.0
 # terribly wrong with the hyperparameters"). Like ALEKS's initial assessment,
 # the first ASSESS_PROBES probes of each area are served whatever the gate
 # says, so the area prior rests on answers, not on one answer or a self-report.
-# scripts/sim_explore_period.py chose 3 (8 cost ARENA novices ~15%: ARENA has
-# seven small areas). Paired, median hours to finish, beginner level: every
-# LeetCode learner type sooner (expert 61 -> 25, two-thirds-known 71 -> 38,
-# novice 119 -> 93 with W_LEETCODE); ARENA expert 35 -> 25 and a first-problem
-# timeout 41 -> 31, but novices / patchy learners +2-4 h (~30 extra 4-minute
-# probes) and one median false "settled" for a third-known learner; ARENA
-# total -5% beginner, ~0 neutral, +2% strong. A survey answer of "never" for
-# the area skips it: that is the learner telling us, not a guess.
-ASSESS_PROBES = 3
+# scripts/sim_explore_period.py chose 2. At 3 (shipped 2026-10-02 morning)
+# ARENA novices / patchy learners paid +2-4 h (~30 extra 4-minute probes over
+# ARENA's seven small areas) and a third-known learner's median run falsely
+# "settled" 1 concept; Seth: "you mean the work we did here made the ARENA
+# worse?". At 2, median hours to finish vs no assessment (ARENA 16 seeds,
+# beginner): novice 69.3 -> 70.0, third-known 56.5 -> 57.5, spotty 61.4 ->
+# 62.0, expert 35 -> 25.5, two-thirds-known 37.5 -> 32.4; no false settles.
+# No level picked, novice / third-known still +4 h (nothing shifts their
+# start down, so more areas are assessed). LeetCode same as or better than 3
+# (spotty 62 -> 47.5, first-problem timeout 39). A survey answer of "never"
+# for the area skips it: that is the learner telling us, not a guess.
+ASSESS_PROBES = 2
 
 # RETURN WINDOW. After a break of RETURN_GAP_DAYS with no answers, concepts
 # already taught may be probed again (unaided, ranked by information) for
