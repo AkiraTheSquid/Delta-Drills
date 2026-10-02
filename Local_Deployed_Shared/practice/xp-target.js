@@ -29,6 +29,14 @@
 
    No target yet: the line is drawn faint at a suggestion (your pace, or 20)
    and nothing is saved until you move it or pick a date.
+
+   Problems a day beside the XP (2026-10-01): a learner read "20 XP a day"
+   next to "+15 XP / problem" as two problems a day, but XP per problem runs
+   from ~0 to ~20 as a concept fills. The server counts the problems the
+   remainder takes by the same model (`problems_remaining`,
+   app/learning_pace.py); a daily D is ≈ D × problems_remaining / remaining
+   problems a day — both read NOW (not remaining_open), so today's learning
+   shrinks them together.
    ================================================================ */
 (function () {
   "use strict";
@@ -43,6 +51,13 @@
     if (!(daily > 0) || rem <= 0) return null;
     return addDays(s.today.date, Math.ceil(rem / daily) - 1);
   };
+  /** Problems a day that `daily` XP a day stands for, or null. */
+  const problemsFor = (s, daily) => {
+    const rem = Math.max(0, s.remaining ?? 0);
+    if (!(daily > 0) || rem <= 0 || !(s.problems_remaining > 0)) return null;
+    return Math.max(1, Math.round((daily * s.problems_remaining) / rem));
+  };
+  const problemsText = (n) => (n ? ` · ≈ ${n} problem${n === 1 ? "" : "s"} a day` : "");
   /** XP a day to finish by `date` (learning_xp.daily_target). */
   const dailyFor = (s, date) => Math.ceil(remaining(s) / Math.max(1, daysBetween(s.today.date, date) + 1));
 
@@ -69,7 +84,7 @@
     goalEl.querySelector(".xp-goal-fill").style.width = `${(frac * 100).toFixed(1)}%`;
     goalEl.querySelector(".xp-goal-bar").setAttribute("aria-valuenow", String(Math.round(frac * 100)));
     goalEl.querySelector(".xp-goal-nums").textContent = t.set
-      ? `${fmt(done)} of ${fmt(t.daily)} XP today`
+      ? `${fmt(done)} of ${fmt(t.daily)} XP today${problemsText(problemsFor(s, t.daily))}`
       : `${fmt(done)} XP today · no daily target yet`;
     goalEl.querySelector(".xp-goal-pct").textContent = t.set ? `${Math.round(frac * 100)}%` : "";
     // A finished course has no date line (goal() below).
@@ -187,7 +202,9 @@
       knob.setAttribute("transform", `translate(${p.R - 4} ${yy})`);
       knob.setAttribute("aria-valuenow", String(value));
       const f = finishFor(s, value);
-      knob.setAttribute("aria-valuetext", `${value} XP a day${f ? `, finish ${longDate(f)}` : ""}`);
+      const n = problemsFor(s, value);
+      knob.setAttribute("aria-valuetext",
+        `${value} XP a day${n ? `, about ${n} problems` : ""}${f ? `, finish ${longDate(f)}` : ""}`);
       p.svg.classList.remove("is-target-unset");
       paintGoal(s, { daily: value, finish: f, set: true });
     };
@@ -255,5 +272,5 @@
     return box;
   }
 
-  window.DDXpTarget = { goal, wire, current, finishFor, dailyFor };
+  window.DDXpTarget = { goal, wire, current, finishFor, dailyFor, problemsFor };
 })();
