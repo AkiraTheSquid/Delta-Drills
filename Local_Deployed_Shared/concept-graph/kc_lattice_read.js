@@ -230,6 +230,18 @@
       var x = window.kcCrosswalkReadiness(kc, state.atom_mastery, state.atom_last_ts, decay);
       if (x) return { r: x.r, source: "atom", via: x.atoms, ts: x.ts, coveredW: x.coveredW };
     }
+    // No evidence of its own: the explore model's P(known) (`belief`,
+    // kc_explore.beliefs) — the number the queue serves from: the learner's
+    // prior, the area's probe answers, what neighbouring answers imply. It
+    // comes BEFORE the subtopic average, which every concept of a lesson
+    // shares: LeetCode is ONE subtopic, so a single timed-out problem painted
+    // all 40 of a learner's nodes red (Seth, 2026-10-01: "it needs to be in
+    // the middle, where its prior assumes the middle part"). "model" carries
+    // no coverage (lesson-graph.js `_evidence`), so the bubble stays washed
+    // out and dashed: a prior, never drawn as measured.
+    if (row && Number.isFinite(row.belief)) {
+      return { r: Math.max(0, Math.min(1, row.belief)), source: "model", coveredW: 0, server: true };
+    }
     return null;
   }
 

@@ -2410,7 +2410,7 @@ t.manual_seed(0)
   <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=2" defer></script>
-  <script src="concept-graph/kc_lattice_read.js?v=4" defer></script>
+  <script src="concept-graph/kc_lattice_read.js?v=5" defer></script>
   <!-- How the graph draws (node look setting, curved edges, shortcuts).
        BEFORE lesson-graph.js, which builds its stylesheet from it. -->
   <!-- Node placement + edge routing that cut crossings; runs itself as a
@@ -2423,7 +2423,7 @@ t.manual_seed(0)
   <!-- LeetCode's areas (topic families, each its own colour). BEFORE
        lesson-graph.js and graph-views.js, whose section rule reads it. -->
   <script src="concept-graph/leetcode-areas.js?v=2"></script>
-  <script src="concept-graph/lesson-graph.js?v=42" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=43" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->

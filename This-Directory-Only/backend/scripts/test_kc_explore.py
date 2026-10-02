@@ -145,6 +145,15 @@ check("three torch probe misses close torch probing",
 check("... but not math probing (neutral shrink)", X.worth_probing("math.x", 0.0, {"torch": (3, 0)}))
 check("one python miss does not close math", X.worth_probing("math.x", 0.0, {"python": (1, 0)}))
 check("torch probe hits raise the area prior", X.area_known("torch.x", {"torch": (3, 3)}) > 0.8)
+
+print("assessment period (2026-10-01: one timed-out LeetCode problem closed probing)")
+check("one miss does not close the area", X.worth_probing("leetcode.x", 0.0, {"leetcode": (1, 0)}))
+check("...nor a beginner's cold start", X.worth_probing("leetcode.x", -0.5, {}))
+check("ASSESS_PROBES misses do", not X.worth_probing("leetcode.x", 0.0, {"leetcode": (X.ASSESS_PROBES, 0)}))
+check("a survey 'never' skips the assessment", not X.worth_probing("leetcode.x", -0.5, {}, {"leetcode": 0.15}))
+check("a survey 'some' keeps it", X.worth_probing("leetcode.x", -0.5, {}, {"leetcode": 0.5}))
+from app import kc_evidence
+check("a LeetCode answer counts in full", kc_evidence.similarity("leetcode.recursion", 60331, {}) == 1.0)
 s = state()
 answer(s, "torch.tensor-model", False, probe=True)
 answer(s, "torch.constructors", False, probe=True)

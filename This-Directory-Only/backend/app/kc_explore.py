@@ -140,6 +140,26 @@ PROBE_MARGIN = 0.0
 # one python miss block probing math the learner knew (astra, 2026-09-24).
 AREA_PRIOR_PSEUDO = 2.0
 
+# ASSESSMENT PERIOD. The cost gate's break-even sits AT the neutral prior
+# (code: 4 / 8 = 0.5), so before 2026-10-01 a single missed probe dropped an
+# area's prior to 0.29 and closed probing for the whole area, and a "beginner"
+# self-report (-0.5 log-odds) closed it before the first question. A LeetCode
+# learner with a long LeetCode history timed out on one easy problem and was
+# walked up from the root, lesson by lesson (Seth: "if she answers one or two
+# questions and it instantly doesn't explore you must of done something
+# terribly wrong with the hyperparameters"). Like ALEKS's initial assessment,
+# the first ASSESS_PROBES probes of each area are served whatever the gate
+# says, so the area prior rests on answers, not on one answer or a self-report.
+# scripts/sim_explore_period.py chose 3 (8 cost ARENA novices ~15%: ARENA has
+# seven small areas). Paired, median hours to finish, beginner level: every
+# LeetCode learner type sooner (expert 61 -> 25, two-thirds-known 71 -> 38,
+# novice 119 -> 93 with W_LEETCODE); ARENA expert 35 -> 25 and a first-problem
+# timeout 41 -> 31, but novices / patchy learners +2-4 h (~30 extra 4-minute
+# probes) and one median false "settled" for a third-known learner; ARENA
+# total -5% beginner, ~0 neutral, +2% strong. A survey answer of "never" for
+# the area skips it: that is the learner telling us, not a guess.
+ASSESS_PROBES = 3
+
 # RETURN WINDOW. After a break of RETURN_GAP_DAYS with no answers, concepts
 # already taught may be probed again (unaided, ranked by information) for
 # RETURN_WINDOW_DAYS: their old answers have faded (kc_evidence retention), so
@@ -183,11 +203,25 @@ def leave_out(counts: Dict[str, Tuple[int, int]], kc: str, own: Optional[Tuple[i
     return {**counts, area_of(kc): (max(0, n - own[0]), max(0, h - own[1]))}
 
 
+def in_assessment(kc: str, counts: Dict[str, Tuple[int, int]],
+                  centers: Optional[Dict[str, float]] = None) -> bool:
+    """Fewer than ASSESS_PROBES probes answered in `kc`'s area, and the
+    learner has not told the survey they never did it."""
+    center = (centers or {}).get(area_of(kc))
+    if center is not None and center < 0.5:
+        return False
+    return counts.get(area_of(kc), (0, 0))[0] < ASSESS_PROBES
+
+
 def worth_probing(kc: str, x: float, counts: Dict[str, Tuple[int, int]],
                   centers: Optional[Dict[str, float]] = None) -> bool:
     """The cost gate: the posterior `x` (log-odds) combined with the area prior
-    clears the break-even P(known), by PROBE_MARGIN. The 1e-9 keeps a neutral
-    0.5 against a 0.5 ratio from flipping on float rounding."""
+    clears the break-even P(known), by PROBE_MARGIN — after the area's
+    ASSESSMENT PERIOD, inside which every open concept is worth a probe. The
+    1e-9 keeps a neutral 0.5 against a 0.5 ratio from flipping on float
+    rounding."""
+    if in_assessment(kc, counts, centers):
+        return True
     p = _sigmoid(x + _logit(area_known(kc, counts, centers)))
     return p >= probe_cost_ratio(kc) + PROBE_MARGIN - 1e-9
 
@@ -438,6 +472,11 @@ def _inputs(user_state) -> _Inputs:
 def _state_inputs(user_state):
     I = _inputs(user_state)
     return I.reg, I.ev, I.level
+
+
+def answered_areas(user_state) -> set:
+    """Areas the learner has given at least one graded answer in."""
+    return {area_of(row[0]) for row in _inputs(user_state).ev}
 
 
 def beliefs(user_state) -> Dict[str, float]:

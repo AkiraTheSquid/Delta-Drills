@@ -206,11 +206,15 @@ def check_a_topic_reading_contributes_no_direct_evidence():
     1 x 1.0 x specificity, where specificity degrades to 1/siblings whenever the
     browser's crosswalk fetch failed. One single-KC lesson in kc_registry.json
     and a placement seed draws as a measured concept with a tight band.
+
+    The explore model's prior (`source: "model"`, kc_lattice_read.js, 2026-10-01)
+    is the same kind of number and takes the same zero.
     """
     src = _read(os.path.join(HERE, 'lesson-graph.js'))
-    assert 'info && info.source === "topic"' in src, (
-        "_evidence must take a topic reading's own coveredW (0) rather than the "
-        "server's covered_w, or a placement seed can be sized like observation"
+    assert 'info && (info.source === "topic" || info.source === "model")' in src, (
+        "_evidence must take a topic or model reading's own coveredW (0) rather "
+        "than the server's covered_w, or a placement seed / prior can be sized "
+        "like observation"
     )
 
 

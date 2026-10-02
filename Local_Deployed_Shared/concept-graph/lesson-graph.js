@@ -659,7 +659,7 @@
     // specificity falls back to 1/siblings whenever the browser's crosswalk
     // failed to load: one single-KC lesson in kc_registry.json away from a
     // placement seed being drawn as a measured concept with a tight band.
-    const coveredW = info && info.source === "topic"
+    const coveredW = info && (info.source === "topic" || info.source === "model")
       ? 0
       : (row && Number.isFinite(row.covered_w)
           ? row.covered_w
